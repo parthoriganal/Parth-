@@ -6,3 +6,8 @@ out/
 .DS_Store
 contribution-city/test/*.png
 contribution-city/test/*.jpg
+__pycache__/
+*.pyc
+.venv/
+dist/
+.env
