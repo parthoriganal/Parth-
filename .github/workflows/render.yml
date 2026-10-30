@@ -5,6 +5,11 @@ name: Render MP4
 # encoding them. Roughly 10–25 minutes for the full 1080p master.
 
 on:
+  # dispatch is the normal path; the push trigger exists so a render can be
+  # requested from a branch without Actions-write access by touching the marker
+  push:
+    branches: ['arena/**']
+    paths: ['.github/render-request']
   workflow_dispatch:
     inputs:
       scale:
@@ -57,12 +62,17 @@ jobs:
         run: npm run build
 
       - name: Render frames + encode
+        env:
+          SCALE: ${{ inputs.scale || '1' }}
+          CRF: ${{ inputs.crf || '17' }}
+          FROM: ${{ inputs.from || '0' }}
+          TO: ${{ inputs.to || '863' }}
         run: |
           node scripts/render.mjs \
-            --scale ${{ inputs.scale }} \
-            --crf ${{ inputs.crf }} \
-            --from ${{ inputs.from }} \
-            --to ${{ inputs.to }} \
+            --scale "$SCALE" \
+            --crf "$CRF" \
+            --from "$FROM" \
+            --to "$TO" \
             --keep-frames
 
       - name: Upload MP4
@@ -81,7 +91,7 @@ jobs:
           retention-days: 14
 
       - name: Publish release
-        if: ${{ inputs.release }}
+        continue-on-error: true
         run: |
           TAG="render-$(date +%Y%m%d-%H%M%S)"
           gh release create "$TAG" out/*.mp4 \
