@@ -77,16 +77,16 @@ assets/style.css    the whole UI theme
 assets/data.js      deterministic contribution calendar generator (seeded PRNG)
 assets/render.js    the software renderer
 assets/ui.js        interaction, panels, render dialog, shortcuts
-test/smoke.js       headless jsdom smoke test (fake 2D context, checks for runtime errors)
-test/render-shot.js rasterises the real viewport to a PNG for eyeballing
+test/smoke.cjs       headless jsdom smoke test (fake 2D context, checks for runtime errors)
+test/render-shot.cjs rasterises the real viewport to a PNG for eyeballing
 ```
 
 ## Dev checks
 
 ```bash
 npm i -D jsdom @napi-rs/canvas     # test-only, not needed to run the app
-node test/smoke.js                 # steps frames, prints stats, fails on any error
-node test/render-shot.js 1180 720 test/shot.png
+node test/smoke.cjs                              # steps frames, prints stats, fails on any error
+node test/render-shot.cjs 1180 720 test/shot.png # rasterise the viewport
 ```
 
 ## Notes
