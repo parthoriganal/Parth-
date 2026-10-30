@@ -3,78 +3,384 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>AUREUM — Ident</title>
-<meta name="description" content="AUREUM — a deterministic, code-generated cinematic ident. 36 seconds, 864 frames, no footage." />
+<title>KDP Scout Pro — Amazon Keyword & Niche Research Platform</title>
+<meta name="description" content="Advanced Amazon KDP keyword research, niche analysis, competition, BSR, profit & opportunity scoring." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./src/style.css" />
 </head>
 <body>
-	<div id="stage">
-		<canvas id="film"></canvas>
+<div id="app">
+  <!-- Sidebar -->
+  <aside id="sidebar" class="sidebar" aria-label="Navigation">
+    <div class="sidebar-head">
+      <div class="logo">
+        <span class="logo-mark">◈</span>
+        <span class="logo-text"><b>KDP</b> SCOUT <em>PRO</em></span>
+      </div>
+      <span class="version-badge">v1.0 • BETA</span>
+      <button id="btnCloseSidebar" class="icon-btn hide-desktop" aria-label="Close menu">✕</button>
+    </div>
+    <nav class="nav">
+      <button class="nav-item active" data-view="research"><span class="nav-ico">⌕</span> Research</button>
+      <button class="nav-item" data-view="results"><span class="nav-ico">◫</span> Dashboard</button>
+      <button class="nav-item" data-view="keywords"><span class="nav-ico">≡</span> Keywords</button>
+      <button class="nav-item" data-view="competitors"><span class="nav-ico">◎</span> Competitors</button>
+      <button class="nav-item" data-view="trends"><span class="nav-ico">↗</span> Trends</button>
+      <button class="nav-item" data-view="profit"><span class="nav-ico">₹</span> Profit Calc</button>
+      <div class="nav-sep"></div>
+      <button class="nav-item" data-view="report"><span class="nav-ico">⧉</span> Report & Export</button>
+      <a class="nav-item nav-link" href="./docs/COMPATIBILITY_REPORT.md" target="_blank"><span class="nav-ico">ⓘ</span> Compatibility</a>
+      <a class="nav-item nav-link" href="https://github.com/rxpelle/kdp-scout" target="_blank"><span class="nav-ico">↗</span> kdp-scout (MIT)</a>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="status-card" id="statusCard">
+        <div class="status-dot" id="statusDot"></div>
+        <div>
+          <div class="status-title">API Status</div>
+          <div class="status-sub" id="statusSub">Checking…</div>
+        </div>
+      </div>
+      <div class="tiny">Respect Amazon ToS • Rate-limited • No fake data</div>
+    </div>
+  </aside>
 
-		<div id="ui" class="ui">
-			<div class="ui-top">
-				<div class="ui-brand">
-					<span class="brand-mark">AUREUM</span>
-					<span class="brand-sub">IDENT — DIRECTOR'S CUT</span>
-				</div>
-				<div class="ui-meta">
-					<span id="ui-section" class="meta-strong">I · OVERTURE</span>
-					<span id="ui-shot" class="meta-dim">001 / 053</span>
-				</div>
-			</div>
+  <!-- Main -->
+  <div class="main">
+    <header class="topbar">
+      <button id="btnOpenSidebar" class="icon-btn hide-desktop" aria-label="Open menu">☰</button>
+      <div class="topbar-title">
+        <h1>Amazon KDP Research</h1>
+        <p>Keyword mining • BSR & reviews • Profit • Opportunity 0-100</p>
+      </div>
+      <div class="topbar-actions">
+        <span class="pill" id="marketplacePill">US • $</span>
+        <button id="btnRunResearch" class="btn btn-primary">▶ Run Research</button>
+      </div>
+    </header>
 
-			<div class="ui-bottom">
-				<button id="btn-play" class="btn btn-main" title="Play / Pause (Space)">
-					<span id="btn-play-icon">❚❚</span>
-				</button>
-				<div class="transport">
-					<input id="scrub" type="range" min="0" max="863" step="1" value="0" aria-label="Scrub timeline" />
-					<div class="transport-row">
-						<span id="ui-tc" class="mono">00:00:00:00</span>
-						<span id="ui-frames" class="mono dim">FRAME 0000 / 0864</span>
-					</div>
-				</div>
-				<div class="toggles">
-					<button id="btn-export" class="btn btn-accent" title="Render this film to MP4 in your browser">EXPORT MP4</button>
-					<button id="btn-sound" class="btn" title="Procedural score (S)">SOUND OFF</button>
-					<button id="btn-quality" class="btn" title="Render scale">1.0×</button>
-					<button id="btn-hide" class="btn" title="Hide interface (H)">HIDE UI</button>
-				</div>
-			</div>
-			<div class="hint mono">SPACE play · ← → step · R restart · S sound · H hide · EXPORT writes an MP4</div>
-		</div>
+    <!-- VIEWS -->
+    <section id="view-research" class="view active">
+      <div class="card">
+        <div class="card-head">
+          <h2>Book & Keyword Input</h2>
+          <span class="badge">Required: 1–10 seeds + marketplace</span>
+        </div>
+        <form id="researchForm" class="form-grid" onsubmit="return false">
+          <div class="field">
+            <label>Book Title</label>
+            <input id="inpTitle" placeholder="e.g., The Silent Library" />
+          </div>
+          <div class="field">
+            <label>Subtitle</label>
+            <input id="inpSubtitle" placeholder="e.g., A Cozy Mystery with Recipes" />
+          </div>
+          <div class="field">
+            <label>Seed Keywords <span class="req">*</span> — 1 to 10</label>
+            <textarea id="inpSeeds" rows="3" placeholder="one per line — e.g.&#10;cozy mystery&#10;cozy crime fiction&#10;culinary mystery"></textarea>
+            <div class="hint">Amazon autocomplete mining (a–z expansion). Try 3–5 specific seeds.</div>
+          </div>
+          <div class="field row2">
+            <div>
+              <label>Marketplace <span class="req">*</span></label>
+              <select id="inpMarketplace">
+                <option value="us">🇺🇸 US — Amazon.com ($)</option>
+                <option value="uk">🇬🇧 UK — Amazon.co.uk (£)</option>
+                <option value="ca">🇨🇦 Canada — Amazon.ca (C$)</option>
+                <option value="au">🇦🇺 Australia — Amazon.com.au (A$)</option>
+                <option value="de">🇩🇪 Germany — Amazon.de (€)</option>
+                <option value="in">🇮🇳 India — Amazon.in (₹)</option>
+              </select>
+            </div>
+            <div>
+              <label>Book Format</label>
+              <select id="inpFormat">
+                <option value="ebook">eBook / Kindle</option>
+                <option value="paperback">Paperback</option>
+                <option value="hardcover">Hardcover</option>
+              </select>
+            </div>
+          </div>
+          <div class="field row2">
+            <div>
+              <label>Selling Price</label>
+              <input id="inpPrice" type="number" step="0.01" min="0" placeholder="e.g., 4.99" />
+              <div class="hint">Drives profit & opportunity scoring.</div>
+            </div>
+            <div>
+              <label>Page Count</label>
+              <input id="inpPages" type="number" min="1" placeholder="e.g., 280" value="220" />
+            </div>
+          </div>
+          <div class="field row2">
+            <div>
+              <label>Department</label>
+              <select id="inpDept">
+                <option value="kindle">Kindle Store</option>
+                <option value="books">Books</option>
+                <option value="all">All Departments</option>
+              </select>
+            </div>
+            <div>
+              <label>Depth</label>
+              <select id="inpDepth">
+                <option value="1">Depth 1 — 27 queries (fast)</option>
+                <option value="2">Depth 2 — deep expand (slower, richer)</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>Competitor ASINs (optional, up to 8)</label>
+            <input id="inpASINs" placeholder="e.g., B08N5WRWNW, B003K16PJW" />
+            <div class="hint">10-char ASINs from Amazon product URLs (/dp/ASIN). Unlocks BSR/reviews/content-gap.</div>
+          </div>
+          <div class="form-actions">
+            <button id="btnResearchSubmit" class="btn btn-primary btn-lg" type="button">▶ Run Full Research</button>
+            <button id="btnDemo" class="btn btn-ghost" type="button">Load Demo (cozy mystery)</button>
+            <span id="researchStatus" class="status-text"></span>
+          </div>
+        </form>
+      </div>
 
-		<div id="export-panel" class="export-panel" hidden>
-			<div class="export-inner">
-				<div class="export-head">
-					<span class="export-title" id="export-title">RENDERING MP4</span>
-					<button id="export-close" class="export-close" title="Close">✕</button>
-				</div>
-				<div class="export-bar"><i id="export-fill"></i></div>
-				<div class="export-meta">
-					<span id="export-status" class="mono">frame 0000 / 0864</span>
-					<span id="export-pct" class="mono">0%</span>
-				</div>
-				<a id="export-link" class="export-link" hidden download="aureum_1920x1080.mp4">DOWNLOAD MP4</a>
-				<div id="export-note" class="export-note mono">Encoded in your browser — 1920×1080 · 24 fps · H.264</div>
-			</div>
-		</div>
+      <div class="card">
+        <h3>How scoring works — no black box</h3>
+        <div class="score-explain-grid">
+          <div class="explain"><b>Demand 30</b> — Autocomplete position (1=highest visibility) + result count proxy. <em>ESTIMATED</em> unless DataForSEO volume key set. Never claimed as monthly searches.</div>
+          <div class="explain"><b>Competition 25</b> — Result count + avg BSR + avg reviews of your competitors. More competitors / lower BSR = lower score.</div>
+          <div class="explain"><b>Differentiation 15</b> — Specificity (word count) + content-gap TF-IDF vs competitor titles.</div>
+          <div class="explain"><b>Buyer Intent 15</b> — Commercial tokens (best/buy/workbook/journal/guide/for beginners) + top-3 autocomplete boost.</div>
+          <div class="explain"><b>Profitability 15</b> — KDP royalty window (70% $2.99-$9.99 else 35% eBook; 60% minus printing paperback/hardcover).</div>
+        </div>
+        <div class="tiny" style="margin-top:8px">Formula: Demand30+Competition25+Differentiation15+Intent15+Profit15=100. Overall niche = mean of top-10 keywords. Every number carries source + timestamp + status tag (ACTUAL / ESTIMATED / SIMULATED / UNAVAILABLE).</div>
+      </div>
 
-		<div id="loader" class="loader">
-			<div class="loader-inner">
-				<div class="loader-mark">AUREUM</div>
-				<div class="loader-line"><i></i></div>
-				<div class="loader-sub mono">BUILDING TIMELINE</div>
-			</div>
-		</div>
+      <div class="card" id="dataAccuracyCard">
+        <h3>Data Accuracy & Sources</h3>
+        <ul class="source-list">
+          <li><span class="tag tag-ok">ACTUAL</span> Amazon autocomplete suggestions — real shopper type-ahead, directly from <code>completion.{domain}/api/2017/suggestions</code>. Not search volume.</li>
+          <li><span class="tag tag-est">ESTIMATED</span> Demand signal 0-100 — heuristic from position + word count. Clearly labeled.</li>
+          <li><span class="tag tag-ok">ACTUAL</span> BSR, price, rating, reviews, categories — scraped from <code>/dp/{ASIN}</code> when not CAPTCHA-blocked.</li>
+          <li><span class="tag tag-warn">SIMULATED</span> Google Trends — deterministic seasonal model unless <code>pytrends</code> installed (then ACTUAL via Google).</li>
+          <li><span class="tag tag-na">UNAVAILABLE</span> Reverse ASIN — requires DataForSEO API key (optional). UI shows disabled state, not fake data.</li>
+        </ul>
+      </div>
+    </section>
 
-		<div id="fatal" class="fatal" hidden>
-			<div class="fatal-inner">
-				<div class="fatal-title">WebGL 2 unavailable</div>
-				<div class="fatal-body">This piece renders in real time on the GPU. Enable hardware acceleration or open it in a current Chrome, Edge, Firefox or Safari.</div>
-			</div>
-		</div>
-	</div>
-	<script type="module" src="./src/main.js"></script>
+    <section id="view-results" class="view">
+      <div id="emptyState" class="empty">
+        <div class="empty-icon">◫</div>
+        <h2>No research yet</h2>
+        <p>Run a research on the Research tab — results appear here: opportunity score, scatter plot, profit & more.</p>
+        <button class="btn btn-primary" onclick="document.querySelector('[data-view=research]').click()">Go to Research</button>
+      </div>
+      <div id="resultsContent" hidden>
+        <!-- Overall score hero -->
+        <div class="hero-grid">
+          <div class="hero-score card">
+            <div class="hero-label">Overall Niche Opportunity</div>
+            <div class="hero-value" id="overallScore">—</div>
+            <div class="hero-sub" id="overallLabel">—</div>
+            <div class="score-bar"><i id="overallBar"></i></div>
+            <div class="tiny" id="overallFormula" style="margin-top:8px"></div>
+          </div>
+          <div class="hero-meta card">
+            <h3>Research Summary</h3>
+            <div class="kv" id="summaryKv"></div>
+            <div class="pill-row" id="sourcePills"></div>
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="card">
+            <div class="card-head">
+              <h3>Opportunity vs Demand Scatter</h3>
+              <span class="badge">Demand signal (x) vs Opportunity score (y)</span>
+            </div>
+            <canvas id="chartScatter" height="220"></canvas>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <h3>Keyword Comparison (Top 8)</h3>
+              <span class="badge">Opportunity 0-100</span>
+            </div>
+            <canvas id="chartBars" height="220"></canvas>
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="card">
+            <div class="card-head">
+              <h3>Word Count & Intent Mix</h3>
+            </div>
+            <canvas id="chartIntent" height="220"></canvas>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <h3>Competition Ladder</h3>
+              <span class="badge">Result count (lower = less crowded)</span>
+            </div>
+            <canvas id="chartCompetition" height="220"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h3>Low-Competition Opportunities</h3>
+            <span class="badge">Score ≥55 + &lt;20k results</span>
+          </div>
+          <div id="lowCompList" class="chip-grid"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-keywords" class="view">
+      <div class="card">
+        <div class="card-head">
+          <h2>Mined Keywords — Related & Long-tail</h2>
+          <div class="card-actions">
+            <input id="kwFilter" class="input-sm" placeholder="Filter keywords…" />
+            <select id="kwSort" class="select-sm">
+              <option value="opportunity">Sort: Opportunity ↓</option>
+              <option value="demand">Sort: Demand ↓</option>
+              <option value="position">Sort: Position ↑</option>
+              <option value="alpha">Sort: A-Z</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table id="kwTable" class="table">
+            <thead><tr>
+              <th>#</th><th>Keyword</th><th>Seed</th><th>Pos</th><th>Demand</th><th>Results</th><th>Score</th><th>Intent</th><th>Status</th>
+            </tr></thead>
+            <tbody id="kwTbody"><tr><td colspan="9" class="muted">No data — run research first.</td></tr></tbody>
+          </table>
+        </div>
+        <div class="card-actions" style="margin-top:10px">
+          <button class="btn btn-ghost btn-sm" id="btnExportKeywordsCSV">Export CSV</button>
+          <span class="tiny" id="kwMeta"></span>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-competitors" class="view">
+      <div class="card">
+        <div class="card-head">
+          <h2>Top 20 Competing Books (for top keyword)</h2>
+          <span class="badge" id="top20Badge">—</span>
+        </div>
+        <div class="table-wrap">
+          <table class="table" id="top20Table">
+            <thead><tr><th>#</th><th>ASIN</th><th>Title</th><th>Price</th><th>Rating</th><th>Reviews</th><th>Rank</th></tr></thead>
+            <tbody id="top20Tbody"><tr><td colspan="7" class="muted">No data — run research with seeds.</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-head"><h3>Competitor BSR</h3></div>
+          <canvas id="chartBSR" height="200"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Reviews vs Rating</h3></div>
+          <canvas id="chartReviews" height="200"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Tracked Competitors (your ASINs)</h3><span class="badge">BSR • price • rating • categories</span></div>
+        <div id="trackedList" class="book-grid"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Category Analysis</h3></div>
+        <div id="categoryFrom" class="category-section"></div>
+        <div id="categorySuggested" class="category-section" style="margin-top:10px"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Content Gap Analyzer</h3><span class="badge">TF-IDF demand vs competitor coverage</span></div>
+        <div id="gapSummary" class="muted"></div>
+        <div id="gapList"></div>
+      </div>
+    </section>
+
+    <section id="view-trends" class="view">
+      <div class="card">
+        <div class="card-head">
+          <h2>Search Trend Charts</h2>
+          <div class="card-actions">
+            <select id="trendPicker" class="select-sm"><option value="">Pick keyword…</option></select>
+            <span class="badge" id="trendStatusBadge">—</span>
+          </div>
+        </div>
+        <canvas id="chartTrends" height="200"></canvas>
+        <div class="tiny" id="trendNote"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Quick Trend Comparison (top 3 keywords)</h3></div>
+        <div id="trendMini" class="trend-mini-grid"></div>
+      </div>
+    </section>
+
+    <section id="view-profit" class="view">
+      <div class="card">
+        <div class="card-head">
+          <h2>Profit Calculator</h2>
+          <span class="badge">KDP royalty tables</span>
+        </div>
+        <div class="profit-hero" id="profitHero"></div>
+        <div class="table-wrap">
+          <table class="table" id="profitTable">
+            <thead><tr><th>Price</th><th>eBook Royalty (rate)</th><th>Paperback Royalty</th><th>Hardcover Royalty</th></tr></thead>
+            <tbody id="profitTbody"><tr><td colspan="4" class="muted">Enter a price on the Research tab or here.</td></tr></tbody>
+          </table>
+        </div>
+        <div class="form-grid" style="margin-top:14px">
+          <div class="field row2">
+            <div><label>Re-calculate price</label><input id="profitPrice" type="number" step="0.01" placeholder="4.99" /></div>
+            <div><label>Pages</label><input id="profitPages" type="number" placeholder="220" value="220" /></div>
+          </div>
+          <div><button class="btn btn-primary" id="btnRecalcProfit">Calculate</button></div>
+        </div>
+        <canvas id="chartProfit" height="200" style="margin-top:14px"></canvas>
+        <div class="tiny" id="profitNote" style="margin-top:8px"></div>
+      </div>
+    </section>
+
+    <section id="view-report" class="view">
+      <div class="card">
+        <div class="card-head">
+          <h2>Research Report & Export</h2>
+          <div class="card-actions">
+            <button class="btn btn-primary btn-sm" id="btnExportCSV">Export CSV</button>
+            <button class="btn btn-ghost btn-sm" id="btnExportPDF">Export PDF</button>
+            <button class="btn btn-ghost btn-sm" id="btnCopyReport">Copy Summary</button>
+          </div>
+        </div>
+        <div id="reportBody" class="report-body">
+          <div class="muted">No research yet — run one from the Research tab.</div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div>© KDP Scout Pro — Built on <a href="https://github.com/rxpelle/kdp-scout" target="_blank">rxpelle/kdp-scout (MIT)</a> • Pangolinfo MCP (optional) • Nexscope skills templates • <a href="./docs/COMPATIBILITY_REPORT.md" target="_blank">Compatibility Report</a></div>
+      <div class="tiny">This tool respects Amazon ToS: rate-limited requests, respects 429/503 backoff, never circumvents access controls. Autocomplete ≠ search volume. BSR→sales is estimated. All data labeled with source & timestamp. If a source fails, the UI shows the failure — no fake data is generated.</div>
+    </footer>
+  </div>
+</div>
+
+<!-- Loading overlay -->
+<div id="loading" class="loading" hidden>
+  <div class="loading-card">
+    <div class="spinner"></div>
+    <h3 id="loadingTitle">Mining keywords…</h3>
+    <p id="loadingSub">Amazon autocomplete • Please wait 10-30s</p>
+    <div class="progress"><i id="loadingBar"></i></div>
+    <div class="tiny" id="loadingDetail">This respects Amazon rate limits (0.2–1s between requests).</div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast" hidden></div>
+
+<script type="module" src="./src/app.js"></script>
 </body>
 </html>
