@@ -1,195 +1,159 @@
-# AUREUM — an ident made entirely of code
+# KDP Scout Pro — Advanced Amazon KDP Keyword & Niche Research Platform
 
-**36 seconds · 864 frames · 52 shots · 24 fps · 2.39:1**
+**Mobile-responsive SaaS dashboard for KDP authors** — keyword mining, demand vs competition scoring, BSR/reviews, profit, categories, trends, content gaps, and a transparent 0–100 opportunity score.
 
-No footage. No images. No textures. No AI video. Every pixel in this film is computed
-at runtime from geometry, light and shaders — then it can be rendered to a real MP4 on
-GitHub Actions.
+Built on [rxpelle/kdp-scout](https://github.com/rxpelle/kdp-scout) (MIT) as the primary research engine, with optional enrichment from [pangolinfoapi/amazon-niche-finder](https://github.com/pangolinfoapi/amazon-niche-finder) and templates from [nexscope-ai/amazon-skills](https://github.com/nexscope-ai/amazon-skills). See [`docs/COMPATIBILITY_REPORT.md`](./docs/COMPATIBILITY_REPORT.md) for the full repository audit.
 
-```
-open ?render=1   →  deterministic frame server for the MP4 encoder
-```
+![Dark dashboard](docs/screenshot-placeholder.png)
 
 ---
 
-## What it is
+## ✨ What it does
 
-A five-movement title sequence in the register of a broadcast ident: a technical,
-restrained, brass-and-bone design system in front of a metallic 3D field, composited
-through a full film chain (GTAO-era occlusion is replaced by bloom + halation + gate
-weave, aberration, grain, vignette and a hard 2.39:1 mask).
+| Module | Source | Status |
+|---|---|---|
+| **Keyword Miner** | Amazon autocomplete `completion.{domain}/api/2017/suggestions` + a–z expansion | ✅ ACTUAL |
+| **Search Volume Analyzer** | Demand signal 0–100 (position heuristic, ESTIMATED) — DataForSEO `search_volume` when key set → ACTUAL | ✅ / ⚠️ optional |
+| **Competition Analyzer** | Amazon search result count `/s?k=` + parsed organics | ✅ ACTUAL |
+| **Reverse ASIN** | DataForSEO `ranked_keywords/live` (≈$0.01/ASIN) | ⚠️ UNAVAILABLE without key |
+| **Competitor Analyzer** | Scrapes `/dp/{ASIN}` for BSR, price, rating, reviews, pages, categories | ✅ ACTUAL |
+| **Category Analyzer** | BSR category trees + breadcrumbs + 25 KDP categories explorer | ✅ |
+| **Trend Analyzer** | Google Trends via `pytrends` → ACTUAL, else deterministic seasonal model → SIMULATED | ✅ |
+| **Content Gap** | TF-IDF demand tokens vs competitor title/desc/categories | ✅ |
+| **Profit Calculator** | KDP tables: eBook 70%/35%, paperback/hardcover 60%-printing | ✅ |
+| **Opportunity Scorer** | Transparent 0–100: Demand30 + Competition25 + Differentiation15 + Intent15 + Profit15 | ✅ |
 
-It runs **live in the browser at 60 fps** and it **exports to H.264**, from the same
-source, because the whole film is a pure function of the frame index:
-
-```js
-t = frame / 24        // no delta-time, no Math.random(), no accumulation
-```
-
-Render frame 517 alone, or in sequence — identical pixels. That determinism is the
-only reason a browser can be used as a film renderer.
-
----
-
-## The edit
-
-| # | Movement | Time | Shots | Function |
-|---|---|---|---|---|
-| I | **OVERTURE** | 0–6 s | 6 | darkness, one pulse, a hairline opens, the wordmark rises |
-| II | **GRID** | 6–14 s | 12 | technical build: rulers, readouts, barcodes, crosshairs |
-| III | **SLAM** | 14–22 s | 16 | kinetic type — one cut every ~12 frames, inversions, slice reveals |
-| IV | **FIELD** | 22–32 s | 14 | the 3D field erupts: cloud → tunnel → burst → vortex → collapse |
-| V | **LOCKUP** | 32–36 s | 4 | drain, ring, wordmark, end card, grain decay |
-
-Cut density peaks at **~4 cuts per second** in the SLAM and FIELD movements.
-The score is sequenced to the same 120 BPM grid the edit is cut on.
+**Data accuracy contract:** every number shows `source`, `status` (`ACTUAL` / `ESTIMATED` / `SIMULATED` / `UNAVAILABLE` / `MOCK`), and `updated_at`. If Amazon blocks/throttles, the UI shows the failure banner — no fake BSR/prices/reviews are invented. Autocomplete ≠ search volume is warned everywhere.
 
 ---
 
-## The seventeen graphic systems
+## 🚀 Quick Start
 
-Every shot is one of these, drawn on a 1920×1080 canvas with one grid, one palette
-(`#06070a` ink, `#f4efe6` bone, `#c2a15c` brass, `#e0492c` ember, `#6e7a85` steel)
-and manual letter-spacing — no webfonts, no image assets.
+### Backend (Flask research engine)
 
-`void` · `rules` · `wordmark` · `counter` · `grid` · `hud` · `bars` · `metric` ·
-`flash` · `typeSlam` · `typeSlice` · `typeStack` · `invert` · `glitch` · `field` ·
-`lockup` · `endcard`
-
-Typographic layer is composited **after** tone mapping, in display space — the way a
-finishing artist builds type over a graded plate. That is why the bone white stays
-pure white and the small caps stay sharp instead of being crushed by ACES.
-
----
-
-## The physical layer
-
-- **320 machined slabs** — instanced boxes, metalness 1.0, lit only by an HDRI
-- **160 hairline rings** — instanced tori, 3 radial segments
-- **16,000 motes** — positions solved per-vertex in the shader, additive
-- **one light core** — pushed above 1.0 so it is the only thing that blooms
-- **HDRI environment** — generated at runtime from `RoomEnvironment`, no `.hdr` file
-- **7 formations** — cloud, grid, tunnel, burst, vortex, collapse, ring
-
-Draw calls for the entire field: **3**.
-
----
-
-## The film chain
-
-```
-scene → HDR half-float → bloom (mip-mapped) → ACES filmic + sRGB
-      → aberration + halation + glitch bands + gate weave
-      → typography → grain → vignette → 2.39:1 letterbox
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate      # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+cp .env.example .env           # optional: add DataForSEO / Pangolinfo keys
+python app.py                  # → http://localhost:5000  •  /api/health
 ```
 
-- Tone mapping happens exactly **once**, at the output pass.
-- Bloom threshold at 0.86 with a deliberately HDR core.
-- Grain is luminance-weighted (heaviest in the shadows) and keyed to the frame index.
-- Letterbox is a projector gate with a hairline, not a CSS crop.
-
----
-
-## Run it
+### Frontend (Vite + Chart.js)
 
 ```bash
 npm install
-npm run dev            # → http://localhost:5173
-npm run build          # → dist/
-npm run verify         # 864 frames through a mock canvas, no GPU needed
+npm run dev    # → http://localhost:5173  (proxies /api to Flask)
+npm run build  # → dist/  (Flask also serves it at /)
 ```
 
-### Controls
-
-| Key | Action |
-|---|---|
-| `Space` | play / pause |
-| `←` `→` | step one frame |
-| `R` | restart |
-| `S` | procedural score on/off (synthesised live, no audio file) |
-| `H` | hide interface |
-| scrub | drag the timeline — the film is stateless, so scrubbing is instant |
-
-The interface auto-hides; move the mouse to bring it back.
-
----
-
-## Get the MP4 — two ways
-
-### 1. In your browser (fastest)
-
-Click **EXPORT MP4** in the transport bar. The page paints all 864 frames at
-1920×1080, encodes H.264 with WebCodecs and muxes it with `mp4-muxer` — then hands
-you `aureum_1920x1080.mp4`. Nothing is uploaded; the file never leaves your machine.
-Takes about a minute on a laptop, and needs Chrome or Edge.
-
-### 2. On GitHub Actions (no browser needed)
-
-`Actions → Render MP4 → Run workflow` — see below.
-
-## Render a real MP4
-
-The browser is used as a rasteriser only: seek to frame *N*, paint, screenshot.
-Then `ffmpeg` encodes.
+### Full stack in one command
 
 ```bash
-npm run build
-npx playwright install chromium
-
-node scripts/render.mjs                  # 1920×1080 master → out/aureum_1920x1080.mp4
-node scripts/render.mjs --scale 0.5      # 960×540 draft
-node scripts/render.mjs --from 300 --to 420
-node scripts/render.mjs --still 512      # one frame as PNG
+npm run build && PORT=5000 python backend/app.py
+# Open http://localhost:5000  — single origin, no CORS
 ```
 
-### Or let GitHub do it — Actions is the render farm
-
-`Actions → Render MP4 → Run workflow`.
-
-It installs headless Chromium (software WebGL), builds, paints all 864 frames,
-encodes H.264 at CRF 17, uploads the artifact and publishes a Release with the MP4
-attached. Roughly 10–25 minutes on a standard runner, comfortably inside the 6-hour
-job cap. No GPU required.
-
-`Actions → Deploy to GitHub Pages` publishes the live version on every push to `main`.
+**Android:** open the preview URL in Chrome — heavy work runs cloud-side (Flask), not on device.
 
 ---
 
-## File map
+## 📖 Usage
 
-```
-src/timeline.js    the edit — 52 shots, cameras, grade, the state function
-src/scene3d.js     320 slabs, 160 rings, 16k motes, 7 formations, HDRI
-src/overlay.js     17 graphic systems on a 1920×1080 canvas
-src/shaders.js     background haze, particle field, film gate
-src/audio.js       synthesised score on the 120 BPM cut grid
-src/export.js      WebCodecs + mp4-muxer → MP4 in the browser
-src/main.js        renderer, post chain, transport, capture API
-scripts/render.mjs Playwright frame server → ffmpeg
-```
+1. **Research tab** → Title / Subtitle (optional), **1–10 seed keywords**, Marketplace (US/UK/CA/AU/DE/IN), Format, Price, Page count, optional **ASINs** (up to 8), Depth (1 fast / 2 deep).
+2. Click **Run Full Research** — 15–35s: mines autocomplete (a–z), probes competition for top-12, scrapes competitors, scores, builds trends/categories/gaps.
+3. Explore: **Dashboard** (overall score, demand vs competition scatter, intent donut), **Keywords** table (filter/sort, export), **Competitors** (BSR & review charts, categories), **Trends**, **Profit**, **Report & Export** (CSV/PDF).
+
+**Try Demo:** click *Load Demo (cozy mystery)* → Run.
 
 ---
 
-## Honest notes
+## 🔑 Optional API keys (all features work without them)
 
-- **No GPU in CI.** Software WebGL renders ~1–3 frames per second at 1080p. That is
-  fine for 864 frames; it is not fine for a 10-minute film.
-- **No audio file ships.** The score is synthesised in the browser on demand, so the
-  MP4 is silent by design. Add a `-i score.wav` to the ffmpeg call to mux one.
-- **Fonts are system fonts.** Times and Helvetica are chosen so nothing needs
-  downloading — the price is that typography varies slightly per OS.
-- **This is not photoreal.** It is title design and motion graphics, which is what
-  code is genuinely good at. Veo-class footage is a different discipline entirely.
-- **Rendering requires WebGL 2.** Without hardware acceleration you get an error card,
-  not a broken frame.
+| Key | Get it at | Env vars | Enables |
+|---|---|---|---|
+| DataForSEO | dataforseo.com | `DATAFORSEO_LOGIN`, `DATAFORSEO_API_KEY` | Actual monthly search volume + Reverse ASIN |
+| Pangolinfo | tool.pangolinfo.com (200 free calls) | `PANGOLINFO_API_KEY` | Blue-ocean `filter_niches` feed |
+| Google Trends actual | `pip install pytrends` | — | Turns Trend Analyzer from SIMULATED → ACTUAL |
 
-Built to be forked: change `SECTIONS` in `src/timeline.js` and you have cut a
-different film.
+Copy `backend/.env.example` → `backend/.env` and fill any you have.
 
 ---
 
-## Also in this repo
+## 🧮 How the score works — no black box
 
-- **[contribution-city](contribution-city/)** — a GitHub contribution graph rebuilt as a
-  beveled 3D city, rendered by a hand-rolled software renderer on a 2D canvas (no WebGL,
-  no dependencies). Open `contribution-city/index.html`.
+```
+Demand 30        = f(position 1..10, result_count) — 1 ⇒ strongest; boost if >10k results. Labeled ESTIMATED unless DataForSEO volume present.
+Competition 25   = invert(result_count, avgBSR, avgReviews) — fewer/weaker ⇒ higher.
+Differentiation 15= word count specificity + TF-IDF content-gap vs competitors.
+Buyer Intent 15  = commercial tokens (workbook/journal/planner/guide/best/buy/for beginners) + top-3 autocomplete boost.
+Profitability 15 = KDP window: $2.99-$9.99 → 70% eBook else 35% (delivery $0.15); paperback/hardcover 60% - printing.
+
+Total 0–100 = sum pillars. Overall niche = mean of top-10 keyword scores.
+Labels: ≥75 Excellent  ≥60 Good  ≥45 Moderate  ≥30 Challenging  <30 High Risk
+```
+
+Click any keyword in the report to see its 5-pillar breakdown with plain-English explanations.
+
+---
+
+## 📊 Dashboard exports
+
+- **CSV:** all mined keywords with demand, result_count, opportunity, pillars, source, timestamp — opens in Sheets/Excel → Amazon Ads import-ready.
+- **PDF:** printable report via browser `window.print()` (no server round-trip) — includes top-20 table + score breakdowns.
+- **Copy Summary:** one-line clipboard for notes/ads.
+
+---
+
+## 🏗 Architecture
+
+```
+Browser (Vite + Chart.js, responsive dark UI)
+   │  /api/* proxy (dev) or same origin (prod)
+   ▼
+Flask (backend/app.py) ──► kdp_engine/
+   ├─ autocomplete.py  (ported kdp-scout, a–z + adaptive backoff + mock fallback)
+   ├─ product_scraper.py (multi-selector /dp scrape + CAPTCHA detect)
+   ├─ bsr_model.py     (power-law k·bsr^-a, per marketplace)
+   ├─ scorer.py        (transparent 100-pt composite)
+   ├─ profit.py        (KDP royalty + printing tables)
+   ├─ trends.py        (pytrends → ACTUAL else seasonal SIMULATED)
+   ├─ content_gap.py   (TF-IDF demand vs competitor coverage)
+   └─ mock_data.py     (labeled MOCK when Amazon egress blocked)
+
+LocalStorage: last research JSON persisted for offline revisit.
+```
+
+**Markets:** US, UK, Canada, Australia, Germany, India (added — reuses `us_kindle` BSR model, MID `A21TJRUUN4KGV`).
+
+**Respect for ToS:** rate-limited (0.18–1.2s between Amazon hits), UA rotation, exponential backoff on 429/503, never bypasses CAPTCHA — reports it.
+
+---
+
+## 📚 Docs
+
+- [Compatibility Report — repo audit + integration decisions](./docs/COMPATIBILITY_REPORT.md)
+- [Setup Guide](./docs/SETUP.md)
+- [API Guide & feature matrix](./docs/API_GUIDE.md)
+
+---
+
+## 🛠 Dependencies
+
+**Backend:** Flask, Flask-Cors, requests, beautifulsoup4, lxml, pandas, python-dotenv
+**Frontend:** Vite, Chart.js
+**Optional:** pytrends (trends ACTUAL), DataForSEO account, Pangolinfo key
+
+---
+
+## 🔒 Privacy
+
+No telemetry, no cloud DB — SQLite local if you add it; research JSON stays in `localStorage`. Your ASINs/keys never leave your machine except to Amazon/DataForSEO for the searches you explicitly run.
+
+---
+
+## 📄 License
+
+App: MIT (consistent with `rxpelle/kdp-scout` MIT). Curated mock data is demo-only. Amazon is a trademark of Amazon.com, Inc.
+

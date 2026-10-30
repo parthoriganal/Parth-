@@ -1,21 +1,14 @@
 import { defineConfig } from 'vite';
-
 export default defineConfig({
-	base: './',
-	server: {
-		host: '0.0.0.0',
-		port: 5173,
-		strictPort: true,
-		allowedHosts: true
-	},
-	preview: {
-		host: '0.0.0.0',
-		port: 4173,
-		allowedHosts: true
-	},
-	build: {
-		target: 'es2020',
-		outDir: 'dist',
-		assetsInlineLimit: 0
-	}
+  server: {
+    host: '0.0.0.0',
+    port: 5173,
+    allowedHosts: true,
+    headers: { 'X-Frame-Options': 'ALLOWALL' },
+    proxy: {
+      '/api': { target: 'http://127.0.0.1:5000', changeOrigin: true }
+    }
+  },
+  preview: { host: '0.0.0.0', port: 4173 },
+  build: { outDir: 'dist', emptyOutDir: true }
 });
