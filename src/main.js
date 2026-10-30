@@ -18,6 +18,7 @@ import { createWorld } from './scene3d.js';
 import { createOverlay } from './overlay.js';
 import { createAudio } from './audio.js';
 import { filmShader } from './shaders.js';
+import { exportFilm, canExport } from './export.js';
 import { timecode, clamp } from './util.js';
 
 function showFatal(message) {
@@ -48,7 +49,7 @@ try {
 		antialias: false,
 		alpha: false,
 		powerPreference: 'high-performance',
-		preserveDrawingBuffer: RENDER_MODE,
+		preserveDrawingBuffer: true,
 		stencil: false,
 		depth: true
 	});
@@ -200,9 +201,11 @@ function tick(now) {
 		}
 	}
 
-	renderAt(transport.time);
-	audio.update(transport.time, transport.playing, currentState);
-	updateHud();
+	if (!exporting) {
+		renderAt(transport.time);
+		audio.update(transport.time, transport.playing, currentState);
+		updateHud();
+	}
 
 	if (!RENDER_MODE) adaptQuality(dt);
 }
@@ -224,7 +227,16 @@ const el = {
 	hide: document.getElementById('btn-hide'),
 	ui: document.getElementById('ui'),
 	loader: document.getElementById('loader'),
-	hint: document.querySelector('.hint')
+	hint: document.querySelector('.hint'),
+	exBtn: document.getElementById('btn-export'),
+	exPanel: document.getElementById('export-panel'),
+	exTitle: document.getElementById('export-title'),
+	exFill: document.getElementById('export-fill'),
+	exStatus: document.getElementById('export-status'),
+	exPct: document.getElementById('export-pct'),
+	exLink: document.getElementById('export-link'),
+	exClose: document.getElementById('export-close'),
+	exNote: document.getElementById('export-note')
 };
 
 el.scrub.max = String(TOTAL_FRAMES - 1);
@@ -344,6 +356,98 @@ window.addEventListener('keydown', (e) => {
 	} else if (e.code === 'KeyS') {
 		el.sound.click();
 	}
+});
+
+/* ------------------------------------------------------------------ */
+/* export — encode the film to MP4 in this browser                     */
+/* ------------------------------------------------------------------ */
+
+export let exporting = false;
+
+function setExportProgress({ frame, frames }) {
+	const pct = Math.min(100, Math.round((frame / frames) * 100));
+	el.exFill.style.width = `${pct}%`;
+	el.exStatus.textContent = `frame ${String(frame).padStart(4, '0')} / ${frames}`;
+	el.exPct.textContent = `${pct}%`;
+}
+
+async function runExport() {
+	if (exporting) return;
+
+	el.exPanel.hidden = false;
+	el.exLink.hidden = true;
+
+	if (!canExport()) {
+		el.exTitle.textContent = 'EXPORT UNAVAILABLE';
+		el.exStatus.textContent = 'WebCodecs missing';
+		el.exNote.textContent =
+			'This browser cannot encode H.264 locally. Open the page in Chrome or Edge — or run the “Render MP4” workflow on GitHub, which produces the same file on a runner.';
+		return;
+	}
+
+	exporting = true;
+	const wasPlaying = transport.playing;
+	setPlaying(false);
+
+	el.exTitle.textContent = 'RENDERING MP4';
+	el.exNote.textContent = 'Every frame is painted and encoded here. Leave this tab in front.';
+	setExportProgress({ frame: 0, frames: TOTAL_FRAMES });
+
+	// a clean 1920×1080 master, independent of the window size
+	const W = 1920;
+	const H = 1080;
+	const prevQuality = quality;
+
+	quality = 1;
+	renderer.setPixelRatio(1);
+	renderer.setSize(W, H, false);
+	composer.setPixelRatio(1);
+	composer.setSize(W, H);
+	world.setSize(W, H);
+	if (filmPass.uniforms.uRes.value.isVector2) filmPass.uniforms.uRes.value.set(W, H);
+
+	try {
+		const result = await exportFilm({
+			renderFrame: (i) => renderAt(i / FPS),
+			frames: TOTAL_FRAMES,
+			fps: FPS,
+			canvas,
+			width: W,
+			height: H,
+			onProgress: setExportProgress
+		});
+
+		const mb = (result.bytes / 1048576).toFixed(1);
+		el.exTitle.textContent = 'MP4 READY';
+		el.exStatus.textContent = `${mb} MB · ${result.codec}`;
+		el.exPct.textContent = '100%';
+		el.exFill.style.width = '100%';
+		el.exLink.href = result.url;
+		el.exLink.hidden = false;
+		el.exNote.textContent = 'Download started. If the preview blocked it, use the button above.';
+
+		const a = document.createElement('a');
+		a.href = result.url;
+		a.download = 'aureum_1920x1080.mp4';
+		a.rel = 'noopener';
+		document.body.appendChild(a);
+		a.click();
+		a.remove();
+	} catch (err) {
+		el.exTitle.textContent = 'EXPORT FAILED';
+		el.exStatus.textContent = String(err && err.message ? err.message : err).slice(0, 90);
+		el.exNote.textContent = 'Try Chrome or Edge. The GitHub Actions renderer produces the same file without a browser.';
+	} finally {
+		quality = prevQuality;
+		resize();
+		exporting = false;
+		if (wasPlaying) setPlaying(true);
+	}
+}
+
+el.exBtn.addEventListener('click', runExport);
+el.exClose.addEventListener('click', () => {
+	if (!exporting) el.exPanel.hidden = true;
 });
 
 /* ------------------------------------------------------------------ */

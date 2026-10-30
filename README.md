@@ -114,6 +114,19 @@ The interface auto-hides; move the mouse to bring it back.
 
 ---
 
+## Get the MP4 — two ways
+
+### 1. In your browser (fastest)
+
+Click **EXPORT MP4** in the transport bar. The page paints all 864 frames at
+1920×1080, encodes H.264 with WebCodecs and muxes it with `mp4-muxer` — then hands
+you `aureum_1920x1080.mp4`. Nothing is uploaded; the file never leaves your machine.
+Takes about a minute on a laptop, and needs Chrome or Edge.
+
+### 2. On GitHub Actions (no browser needed)
+
+`Actions → Render MP4 → Run workflow` — see below.
+
 ## Render a real MP4
 
 The browser is used as a rasteriser only: seek to frame *N*, paint, screenshot.
@@ -150,6 +163,7 @@ src/scene3d.js     320 slabs, 160 rings, 16k motes, 7 formations, HDRI
 src/overlay.js     17 graphic systems on a 1920×1080 canvas
 src/shaders.js     background haze, particle field, film gate
 src/audio.js       synthesised score on the 120 BPM cut grid
+src/export.js      WebCodecs + mp4-muxer → MP4 in the browser
 src/main.js        renderer, post chain, transport, capture API
 scripts/render.mjs Playwright frame server → ffmpeg
 ```

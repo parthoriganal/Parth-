@@ -35,12 +35,29 @@
 					</div>
 				</div>
 				<div class="toggles">
+					<button id="btn-export" class="btn btn-accent" title="Render this film to MP4 in your browser">EXPORT MP4</button>
 					<button id="btn-sound" class="btn" title="Procedural score (S)">SOUND OFF</button>
 					<button id="btn-quality" class="btn" title="Render scale">1.0×</button>
 					<button id="btn-hide" class="btn" title="Hide interface (H)">HIDE UI</button>
 				</div>
 			</div>
-			<div class="hint mono">SPACE play · ← → step · R restart · S sound · H hide</div>
+			<div class="hint mono">SPACE play · ← → step · R restart · S sound · H hide · EXPORT writes an MP4</div>
+		</div>
+
+		<div id="export-panel" class="export-panel" hidden>
+			<div class="export-inner">
+				<div class="export-head">
+					<span class="export-title" id="export-title">RENDERING MP4</span>
+					<button id="export-close" class="export-close" title="Close">✕</button>
+				</div>
+				<div class="export-bar"><i id="export-fill"></i></div>
+				<div class="export-meta">
+					<span id="export-status" class="mono">frame 0000 / 0864</span>
+					<span id="export-pct" class="mono">0%</span>
+				</div>
+				<a id="export-link" class="export-link" hidden download="aureum_1920x1080.mp4">DOWNLOAD MP4</a>
+				<div id="export-note" class="export-note mono">Encoded in your browser — 1920×1080 · 24 fps · H.264</div>
+			</div>
 		</div>
 
 		<div id="loader" class="loader">

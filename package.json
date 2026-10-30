@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "AUREUM \u2014 a deterministic, code-generated cinematic ident. 36s / 24fps / 864 frames. No footage, no images, no textures.",
+  "description": "AUREUM — a deterministic, code-generated cinematic ident. 36s / 24fps / 864 frames. No footage, no images, no textures.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -13,10 +13,11 @@
     "render:fast": "node scripts/render.mjs --scale 0.5 --crf 26"
   },
   "dependencies": {
+    "mp4-muxer": "^5.2.2",
     "three": "0.187.0"
   },
   "devDependencies": {
-    "vite": "8.3.5",
-    "playwright": "1.64.1"
+    "playwright": "1.64.1",
+    "vite": "8.3.5"
   }
 }
