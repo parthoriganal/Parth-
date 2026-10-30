@@ -13,7 +13,7 @@
  */
 
 import { chromium } from 'playwright';
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -125,18 +125,26 @@ async function main() {
 	console.log(`\n  AUREUM — frame renderer`);
 	console.log(`  ${width}×${height} @ ${FPS}fps · server :${port}\n`);
 
-	const browser = await chromium.launch({
-		headless: true,
-		args: [
+	const launchArgs = [
 			'--use-gl=angle',
 			'--use-angle=swiftshader',
 			'--enable-unsafe-swiftshader',
 			'--no-sandbox',
 			'--disable-dev-shm-usage',
-			'--force-device-scale-factor=1',
-			'--disable-lcd-text'
-		]
-	});
+		'--force-device-scale-factor=1',
+		'--disable-lcd-text',
+		'--ignore-gpu-blocklist',
+		'--enable-webgl',
+		'--disable-gpu-sandbox'
+	];
+
+	let browser;
+	try {
+		// full Chromium in new headless mode gives the most reliable SwiftShader WebGL2
+		browser = await chromium.launch({ headless: true, channel: 'chromium', args: launchArgs });
+	} catch {
+		browser = await chromium.launch({ headless: true, args: launchArgs });
+	}
 
 	const page = await browser.newPage({
 		viewport: { width, height },
@@ -154,6 +162,48 @@ async function main() {
 	const total = await page.evaluate(() => window.__film.frames);
 	const shots = await page.evaluate(() => window.__film.shots);
 	console.log(`  timeline: ${total} frames · ${shots} shots\n`);
+
+	// --- runtime diagnostics, written to out/diag.txt ------------------
+	await page.evaluate((i) => window.__film.seek(i), 96);
+	const stats = await page.evaluate(() => {
+		const c = document.querySelector('#film');
+		const gl = c.getContext('webgl2') || c.getContext('webgl');
+		let renderer = null, version = null, mean = -1, max = -1;
+		if (gl) {
+			const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+			renderer = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+			version = gl.getParameter(gl.VERSION);
+			try {
+				const w = c.width, h = c.height;
+				const px = new Uint8Array(w * h * 4);
+				gl.readPixels(0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, px);
+				let sum = 0, n = 0, m = 0;
+				for (let i = 0; i < px.length; i += 4 * 101) {
+					const v = (px[i] + px[i + 1] + px[i + 2]) / 3;
+					sum += v; n++; if (v > m) m = v;
+				}
+				mean = +(sum / n).toFixed(2);
+				max = m;
+			} catch (e) {
+				mean = -2;
+			}
+		}
+		return { hasWebGL: !!gl, renderer, version, meanLuma: mean, maxLuma: max, canvas: [c.width, c.height] };
+	});
+
+	const diag = {
+		at: new Date().toISOString(),
+		context: stats,
+		frames: total,
+		shots,
+		ffmpeg: (() => {
+			const r = spawnSync('bash', ['-lc', 'command -v ffmpeg || echo missing'], { encoding: 'utf8' });
+			return (r.stdout || 'missing').trim();
+		})()
+	};
+	fs.mkdirSync(OUT_DIR, { recursive: true });
+	fs.writeFileSync(path.join(OUT_DIR, 'diag.txt'), JSON.stringify(diag, null, 2));
+	console.log('  diagnostics:', JSON.stringify(diag.context));
 
 	const canvas = page.locator('#film');
 

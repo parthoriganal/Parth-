@@ -58,6 +58,14 @@ jobs:
       - name: Install Chromium (software WebGL)
         run: npx playwright install --with-deps chromium
 
+      - name: Install ffmpeg
+        run: |
+          if ! command -v ffmpeg >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq ffmpeg
+          fi
+          ffmpeg -version | head -1
+
       - name: Build
         run: npm run build
 
@@ -91,12 +99,21 @@ jobs:
           retention-days: 14
 
       - name: Publish release
-        continue-on-error: true
         run: |
           TAG="render-$(date +%Y%m%d-%H%M%S)"
+          {
+            echo "Rendered from source: 864 deterministic frames. No footage, no images, no AI video."
+            echo
+            echo '```json'
+            cat out/diag.txt 2>/dev/null || echo '{"error":"no diagnostics written"}'
+            echo '```'
+            echo
+            echo "Files:"
+            ls -lh out/*.mp4 2>/dev/null || echo "NO MP4 PRODUCED"
+          } > notes.md
           gh release create "$TAG" out/*.mp4 \
             --title "AUREUM · $TAG" \
-            --notes "Rendered from source: 864 deterministic frames, no footage, no images." \
+            --notes-file notes.md \
             --latest
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
