@@ -1,0 +1,43 @@
+{
+  "_provenance": "Verified live via `gh repo view` + GitHub API + local git on 2026-10-30. Every number/word below is real repository metadata. Nothing is estimated or embellished. No private code, email addresses, or personal data appear in the film.",
+  "repository": "parthoriganal/Parth-",
+  "url": "github.com/parthoriganal/Parth-",
+  "name": "Parth-",
+  "owner": "parthoriganal",
+  "created": "2026-10-30T08:31:01Z",
+  "defaultBranch": "main",
+  "files": ["README.md"],
+  "fileCount": 1,
+  "readmeLine": "# Parth-",
+  "readmeLines": 1,
+  "commitCount": 1,
+  "firstCommit": { "sha": "5a41087", "message": "Initial commit", "date": "2026-10-30T08:31:02Z" },
+  "languages": {},
+  "topics": [],
+  "description": "",
+  "releases": 0,
+  "stars": 0,
+  "forks": 0,
+  "design": {
+    "title": "PARTH- — A World Before Its First Sunrise",
+    "concept": "THE REPOSITORY IS A LIVING PLANET. This one has just begun to breathe.",
+    "heroMotif": "The trailing hyphen in 'Parth-' — an unfinished name, rendered as horizon, cursor and orbit-line.",
+    "palette": {
+      "void": "#03040A",
+      "ice": "#EAF6FF",
+      "genesisCyan": "#5FF5E2",
+      "meteorAmber": "#FFB347",
+      "nebulaViolet": "#7C5CFF",
+      "deepBlue": "#0B1E3A"
+    },
+    "type": { "display": "Space Grotesk", "data": "DejaVu Sans Mono" },
+    "seed": 541087
+  },
+  "acts": [
+    { "n": 1, "name": "VOID", "t": [0, 9], "line": "Every world begins with a single line." },
+    { "n": 2, "name": "THE FIRST COMMIT", "t": [9, 19], "line": "5a41087 — Initial commit. The first light." },
+    { "n": 3, "name": "THE MONOLITH", "t": [19, 31], "line": "README.md. A cathedral of one line." },
+    { "n": 4, "name": "PROTO-PLANET", "t": [31, 40], "line": "No releases. No stars yet. Only gravity." },
+    { "n": 5, "name": "PARTH-", "t": [40, 45], "line": "The repository is a living planet. It has just begun to breathe." }
+  ]
+}
