@@ -4,3 +4,5 @@ out/
 .vite/
 *.log
 .DS_Store
+contribution-city/test/*.png
+contribution-city/test/*.jpg

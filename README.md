@@ -185,3 +185,11 @@ scripts/render.mjs Playwright frame server → ffmpeg
 
 Built to be forked: change `SECTIONS` in `src/timeline.js` and you have cut a
 different film.
+
+---
+
+## Also in this repo
+
+- **[contribution-city](contribution-city/)** — a GitHub contribution graph rebuilt as a
+  beveled 3D city, rendered by a hand-rolled software renderer on a 2D canvas (no WebGL,
+  no dependencies). Open `contribution-city/index.html`.

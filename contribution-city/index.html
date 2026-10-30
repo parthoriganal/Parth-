@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Contribution City — GitHub × Blender</title>
+<meta name="description" content="Your GitHub contribution graph, rebuilt as a beveled 3D city by a hand-rolled software renderer. No dependencies." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231d2226'/%3E%3Cpath d='M16 6l9 5v10l-9 5-9-5V11z' fill='%235cc47a'/%3E%3Cpath d='M16 6l9 5-9 5-9-5z' fill='%239cf07f'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="20" height="20">
+          <path d="M12 2.6 21 7.7v10.6L12 23.4 3 18.3V7.7z" fill="#5cc47a" opacity=".92"/>
+          <path d="M12 2.6 21 7.7 12 12.6 3 7.7z" fill="#9cf07f"/>
+          <path d="M12 12.6 21 7.7v10.6L12 23.4z" fill="#3f9a5f"/>
+        </svg>
+      </span>
+      <span class="brand-title">Contribution&nbsp;City</span>
+      <span class="brand-tag">GitHub&nbsp;×&nbsp;Blender</span>
+    </div>
+
+    <nav class="menus" aria-label="Application menu">
+      <button type="button" class="menu" data-menu="file">File</button>
+      <button type="button" class="menu" data-menu="edit">Edit</button>
+      <button type="button" class="menu" data-menu="render">Render</button>
+      <button type="button" class="menu" data-menu="help">Help</button>
+    </nav>
+
+    <div class="workspaces" role="tablist" aria-label="Workspaces">
+      <button class="ws is-active" role="tab" aria-selected="true" title="Isometric view, shaded">Layout</button>
+      <button class="ws" role="tab" aria-selected="false" title="Wireframe, front view">Modeling</button>
+      <button class="ws" role="tab" aria-selected="false" title="Cycle the palette">Shading</button>
+      <button class="ws" role="tab" aria-selected="false" title="Render a still">Render</button>
+    </div>
+
+    <div class="topbar-right">
+      <label class="user-field">
+        <span class="at" aria-hidden="true">@</span>
+        <input id="username" value="octocat" autocomplete="off" spellcheck="false" aria-label="GitHub username" />
+      </label>
+      <label class="select-field">
+        <select id="year" aria-label="Contribution year"></select>
+      </label>
+      <button id="renderBtn" class="render-btn" type="button" title="Render a still (F12)">
+        <span>Render</span><kbd>F12</kbd>
+      </button>
+    </div>
+  </header>
+
+  <div class="workarea">
+
+    <aside class="toolbar" aria-label="Viewport tools">
+      <button class="tool is-active" data-tool="orbit" title="Orbit — drag the viewport" aria-label="Orbit">
+        <svg viewBox="0 0 20 20"><path d="M10 5.5a4.5 4.5 0 1 1-4.4 5.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M5.2 7.4 5 11l3.4-.9" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="tool" data-tool="pan" title="Pan — Shift + drag" aria-label="Pan">
+        <svg viewBox="0 0 20 20"><path d="M10 3v14M3 10h14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M10 3l-2 2.4M10 3l2 2.4M10 17l-2-2.4M10 17l2-2.4M3 10l2.4-2M3 10l2.4 2M17 10l-2.4-2M17 10l-2.4 2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </button>
+      <button class="tool" data-tool="zoom" title="Zoom — scroll" aria-label="Zoom">
+        <svg viewBox="0 0 20 20"><circle cx="9" cy="9" r="5.2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M13 13l4 4M6.6 9h4.8M9 6.6v4.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </button>
+
+      <div class="tool-sep" aria-hidden="true"></div>
+
+      <button class="tool" data-preset="iso" title="Isometric view (1)" aria-label="Isometric view">
+        <svg viewBox="0 0 20 20"><path d="M10 3.2 16.6 7v6.2L10 17l-6.6-3.8V7z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M10 3.2 16.6 7 10 10.8 3.4 7M10 10.8V17" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="tool" data-preset="front" title="Front view (2)" aria-label="Front view">
+        <svg viewBox="0 0 20 20"><rect x="3.5" y="3.5" width="13" height="13" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M3.5 10h13M10 3.5v13" stroke="currentColor" stroke-width="1.3" opacity=".55"/></svg>
+      </button>
+      <button class="tool" data-preset="top" title="Top view (3)" aria-label="Top view">
+        <svg viewBox="0 0 20 20"><path d="M10 3.4 17 7l-7 3.6L3 7z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M3 7v6l7 3.6 7-3.6V7" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" opacity=".5"/></svg>
+      </button>
+
+      <div class="tool-sep" aria-hidden="true"></div>
+
+      <button class="tool" id="turntableBtn" title="Turntable (T)" aria-label="Turntable" aria-pressed="false">
+        <svg viewBox="0 0 20 20"><ellipse cx="10" cy="13.4" rx="6.4" ry="2.4" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M13.6 5.4a4.2 4.2 0 1 0 1.5 2.2" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M15.4 4.4 15 8l-3.2-1.8" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="tool" id="wireBtn" title="Wireframe (W)" aria-label="Wireframe" aria-pressed="false">
+        <svg viewBox="0 0 20 20"><path d="M10 3 17 7v6.4L10 17l-7-3.6V7z" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M3 7l7 3.8L17 7M10 10.8V17M6.5 5l7 3.8v6.4" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".8"/></svg>
+      </button>
+    </aside>
+
+    <main class="viewport" id="viewport">
+      <canvas id="scene"></canvas>
+
+      <div class="vp-label tl"><span class="dot"></span> Contribution&nbsp;City <em>/ Object Mode</em></div>
+      <div class="vp-label tr" id="fpsLabel">— fps</div>
+
+      <div class="vp-hud">
+        <div><span>verts</span><b id="statVerts">—</b></div>
+        <div><span>faces</span><b id="statFaces">—</b></div>
+        <div><span>fps</span><b id="statFps">—</b></div>
+        <div><span>engine</span><b id="statEngine">EEVEE</b></div>
+      </div>
+
+      <div class="vp-hint" id="vpHint">drag to orbit · scroll to zoom · hover a tower</div>
+
+      <div class="tooltip" id="tooltip" hidden>
+        <b id="ttValue">0</b><span id="ttUnit">contributions</span>
+        <small id="ttDate">—</small>
+      </div>
+
+      <div class="render-panel" id="renderPanel" hidden>
+        <header>
+          <h3>Render</h3>
+          <button type="button" class="panel-close" id="renderClose" aria-label="Close">×</button>
+        </header>
+        <div class="render-body">
+          <div class="render-thumb" id="renderThumb"></div>
+          <ul class="render-meta">
+            <li><span>Engine</span><b id="rEngine">EEVEE</b></li>
+            <li><span>Samples</span><b id="rSamples">0 / 128</b></li>
+            <li><span>Resolution</span><b id="rRes">—</b></li>
+            <li><span>Time</span><b id="rTime">0.00s</b></li>
+          </ul>
+          <div class="render-bar"><i id="renderBar"></i></div>
+          <a class="btn-primary" id="savePng" href="#" download="contribution-city.png" hidden>Save PNG</a>
+        </div>
+      </div>
+    </main>
+
+    <aside class="sidebar">
+
+      <section class="panel">
+        <header class="panel-head">
+          <h2>Outliner</h2>
+          <span class="panel-chip">View Layer</span>
+        </header>
+        <ul class="outliner" id="outliner">
+          <li class="row row-group"><span class="caret">▾</span><span class="otype otype-col"></span>Scene Collection</li>
+          <li class="row is-active" data-object="city"><span class="caret"></span><span class="otype otype-mesh"></span>Contribution City<span class="eye" title="Toggle visibility">◉</span></li>
+          <li class="row" data-object="floor"><span class="caret"></span><span class="otype otype-grid"></span>Grid Floor<span class="eye" title="Toggle visibility">◉</span></li>
+          <li class="row" data-object="key"><span class="caret"></span><span class="otype otype-light"></span>Key Light<span class="eye" title="Toggle visibility">◉</span></li>
+          <li class="row" data-object="cam"><span class="caret"></span><span class="otype otype-cam"></span>Camera<span class="eye eye-none" title="Select to reset the view">◉</span></li>
+        </ul>
+      </section>
+
+      <section class="panel">
+        <header class="panel-head"><h2>Render Engine</h2></header>
+        <div class="chips" id="engineChips">
+          <button type="button" class="chip is-active" data-engine="eevee">EEVEE</button>
+          <button type="button" class="chip" data-engine="cycles">Cycles</button>
+        </div>
+      </section>
+
+      <section class="panel panel-grow">
+        <header class="panel-head"><h2>Light &amp; Geometry</h2></header>
+
+        <label class="slide">
+          <span>Sun azimuth</span><b id="vAz">—</b>
+          <input type="range" id="sunAz" min="0" max="360" step="1" value="128" />
+        </label>
+        <label class="slide">
+          <span>Sun elevation</span><b id="vEl">—</b>
+          <input type="range" id="sunEl" min="4" max="86" step="1" value="52" />
+        </label>
+        <label class="slide">
+          <span>Key strength</span><b id="vStr">—</b>
+          <input type="range" id="sunStrength" min="0" max="200" step="1" value="100" />
+        </label>
+        <label class="slide">
+          <span>Tower height</span><b id="vH">—</b>
+          <input type="range" id="heightScale" min="20" max="200" step="1" value="100" />
+        </label>
+        <label class="slide">
+          <span>Emissive glow</span><b id="vGlow">—</b>
+          <input type="range" id="glow" min="0" max="100" step="1" value="32" />
+        </label>
+
+        <div class="panel-divider"></div>
+        <header class="panel-head sub"><h2>Palette</h2></header>
+        <div class="chips chips-wrap" id="paletteChips">
+          <button type="button" class="chip is-active" data-palette="moss"><i style="--sw:#5cc47a"></i>Moss</button>
+          <button type="button" class="chip" data-palette="ember"><i style="--sw:#e8873a"></i>Ember</button>
+          <button type="button" class="chip" data-palette="ice"><i style="--sw:#4fb3d9"></i>Ice</button>
+          <button type="button" class="chip" data-palette="mono"><i style="--sw:#d6dde2"></i>Mono</button>
+        </div>
+
+        <div class="panel-divider"></div>
+        <div class="toggles">
+          <button type="button" class="toggle" id="tShadow" aria-pressed="true">Contact shadows</button>
+          <button type="button" class="toggle" id="tTurntable" aria-pressed="false">Turntable</button>
+          <button type="button" class="toggle" id="tWire" aria-pressed="false">Wireframe</button>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <footer class="statusbar">
+    <div class="status-left" id="statusLeft">loading…</div>
+    <div class="status-right">
+      <span id="statusYear"></span>
+      <span class="sep">·</span> hand-rolled renderer
+      <span class="sep">·</span> zero dependencies
+    </div>
+  </footer>
+</div>
+
+<script src="assets/data.js"></script>
+<script src="assets/render.js"></script>
+<script src="assets/ui.js"></script>
+</body>
+</html>
