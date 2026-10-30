@@ -1,0 +1,92 @@
+name: Render MP4
+
+# GitHub Actions is the render farm. No GPU, no footage, no AI video —
+# just headless Chromium painting 864 deterministic frames and ffmpeg
+# encoding them. Roughly 10–25 minutes for the full 1080p master.
+
+on:
+  workflow_dispatch:
+    inputs:
+      scale:
+        description: 'Resolution scale (1 = 1920×1080, 0.5 = 960×540)'
+        default: '1'
+        required: false
+      crf:
+        description: 'H.264 quality (lower = better, 17 ≈ visually lossless)'
+        default: '17'
+        required: false
+      from:
+        description: 'First frame (0)'
+        default: '0'
+        required: false
+      to:
+        description: 'Last frame (863)'
+        default: '863'
+        required: false
+      release:
+        description: 'Publish the MP4 as a GitHub Release asset'
+        type: boolean
+        default: true
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Verify timeline and graphic systems
+        run: npm run verify
+
+      - name: Install Chromium (software WebGL)
+        run: npx playwright install --with-deps chromium
+
+      - name: Build
+        run: npm run build
+
+      - name: Render frames + encode
+        run: |
+          node scripts/render.mjs \
+            --scale ${{ inputs.scale }} \
+            --crf ${{ inputs.crf }} \
+            --from ${{ inputs.from }} \
+            --to ${{ inputs.to }} \
+            --keep-frames
+
+      - name: Upload MP4
+        uses: actions/upload-artifact@v4
+        with:
+          name: aureum-mp4
+          path: out/*.mp4
+          retention-days: 30
+
+      - name: Upload stills
+        uses: actions/upload-artifact@v4
+        with:
+          name: aureum-stills
+          path: out/frames/frame_0000*.png
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Publish release
+        if: ${{ inputs.release }}
+        run: |
+          TAG="render-$(date +%Y%m%d-%H%M%S)"
+          gh release create "$TAG" out/*.mp4 \
+            --title "AUREUM · $TAG" \
+            --notes "Rendered from source: 864 deterministic frames, no footage, no images." \
+            --latest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
