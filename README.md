@@ -4,11 +4,8 @@ A 40-second cinematic 2D motion-graphics film: **1920 × 1080, 16:9, 60 fps, 240
 frame-exact**. No 3D models, no footage, no templates. Every pixel is generated from
 procedural 2D systems — projection maths, particles, typography, light and grain.
 
-```
-media/parallax_1080p60.mp4   ← the film (1920×1080, 60 fps, 40.0 s)
-media/poster.png             ← hero frame
-media/contact.png            ← one frame per second
-```
+The film itself is `media/parallax_1080p60.mp4` (H.264, 1920×1080, 60 fps, 40.0 s,
+≈75 MB). It is not committed — regenerate it with `npm run render`. The stills below are.
 
 ![chapters](media/contact.png)
 

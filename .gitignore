@@ -1,5 +1,6 @@
 node_modules/
 out/
-media/
+# The master encode is large; regenerate it with `npm run render`.
+media/*.mp4
 .DS_Store
 *.log
