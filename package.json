@@ -1,0 +1,22 @@
+{
+  "name": "parth-motion-study-01",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A cinematic 2D motion-graphics showreel rendered frame-exactly at 1920x1080 / 60fps.",
+  "scripts": {
+    "fonts": "node tools/build-fonts.mjs",
+    "render": "node showreel/render.mjs",
+    "render:preview": "node showreel/render.mjs --scale=0.5 --fps=30 --out=out/preview.mp4",
+    "still": "node tools/still.mjs",
+    "web": "node tools/serve.mjs"
+  },
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@fontsource/anton": "^5.3.0",
+    "@fontsource/instrument-serif": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@fontsource/space-grotesk": "^5.3.0",
+    "@napi-rs/canvas": "^0.1.80"
+  }
+}

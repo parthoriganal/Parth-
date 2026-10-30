@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PARALLAX — A Motion Study in Light &amp; Time</title>
+<style>
+  :root {
+    --ink: #05060a;
+    --paper: #f1efe8;
+    --cyan: #8fe6ff;
+    --red: #e5331f;
+    --line: rgba(160, 205, 235, 0.18);
+    --mono: "JetBrainsMono-Regular", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sans: "SpaceGrotesk-Regular", system-ui, -apple-system, Segoe UI, sans-serif;
+    --sansm: "SpaceGrotesk-Medium", system-ui, sans-serif;
+  }
+  @font-face { font-family: "Anton"; src: url("./fonts/Anton.woff2") format("woff2"); font-display: block; }
+  @font-face { font-family: "SpaceGrotesk-Regular"; src: url("./fonts/SpaceGrotesk-Regular.woff2") format("woff2"); font-display: block; }
+  @font-face { font-family: "SpaceGrotesk-Medium"; src: url("./fonts/SpaceGrotesk-Medium.woff2") format("woff2"); font-display: block; }
+  @font-face { font-family: "JetBrainsMono-Regular"; src: url("./fonts/JetBrainsMono-Regular.woff2") format("woff2"); font-display: block; }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--ink); color: var(--paper); }
+  body { font-family: var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+
+  /* ---------- ambient background ---------- */
+  .glowA, .glowB { position: fixed; border-radius: 50%; filter: blur(90px); pointer-events: none; z-index: 0; }
+  .glowA { width: 620px; height: 620px; left: -180px; top: -160px; background: rgba(35, 110, 255, 0.16); }
+  .glowB { width: 520px; height: 520px; right: -160px; bottom: -180px; background: rgba(255, 90, 40, 0.12); }
+
+  .wrap { position: relative; z-index: 1; max-width: 1500px; margin: 0 auto; padding: 34px 32px 60px; }
+
+  /* ---------- masthead ---------- */
+  header { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; padding-bottom: 22px; }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .brand .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--red); box-shadow: 0 0 16px rgba(229, 51, 31, 0.9); }
+  .brand .name { font-family: "Anton", Impact, sans-serif; letter-spacing: 0.14em; font-size: 22px; }
+  .meta { font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; color: rgba(200, 228, 245, 0.55); text-transform: uppercase; text-align: right; line-height: 1.9; }
+
+  /* ---------- stage ---------- */
+  .stage { position: relative; border: 1px solid var(--line); background: #000; overflow: hidden; }
+  .stage::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.55);
+  }
+  .stage canvas { display: block; width: 100%; height: auto; }
+  .stage .corner { position: absolute; width: 22px; height: 22px; border-color: rgba(180, 225, 255, 0.5); z-index: 3; pointer-events: none; }
+  .stage .c1 { left: 12px; top: 12px; border-left: 1px solid; border-top: 1px solid; }
+  .stage .c2 { right: 12px; top: 12px; border-right: 1px solid; border-top: 1px solid; }
+  .stage .c3 { left: 12px; bottom: 12px; border-left: 1px solid; border-bottom: 1px solid; }
+  .stage .c4 { right: 12px; bottom: 12px; border-right: 1px solid; border-bottom: 1px solid; }
+
+  .overlay-hint {
+    position: absolute; inset: 0; display: grid; place-items: center; z-index: 4;
+    background: radial-gradient(circle at 50% 50%, rgba(4, 8, 14, 0.35), rgba(4, 8, 14, 0.78));
+    cursor: pointer; transition: opacity 220ms ease;
+  }
+  .overlay-hint.hidden { opacity: 0; pointer-events: none; }
+  .playBtn {
+    display: flex; align-items: center; gap: 18px; padding: 18px 30px 18px 24px;
+    border: 1px solid rgba(180, 225, 255, 0.35); background: rgba(8, 14, 24, 0.55);
+    backdrop-filter: blur(6px); color: var(--paper);
+    font-family: var(--mono); letter-spacing: 0.3em; font-size: 12px; text-transform: uppercase;
+    transition: transform 200ms ease, border-color 200ms ease, background 200ms ease;
+  }
+  .overlay-hint:hover .playBtn { transform: translateY(-2px); border-color: rgba(200, 240, 255, 0.7); background: rgba(14, 24, 40, 0.7); }
+  .playBtn .tri { width: 0; height: 0; border-left: 11px solid var(--cyan); border-top: 8px solid transparent; border-bottom: 8px solid transparent; }
+
+  /* ---------- transport ---------- */
+  .transport { display: flex; align-items: center; gap: 18px; margin-top: 16px; }
+  .tbtn {
+    width: 42px; height: 42px; border: 1px solid var(--line); background: rgba(10, 16, 26, 0.7);
+    color: var(--paper); font-family: var(--mono); font-size: 12px; cursor: pointer;
+    display: grid; place-items: center; transition: border-color 160ms, background 160ms;
+  }
+  .tbtn:hover { border-color: rgba(190, 235, 255, 0.6); background: rgba(20, 34, 52, 0.8); }
+  .tc { font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em; color: rgba(205, 232, 248, 0.7); min-width: 190px; }
+
+  .scrub { position: relative; flex: 1; height: 42px; display: flex; align-items: center; }
+  .rail { position: absolute; left: 0; right: 0; height: 2px; background: rgba(160, 205, 235, 0.2); }
+  .railFill { position: absolute; left: 0; height: 2px; background: linear-gradient(90deg, var(--cyan), #ffffff); box-shadow: 0 0 12px rgba(140, 230, 255, 0.8); }
+  .tick { position: absolute; top: -4px; width: 1px; height: 10px; background: rgba(160, 205, 235, 0.35); }
+  .tick b { position: absolute; top: 14px; left: 4px; font-family: var(--mono); font-size: 9px; font-weight: 400; letter-spacing: 0.16em; color: rgba(170, 210, 235, 0.45); white-space: nowrap; }
+  .scrub input[type="range"] {
+    position: absolute; inset: 0; width: 100%; margin: 0; opacity: 0; cursor: pointer;
+  }
+
+  /* ---------- chapters ---------- */
+  .chapters { display: grid; grid-template-columns: repeat(8, 1fr); gap: 10px; margin-top: 26px; }
+  .ch {
+    text-align: left; border: 1px solid var(--line); background: rgba(9, 14, 23, 0.6);
+    padding: 12px 12px 14px; cursor: pointer; color: inherit; font: inherit;
+    transition: border-color 160ms, background 160ms, transform 160ms; position: relative; overflow: hidden;
+  }
+  .ch:hover { border-color: rgba(180, 230, 255, 0.55); transform: translateY(-2px); }
+  .ch.active { border-color: rgba(200, 240, 255, 0.85); background: rgba(20, 36, 54, 0.85); }
+  .ch .n { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; color: rgba(180, 220, 245, 0.5); }
+  .ch .t { font-family: "Anton", Impact, sans-serif; letter-spacing: 0.08em; font-size: 19px; margin-top: 8px; }
+  .ch .d { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.1em; color: rgba(180, 220, 245, 0.42); margin-top: 6px; }
+  .ch .bar { position: absolute; left: 0; bottom: 0; height: 2px; background: var(--red); width: 0; }
+
+  /* ---------- notes ---------- */
+  .notes { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 30px; margin-top: 44px; padding-top: 26px; border-top: 1px solid var(--line); }
+  .notes h3 { font-family: var(--mono); font-size: 10px; letter-spacing: 0.26em; color: rgba(180, 220, 245, 0.5); text-transform: uppercase; margin: 0 0 12px; font-weight: 400; }
+  .notes p { margin: 0; font-size: 14.5px; line-height: 1.72; color: rgba(226, 238, 248, 0.78); max-width: 52ch; }
+  .specs { display: grid; gap: 8px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; color: rgba(210, 232, 246, 0.65); }
+  .specs span { color: rgba(150, 195, 225, 0.5); }
+  .finale-meta { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: rgba(210, 232, 246, 0.55); line-height: 2; }
+
+  @media (max-width: 1080px) {
+    .chapters { grid-template-columns: repeat(4, 1fr); }
+    .notes { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 620px) {
+    .wrap { padding: 20px 16px 40px; }
+    .chapters { grid-template-columns: repeat(2, 1fr); }
+    .tc { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="glowA"></div>
+<div class="glowB"></div>
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <span class="dot"></span>
+      <span class="name">PARALLAX</span>
+    </div>
+    <div class="meta">
+      Motion study / vol. 01<br />
+      1920 × 1080 &nbsp;·&nbsp; 60 fps &nbsp;·&nbsp; 40.0 s
+    </div>
+  </header>
+
+  <main class="stage" id="stage">
+    <div class="corner c1"></div>
+    <div class="corner c2"></div>
+    <div class="corner c3"></div>
+    <div class="corner c4"></div>
+    <div class="overlay-hint" id="hint">
+      <div class="playBtn"><span class="tri"></span> Play the film</div>
+    </div>
+  </main>
+
+  <div class="transport">
+    <button class="tbtn" id="play" aria-label="Play or pause">▶</button>
+    <button class="tbtn" id="restart" aria-label="Restart">⟲</button>
+    <div class="tc" id="tc">00:00.00 / 00:40.00</div>
+    <div class="scrub" id="scrub">
+      <div class="rail"></div>
+      <div class="railFill" id="fill"></div>
+      <input type="range" id="range" min="0" max="40" step="0.01" value="0" aria-label="Scrub timeline" />
+    </div>
+  </div>
+
+  <div class="chapters" id="chapters"></div>
+
+  <section class="notes">
+    <div>
+      <h3>The idea</h3>
+      <p>
+        A single continuous piece of motion design built from eight chapters that each
+        change the rules of the image — depth, material, typography, damage, and light.
+        Every frame is generated from pure 2D vector, particle and typographic systems:
+        no 3D models, no stock footage, no templates. Depth is faked with projection
+        maths, parallax and layered light.
+      </p>
+    </div>
+    <div>
+      <h3>Specification</h3>
+      <div class="specs">
+        <div><span>RES</span>&nbsp; 1920 × 1080 (16:9)</div>
+        <div><span>FPS</span>&nbsp; 60, frame-exact</div>
+        <div><span>DUR</span>&nbsp; 40.00 s / 2400 frames</div>
+        <div><span>EDIT</span>&nbsp; 120 BPM half-second grid</div>
+        <div><span>STACK</span>&nbsp; Canvas 2D + x264</div>
+      </div>
+    </div>
+    <div>
+      <h3>Render</h3>
+      <div class="finale-meta">
+        Deterministic frames<br />
+        Skia (offline) · Chrome (live)<br />
+        Same scene code, both targets
+      </div>
+    </div>
+  </section>
+</div>
+
+<script type="module" src="./main.js"></script>
+</body>
+</html>
