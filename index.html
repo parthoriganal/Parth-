@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>AUREUM — Ident</title>
+<meta name="description" content="AUREUM — a deterministic, code-generated cinematic ident. 36 seconds, 864 frames, no footage." />
+<link rel="stylesheet" href="./src/style.css" />
+</head>
+<body>
+	<div id="stage">
+		<canvas id="film"></canvas>
+
+		<div id="ui" class="ui">
+			<div class="ui-top">
+				<div class="ui-brand">
+					<span class="brand-mark">AUREUM</span>
+					<span class="brand-sub">IDENT — DIRECTOR'S CUT</span>
+				</div>
+				<div class="ui-meta">
+					<span id="ui-section" class="meta-strong">I · OVERTURE</span>
+					<span id="ui-shot" class="meta-dim">001 / 053</span>
+				</div>
+			</div>
+
+			<div class="ui-bottom">
+				<button id="btn-play" class="btn btn-main" title="Play / Pause (Space)">
+					<span id="btn-play-icon">❚❚</span>
+				</button>
+				<div class="transport">
+					<input id="scrub" type="range" min="0" max="863" step="1" value="0" aria-label="Scrub timeline" />
+					<div class="transport-row">
+						<span id="ui-tc" class="mono">00:00:00:00</span>
+						<span id="ui-frames" class="mono dim">FRAME 0000 / 0864</span>
+					</div>
+				</div>
+				<div class="toggles">
+					<button id="btn-sound" class="btn" title="Procedural score (S)">SOUND OFF</button>
+					<button id="btn-quality" class="btn" title="Render scale">1.0×</button>
+					<button id="btn-hide" class="btn" title="Hide interface (H)">HIDE UI</button>
+				</div>
+			</div>
+			<div class="hint mono">SPACE play · ← → step · R restart · S sound · H hide</div>
+		</div>
+
+		<div id="loader" class="loader">
+			<div class="loader-inner">
+				<div class="loader-mark">AUREUM</div>
+				<div class="loader-line"><i></i></div>
+				<div class="loader-sub mono">BUILDING TIMELINE</div>
+			</div>
+		</div>
+
+		<div id="fatal" class="fatal" hidden>
+			<div class="fatal-inner">
+				<div class="fatal-title">WebGL 2 unavailable</div>
+				<div class="fatal-body">This piece renders in real time on the GPU. Enable hardware acceleration or open it in a current Chrome, Edge, Firefox or Safari.</div>
+			</div>
+		</div>
+	</div>
+	<script type="module" src="./src/main.js"></script>
+</body>
+</html>
