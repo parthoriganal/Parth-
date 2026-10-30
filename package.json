@@ -1,0 +1,24 @@
+{
+  "name": "repo-cosmos",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Turn any GitHub repository's commit history into a playable 3D galaxy you can hear.",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "github",
+    "visualization",
+    "webgl",
+    "canvas",
+    "sonification",
+    "galaxy"
+  ],
+  "license": "MIT"
+}
