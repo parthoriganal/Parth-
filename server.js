@@ -206,7 +206,9 @@ async function buildCosmos(repoFullName, limit) {
     if (!Array.isArray(data) || data.length === 0) break;
     for (const c of data) {
       const author = c.author || null;
-      const dateStr = c.commit?.author?.date || c.commit?.committer?.date;
+      // committer date keeps the list monotonic; author dates can be years old
+      // for patches that were rebased/merged later (linux is full of those).
+      const dateStr = c.commit?.committer?.date || c.commit?.author?.date;
       commits.push({
         sha: c.sha,
         short: c.sha.slice(0, 7),

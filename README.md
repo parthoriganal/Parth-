@@ -10,6 +10,11 @@ composes itself in real time.
 
 `zero npm dependencies` · `Node 18+` · `Canvas 2D` · `Web Audio`
 
+<img src="docs/cosmos-galaxy.jpg" alt="300 commits of react/react rendered as a neon spiral galaxy" width="100%" />
+
+<sub>^ the real thing: 300 commits of `react/react`, rendered by the app's own engine.
+Colour = author, size = commit weight, position = place in history.</sub>
+
 </div>
 
 ---
@@ -30,6 +35,16 @@ composes itself in real time.
    convolution reverb. Dense days become runs of notes; quiet weeks become rests.
 
 You are not looking at a screenshot of a repo. You are *listening* to one.
+
+## Three ways to look at a repo
+
+<table>
+<tr>
+<td width="33%"><img src="docs/cosmos-playing.jpg" alt="mid-playback: stars ignite as the comet passes" /><br/><sub><b>in flight</b> — the comet sweeps outward, stars ignite behind it, the rest wait as ghosts</sub></td>
+<td width="33%"><img src="docs/cosmos-helix.jpg" alt="helix layout" /><br/><sub><b>helix</b> — the history as a double strand</sub></td>
+<td width="33%"><img src="docs/cosmos-halo.jpg" alt="halo layout" /><br/><sub><b>halo</b> — one ring per era</sub></td>
+</tr>
+</table>
 
 ## Features
 

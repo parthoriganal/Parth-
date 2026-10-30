@@ -63,10 +63,11 @@ function starSprite(color) {
   const [r, gg, b] = hexToRgb(color);
   const grad = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
   grad.addColorStop(0, 'rgba(255,255,255,1)');
-  grad.addColorStop(0.1, `rgba(255,255,255,0.9)`);
-  grad.addColorStop(0.16, `rgba(${r},${gg},${b},0.82)`);
-  grad.addColorStop(0.3, `rgba(${r},${gg},${b},0.3)`);
-  grad.addColorStop(0.55, `rgba(${r},${gg},${b},0.07)`);
+  grad.addColorStop(0.055, 'rgba(255,255,255,0.96)');
+  grad.addColorStop(0.12, `rgba(${r},${gg},${b},0.9)`);
+  grad.addColorStop(0.22, `rgba(${r},${gg},${b},0.4)`);
+  grad.addColorStop(0.4, `rgba(${r},${gg},${b},0.14)`);
+  grad.addColorStop(0.66, `rgba(${r},${gg},${b},0.04)`);
   grad.addColorStop(1, `rgba(${r},${gg},${b},0)`);
   g.fillStyle = grad;
   g.fillRect(0, 0, size, size);
@@ -266,11 +267,11 @@ export class Cosmos {
       if (this.layout === 'galaxy') {
         const arm = c.authorIdx % GALAXY.arms;
         const angle =
-          t * TAU * GALAXY.turns + arm * (TAU / GALAXY.arms) + j1 * GALAXY.jitter;
-        const radius = GALAXY.core + Math.pow(t, 0.88) * GALAXY.spread + j3 * 0.05;
-        c.x = Math.cos(angle) * radius + j3 * 0.03;
-        c.z = Math.sin(angle) * radius + j1 * 0.03;
-        c.y = j2 * 0.2 * (1 - 0.55 * t);
+          t * TAU * GALAXY.turns + arm * (TAU / GALAXY.arms) + j1 * 0.24;
+        const radius = GALAXY.core + Math.pow(t, 0.88) * GALAXY.spread + j3 * 0.075;
+        c.x = Math.cos(angle) * radius + j3 * 0.042;
+        c.z = Math.sin(angle) * radius + j1 * 0.042;
+        c.y = j2 * 0.24 * (1 - 0.55 * t);
       } else if (this.layout === 'helix') {
         const a = t * TAU * HELIX.turns + j1 * 0.22;
         c.x = (t - 0.5) * HELIX.span;
@@ -563,32 +564,51 @@ export class Cosmos {
 
       let alpha;
       if (isBorn) {
-        alpha = 0.8;
+        alpha = 0.42;
         if (born) {
           const age = (now - born) / 620;
-          if (age < 1) alpha = lerp(1.9, 0.92, Math.pow(age, 0.5));
+          if (age < 1) alpha = lerp(1.35, 0.5, Math.pow(age, 0.5));
         }
       } else {
-        alpha = 0.075; // unborn ghosts — keeps the galaxy's silhouette visible
+        alpha = 0.055; // unborn ghosts — keeps the galaxy's silhouette visible
       }
 
       if (this.muted && this.muted.has(c.key)) alpha *= 0.10;
       const depthBoost = clamp(0.36 + 0.64 * p.persp * 0.78, 0.2, 1.25);
       const size = c.weight * p.scale * 0.0075 * (0.85 + 0.3 * p.persp);
-      const R = Math.min(120, size * 1.7);
+      const R = Math.min(96, size * 1.35) * (isBorn ? 1 : 0.5);
 
       const a = clamp(alpha * depthBoost, 0, 1.35);
       ctx.globalAlpha = clamp(a, 0, 1);
       const sprite = starSprite(c.color);
       ctx.drawImage(sprite, p.sx - R, p.sy - R, R * 2, R * 2);
 
-      // hot core
-      if (a > 0.5) {
-        ctx.globalAlpha = clamp(a * 0.9, 0, 1);
+      // pinpoint core
+      if (a > 0.3) {
+        ctx.globalAlpha = clamp(a * 1.5, 0, 1);
         ctx.fillStyle = '#fff';
         ctx.beginPath();
-        ctx.arc(p.sx, p.sy, Math.max(0.7, size * 0.28), 0, TAU);
+        ctx.arc(p.sx, p.sy, Math.max(0.6, size * 0.16), 0, TAU);
         ctx.fill();
+      }
+
+      // diffraction spikes, only on the top ~5% heaviest commits
+      const spike = clamp((c.weight - 7.7) / 0.6, 0, 1);
+      if (spike > 0.02 && a > 0.25) {
+        const L = size * (1.6 + spike * 2.2);
+        ctx.globalAlpha = clamp(a * 0.3 * spike, 0, 1);
+        const g1 = ctx.createLinearGradient(p.sx - L, p.sy, p.sx + L, p.sy);
+        g1.addColorStop(0, 'rgba(255,255,255,0)');
+        g1.addColorStop(0.5, `rgba(${c.r},${c.g},${c.b},0.85)`);
+        g1.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = g1;
+        ctx.fillRect(p.sx - L, p.sy - 0.5, L * 2, 1.0);
+        const g2 = ctx.createLinearGradient(p.sx, p.sy - L, p.sx, p.sy + L);
+        g2.addColorStop(0, 'rgba(255,255,255,0)');
+        g2.addColorStop(0.5, `rgba(${c.r},${c.g},${c.b},0.85)`);
+        g2.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = g2;
+        ctx.fillRect(p.sx - 0.5, p.sy - L, 1.0, L * 2);
       }
 
       p.r = R;
@@ -676,10 +696,12 @@ export class Cosmos {
       // nebula ribbons painted along each spiral arm — a few stacked strokes
       // of decreasing width and increasing opacity fake a soft gradient.
       const passes = [
-        { width: 150, alpha: 0.014, color: '104,132,255' },
-        { width: 96, alpha: 0.02, color: '126,120,255' },
-        { width: 54, alpha: 0.032, color: '150,138,255' },
-        { width: 20, alpha: 0.05, color: '186,170,255' },
+        { width: 260, alpha: 0.0035, color: '92,118,255' },
+        { width: 190, alpha: 0.0042, color: '104,120,255' },
+        { width: 130, alpha: 0.0052, color: '120,120,255' },
+        { width: 84, alpha: 0.0062, color: '138,126,255' },
+        { width: 48, alpha: 0.0072, color: '158,142,255' },
+        { width: 22, alpha: 0.0085, color: '180,166,255' },
       ];
       for (const pass of passes) {
         for (let arm = 0; arm < GALAXY.arms; arm++) {
