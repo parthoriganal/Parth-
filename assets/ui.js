@@ -79,7 +79,10 @@
       usernameInput.blur();
     }
   });
-  yearSelect.addEventListener('change', rebuild);
+  yearSelect.addEventListener('change', function () {
+    rebuild();
+    view.refit();
+  });
 
   /* ── pointer / camera ────────────────────────────────── */
 

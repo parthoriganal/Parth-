@@ -795,6 +795,10 @@
       resize: resize,
       setData: setData,
 
+      refit: function () {
+        if (state.autoFit) computeFraming();
+      },
+
       setParam: function (key, value) {
         if (!(key in state.params)) return;
         state.params[key] = value;
