@@ -1,0 +1,7 @@
+# ── generated / local tooling (do not commit) ──────────────────────────────
+motion-film/.venv/
+motion-film/tools/ffmpeg
+motion-film/out/frames/
+motion-film/out/*.wav
+__pycache__/
+node_modules/
