@@ -9,12 +9,18 @@
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0 --port 4173",
     "backend": "python backend/app.py",
-    "verify": "node scripts/verify.mjs"
+    "verify": "node scripts/verify.mjs",
+    "film:sound": "python scripts/mix-sound.py",
+    "film:render": "node scripts/render-film.mjs",
+    "film:test": "node scripts/test-film.mjs"
   },
   "dependencies": {
-    "chart.js": "^4.4.4"
+    "chart.js": "^4.4.4",
+    "three": "^0.187.0"
   },
   "devDependencies": {
+    "@sparticuz/chromium": "^153.0.0",
+    "playwright": "^1.64.1",
     "vite": "8.3.5"
   }
 }
