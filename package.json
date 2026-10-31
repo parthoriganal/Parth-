@@ -12,7 +12,10 @@
     "verify": "node scripts/verify.mjs",
     "film:sound": "python scripts/mix-sound.py",
     "film:render": "node scripts/render-film.mjs",
-    "film:test": "node scripts/test-film.mjs"
+    "film:test": "node scripts/test-film.mjs",
+    "value:sound": "python scripts/mix-value-sound.py",
+    "value:render": "node scripts/render-film.mjs --value",
+    "value:test": "node scripts/test-value.mjs"
   },
   "dependencies": {
     "chart.js": "^4.4.4",

@@ -10,5 +10,5 @@ export default defineConfig({
     }
   },
   preview: { host: '0.0.0.0', port: 4173 },
-  build: { outDir: 'dist', emptyOutDir: true }
+  build: { outDir: 'dist', emptyOutDir: true, rolldownOptions: { input: { main: 'index.html', value: 'value.html' } } }
 });
