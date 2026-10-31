@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>AUREUM · Calibre 001 — a 40 mm hand-finished wristwatch</title>
+<meta name="description" content="A real-time, hand-modelled 3D study of a 40 mm gold wristwatch: guilloché dial, applied indices, sapphire crystal front and back, visible automatic calibre. Orbit, explode, and configure the piece." />
+<meta name="theme-color" content="#060607" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230a0a0b'/%3E%3Ccircle cx='16' cy='16' r='10' fill='none' stroke='%23c8a76a' stroke-width='1.6'/%3E%3Ccircle cx='16' cy='16' r='1.5' fill='%23c8a76a'/%3E%3Cpath d='M16 9.5V16l4.5 2.6' stroke='%23c8a76a' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="./styles.css" />
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three/three.module.js"
+  }
+}
+</script>
+</head>
+<body class="is-loading">
+
+<div class="stage">
+  <canvas id="watch-canvas" aria-label="Interactive 3D wristwatch. Drag to orbit, scroll to zoom."></canvas>
+  <div class="stage__vignette" aria-hidden="true"></div>
+  <div class="stage__rule" aria-hidden="true"></div>
+  <div class="fallback" id="fallback" hidden>
+    <p>This piece needs WebGL 2. Try a recent Chrome, Edge, Firefox or Safari.</p>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wordmark">
+    <span class="wordmark__name">AUREUM</span>
+    <span class="wordmark__sub">Genève · MDCCCXCIII</span>
+  </div>
+  <div class="collection">
+    <span class="collection__piece">Calibre 001</span>
+    <span class="collection__line">Grande Complication · 40 mm</span>
+  </div>
+  <div class="clock">
+    <span class="clock__label">Local time</span>
+    <span class="clock__value" id="clock">--:--:--</span>
+  </div>
+</header>
+
+<aside class="specs" aria-label="Specifications">
+  <h2>Specifications</h2>
+  <dl>
+    <div><dt>Case</dt><dd id="spec-case">18k Yellow Gold · 40 mm</dd></div>
+    <div><dt>Height</dt><dd>11.4 mm · 18k gold</dd></div>
+    <div><dt>Crystal</dt><dd>Sapphire, AR-coated</dd></div>
+    <div><dt>Dial</dt><dd id="spec-dial">Obsidian</dd></div>
+    <div><dt>Calibre</dt><dd>AUR-001 · automatic</dd></div>
+    <div><dt>Frequency</dt><dd>28,800 vph · 4 Hz</dd></div>
+    <div><dt>Jewels</dt><dd>25 · gold chatons</dd></div>
+    <div><dt>Reserve</dt><dd>72 hours</dd></div>
+    <div><dt>Strap</dt><dd id="spec-strap">Cognac Alligator</dd></div>
+  </dl>
+  <p class="specs__note">Independently finished in the atelier: every bridge, bevel and screw head is chamfered by hand under a loupe.</p>
+</aside>
+
+<div class="dock" role="group" aria-label="Configure the watch">
+  <section class="dock__group">
+    <header>
+      <h3>Case</h3>
+      <span class="dock__value" id="caseName">Yellow gold</span>
+    </header>
+    <div class="swatches">
+      <button class="swatch is-active" type="button" data-case="yellow" aria-label="18k yellow gold" aria-pressed="true" style="--tone:#f0c15f;--tone-2:#a97c2c"></button>
+      <button class="swatch" type="button" data-case="rose" aria-label="18k rose gold" aria-pressed="false" style="--tone:#efb191;--tone-2:#a76a4f"></button>
+      <button class="swatch" type="button" data-case="white" aria-label="18k white gold" aria-pressed="false" style="--tone:#e3e5e2;--tone-2:#8d918e"></button>
+      <button class="swatch" type="button" data-case="platinum" aria-label="platinum 950" aria-pressed="false" style="--tone:#cfd2d3;--tone-2:#757a7c"></button>
+    </div>
+  </section>
+
+  <section class="dock__group">
+    <header>
+      <h3>Dial</h3>
+      <span class="dock__value" id="dialName">Obsidian</span>
+    </header>
+    <div class="swatches">
+      <button class="swatch is-active" type="button" data-dial="obsidian" aria-label="obsidian dial" aria-pressed="true" style="--tone:#15161a;--tone-2:#000000"></button>
+      <button class="swatch" type="button" data-dial="salmon" aria-label="salmon dial" aria-pressed="false" style="--tone:#dd9a80;--tone-2:#8f503c"></button>
+      <button class="swatch" type="button" data-dial="midnight" aria-label="midnight blue dial" aria-pressed="false" style="--tone:#1a3358;--tone-2:#050b17"></button>
+      <button class="swatch" type="button" data-dial="champagne" aria-label="champagne dial" aria-pressed="false" style="--tone:#dcc79e;--tone-2:#92794e"></button>
+    </div>
+  </section>
+
+  <section class="dock__group">
+    <header>
+      <h3>Strap</h3>
+      <span class="dock__value" id="strapName">Cognac alligator</span>
+    </header>
+    <div class="swatches">
+      <button class="swatch" type="button" data-strap="black" aria-label="noir alligator strap" aria-pressed="false" style="--tone:#3a352f;--tone-2:#0d0b09"></button>
+      <button class="swatch is-active" type="button" data-strap="cognac" aria-label="cognac alligator strap" aria-pressed="true" style="--tone:#c19a72;--tone-2:#6a4a2d"></button>
+      <button class="swatch" type="button" data-strap="navy" aria-label="navy alligator strap" aria-pressed="false" style="--tone:#465a7a;--tone-2:#141d2c"></button>
+      <button class="swatch" type="button" data-strap="oxblood" aria-label="oxblood alligator strap" aria-pressed="false" style="--tone:#7f3f36;--tone-2:#2c100c"></button>
+    </div>
+  </section>
+
+  <section class="dock__actions">
+    <button class="action" type="button" id="btn-explode" aria-pressed="false">
+      <span class="action__dot" aria-hidden="true"></span>Explode
+    </button>
+    <button class="action" type="button" id="btn-movement" aria-pressed="false">
+      <span class="action__dot" aria-hidden="true"></span>Movement
+    </button>
+    <button class="action is-active" type="button" id="btn-rotate" aria-pressed="true">
+      <span class="action__dot" aria-hidden="true"></span>Turntable
+    </button>
+    <button class="action" type="button" id="btn-mood">Lighting · Studio</button>
+    <button class="action action--primary" type="button" id="btn-save">Save frame</button>
+  </section>
+</div>
+
+<p class="hint">
+  <span>Drag to orbit</span>
+  <span>Scroll or pinch to zoom</span>
+  <span>Double-click to reset</span>
+</p>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<div class="loader" id="loader">
+  <div class="loader__ring" aria-hidden="true"></div>
+  <p class="loader__title">AUREUM</p>
+  <p class="loader__sub" id="loaderSub">Assembling calibre 001</p>
+</div>
+
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>

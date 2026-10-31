@@ -11,3 +11,7 @@ __pycache__/
 .venv/
 dist/
 .env
+
+# Generated QA captures (see luxury-watch/README.md)
+luxury-watch/test/*.png
+luxury-watch/test/*.jpg
