@@ -1,5 +1,7 @@
 # KDP Scout Pro — Advanced Amazon KDP Keyword & Niche Research Platform
 
+> **Also in this repository:** [Frame Studio](./motion-studio/README.md) is a separate motion-graphics video production system. Run it from `motion-studio/`; the existing KDP application below remains unchanged.
+
 **Mobile-responsive SaaS dashboard for KDP authors** — keyword mining, demand vs competition scoring, BSR/reviews, profit, categories, trends, content gaps, and a transparent 0–100 opportunity score.
 
 Built on [rxpelle/kdp-scout](https://github.com/rxpelle/kdp-scout) (MIT) as the primary research engine, with optional enrichment from [pangolinfoapi/amazon-niche-finder](https://github.com/pangolinfoapi/amazon-niche-finder) and templates from [nexscope-ai/amazon-skills](https://github.com/nexscope-ai/amazon-skills). See [`docs/COMPATIBILITY_REPORT.md`](./docs/COMPATIBILITY_REPORT.md) for the full repository audit.
