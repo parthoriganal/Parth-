@@ -1,0 +1,38 @@
+name: Publish generated video to branch
+
+on:
+  push:
+    branches: [arena/268af70e-parth]
+    paths:
+      - '.github/workflows/publish-t2v.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: arena/268af70e-parth
+
+      - name: Download release assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release download t2v-41164469347 \
+            --dir text-to-video \
+            --pattern astronaut-moon.mp4 \
+            --pattern generation.json \
+            --pattern contact-sheet.jpg \
+            --pattern prompt.txt
+
+      - name: Commit generated video
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add text-to-video/astronaut-moon.mp4 text-to-video/generation.json text-to-video/contact-sheet.jpg text-to-video/prompt.txt
+          git commit -m "Add Text2Video-Zero generated astronaut video [skip ci]" || echo "Nothing to commit"
+          git push origin HEAD:arena/268af70e-parth
