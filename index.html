@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./src/style.css" />
+<link rel="stylesheet" href="./src/image2pdf.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 <div id="app">
@@ -28,6 +30,7 @@
       <button class="nav-item" data-view="competitors"><span class="nav-ico">◎</span> Competitors</button>
       <button class="nav-item" data-view="trends"><span class="nav-ico">↗</span> Trends</button>
       <button class="nav-item" data-view="profit"><span class="nav-ico">₹</span> Profit Calc</button>
+      <button class="nav-item" data-view="image2pdf"><span class="nav-ico">🖼</span> Image → PDF</button>
       <div class="nav-sep"></div>
       <button class="nav-item" data-view="report"><span class="nav-ico">⧉</span> Report & Export</button>
       <a class="nav-item nav-link" href="./docs/COMPATIBILITY_REPORT.md" target="_blank"><span class="nav-ico">ⓘ</span> Compatibility</a>
@@ -341,6 +344,91 @@
         </div>
         <canvas id="chartProfit" height="200" style="margin-top:14px"></canvas>
         <div class="tiny" id="profitNote" style="margin-top:8px"></div>
+      </div>
+    </section>
+
+    <section id="view-image2pdf" class="view">
+      <div class="card">
+        <div class="card-head">
+          <h2>Image → PDF — instant, private (runs in your browser)</h2>
+          <span class="badge">No upload • KDP-ready</span>
+        </div>
+        <p class="tiny" style="margin-top:-6px">Drag images or click to pick. Multi-page PDF — one image per page, auto-fitted. Great for KDP interiors, look-inside proofs, author copies. Nothing leaves your device.</p>
+        
+        <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Drop images or click to select">
+          <div class="dz-icon">🖼️ → 📄</div>
+          <h4>Drop images here or click to browse</h4>
+          <span class="tiny">JPG, PNG, WEBP, GIF • multiple allowed • max 50 images</span>
+          <button class="btn btn-ghost btn-sm" id="btnPickImages" type="button">Choose Images</button>
+          <input id="inpImages" type="file" accept="image/*" multiple hidden />
+        </div>
+
+        <div class="grid2" style="margin-top:14px">
+          <div class="card" style="margin:0">
+            <h3 style="margin:0 0 8px">Page settings</h3>
+            <div class="field">
+              <label>Page size (KDP friendly)</label>
+              <select id="pdfSize">
+                <option value="a4">A4 (210×297mm) — KDP print</option>
+                <option value="letter">US Letter (8.5×11″)</option>
+                <option value="legal">US Legal (8.5×14″)</option>
+                <option value="a5">A5 (148×210mm)</option>
+                <option value="6x9">6×9 inch (KDP novels)</option>
+                <option value="auto">Auto — match first image</option>
+              </select>
+            </div>
+            <div class="field row2" style="margin-top:10px">
+              <div>
+                <label>Orientation</label>
+                <div class="segmented" id="segOrient">
+                  <button data-v="auto" class="active">Auto</button>
+                  <button data-v="portrait">Portrait</button>
+                  <button data-v="landscape">Landscape</button>
+                </div>
+              </div>
+              <div>
+                <label>Fit mode</label>
+                <div class="segmented" id="segFit">
+                  <button data-v="contain" class="active">Contain (no crop)</button>
+                  <button data-v="cover">Cover (fill)</button>
+                </div>
+              </div>
+            </div>
+            <div class="field" style="margin-top:10px">
+              <label>Margin</label>
+              <div class="segmented" id="segMargin">
+                <button data-v="0">None</button>
+                <button data-v="10" class="active">Small (10mm)</button>
+                <button data-v="20">Large (20mm)</button>
+              </div>
+            </div>
+            <div class="field row2" style="margin-top:10px">
+              <div><label>Filename</label><input id="pdfName" value="images.pdf" placeholder="my-book.pdf" /></div>
+              <div><label>BG color</label><select id="pdfBg"><option value="white">White</option><option value="black">Black</option></select></div>
+            </div>
+          </div>
+          <div class="card" style="margin:0">
+            <h3 style="margin:0 0 8px">Preview & actions</h3>
+            <div class="pill-row">
+              <span class="pill" id="countPill">0 images</span>
+              <span class="pill" id="sizePill">A4 • Auto • Contain</span>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+              <button class="btn btn-primary" id="btnMakePDF" type="button">⬇ Download PDF</button>
+              <button class="btn btn-ghost" id="btnClearImages" type="button">Clear all</button>
+              <button class="btn btn-ghost" id="btnDemoImages" type="button">Load demo image</button>
+            </div>
+            <div class="tiny" id="pdfStatus" style="margin-top:8px"></div>
+            <div class="tiny" style="margin-top:8px;color:var(--muted)">Tip: Drag thumbnails below to reorder pages. Generated client-side with jsPDF — no server upload.</div>
+          </div>
+        </div>
+
+        <div id="thumbGrid" class="thumb-grid"></div>
+        <div id="emptyPick" class="empty" style="margin:14px 0 0;padding:20px">
+          <div class="empty-icon">🖼️</div>
+          <h3 style="margin:0">No images yet</h3>
+          <p class="tiny">Add JPG/PNG/WEBP to build a multi-page PDF for KDP interiors or proofs.</p>
+        </div>
       </div>
     </section>
 

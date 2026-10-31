@@ -639,3 +639,235 @@ document.getElementById("btnCopyReport").onclick=async ()=>{
 
 // re-render on results tab active when data exists
 function renderResults(){ if(lastResearch) renderAll(lastResearch); }
+
+// ── Image → PDF (client-side, no upload) ────────────────────────────────────
+(() => {
+  const dz = document.getElementById('dropzone');
+  const inp = document.getElementById('inpImages');
+  const grid = document.getElementById('thumbGrid');
+  const empty = document.getElementById('emptyPick');
+  const btnPick = document.getElementById('btnPickImages');
+  const btnMake = document.getElementById('btnMakePDF');
+  const btnClear = document.getElementById('btnClearImages');
+  const btnDemo = document.getElementById('btnDemoImages');
+  const selSize = document.getElementById('pdfSize');
+  const selBg = document.getElementById('pdfBg');
+  const inpName = document.getElementById('pdfName');
+  const countPill = document.getElementById('countPill');
+  const sizePill = document.getElementById('sizePill');
+  const statusEl = document.getElementById('pdfStatus');
+  const segOrient = document.getElementById('segOrient');
+  const segFit = document.getElementById('segFit');
+  const segMargin = document.getElementById('segMargin');
+  if(!dz) return;
+
+  let orientation='auto', fitMode='contain', margin=10;
+  let images=[]; // {id, name, src, w, h}
+
+  const sizeMap = {
+    a4:{w:210,h:297}, letter:{w:215.9,h:279.4}, legal:{w:215.9,h:355.6}, a5:{w:148,h:210}, '6x9':{w:152.4,h:228.6}
+  };
+
+  function updatePills(){
+    const s = selSize.value;
+    countPill.textContent = `${images.length} image${images.length!==1?'s':''}`;
+    sizePill.textContent = `${s.toUpperCase()} • ${orientation} • ${fitMode}`;
+    empty.style.display = images.length? 'none':'block';
+    btnMake.disabled = images.length===0;
+    btnMake.style.opacity = images.length? '1':'.5';
+  }
+  function segmented(root, setter){
+    root.querySelectorAll('button').forEach(b=>{
+      b.addEventListener('click',()=>{
+        root.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        setter(b.dataset.v);
+        updatePills();
+      });
+    });
+  }
+  segmented(segOrient, v=>orientation=v);
+  segmented(segFit, v=>fitMode=v);
+  segmented(segMargin, v=>{margin=parseInt(v,10); updatePills();});
+  selSize.addEventListener('change', updatePills);
+  updatePills();
+
+  function addFiles(files){
+    const list = Array.from(files).filter(f=>f.type.startsWith('image/'));
+    if(!list.length){ toast('No images found'); return; }
+    if(images.length + list.length > 50){ toast('Max 50 images'); list.splice(50-images.length); }
+    let pending = list.length;
+    list.forEach(f=>{
+      const reader = new FileReader();
+      reader.onload = e=>{
+        const src = e.target.result;
+        const img = new Image();
+        img.onload = ()=>{
+          images.push({id: Math.random().toString(36).slice(2), name:f.name, src, w:img.naturalWidth, h:img.naturalHeight, type:f.type});
+          renderThumbs();
+          pending--; if(pending===0) statusEl.textContent = `${images.length} images ready — click Download PDF`;
+        };
+        img.onerror = ()=>{ pending--; };
+        img.src = src;
+      };
+      reader.readAsDataURL(f);
+    });
+  }
+
+  function renderThumbs(){
+    grid.innerHTML = images.map((im, idx)=>`
+      <div class="thumb" draggable="true" data-id="${im.id}">
+        <img src="${im.src}" alt="${im.name}" loading="lazy"/>
+        <div class="t-actions">
+          <button class="t-btn" data-act="up" title="Move up">↑</button>
+          <button class="t-btn" data-act="down" title="Move down">↓</button>
+          <button class="t-btn" data-act="del" title="Remove">✕</button>
+        </div>
+        <div class="t-meta">${idx+1}. ${im.name} • ${im.w}×${im.h}</div>
+      </div>
+    `).join('');
+    // actions
+    grid.querySelectorAll('.thumb').forEach(el=>{
+      const id = el.dataset.id;
+      el.querySelectorAll('.t-btn').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const a = btn.dataset.act;
+          const i = images.findIndex(x=>x.id===id);
+          if(a==='del') images.splice(i,1);
+          if(a==='up' && i>0) [images[i-1], images[i]] = [images[i], images[i-1]];
+          if(a==='down' && i<images.length-1) [images[i+1], images[i]] = [images[i], images[i+1]];
+          renderThumbs();
+        });
+      });
+      // drag reorder
+      el.addEventListener('dragstart', e=>{ e.dataTransfer.setData('text/plain', id); el.style.opacity='.5'; });
+      el.addEventListener('dragend', ()=> el.style.opacity='1');
+      el.addEventListener('dragover', e=> e.preventDefault());
+      el.addEventListener('drop', e=>{
+        e.preventDefault();
+        const dragId = e.dataTransfer.getData('text/plain');
+        const from = images.findIndex(x=>x.id===dragId);
+        const to = images.findIndex(x=>x.id===id);
+        if(from>-1 && to>-1 && from!==to){ const [m]=images.splice(from,1); images.splice(to,0,m); renderThumbs(); }
+      });
+    });
+    updatePills();
+  }
+
+  // events
+  btnPick.addEventListener('click', ()=> inp.click());
+  dz.addEventListener('click', (e)=>{ if(e.target===dz || e.target.closest('.dz-icon') || e.target.tagName==='H4' || e.target.classList.contains('tiny')) inp.click(); });
+  dz.addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' ') { e.preventDefault(); inp.click(); }});
+  inp.addEventListener('change', ()=>{ if(inp.files.length) addFiles(inp.files); inp.value=''; });
+  ['dragenter','dragover'].forEach(ev=> dz.addEventListener(ev, e=>{ e.preventDefault(); dz.classList.add('drag'); }));
+  ['dragleave','drop'].forEach(ev=> dz.addEventListener(ev, e=>{ e.preventDefault(); dz.classList.remove('drag'); }));
+  dz.addEventListener('drop', e=>{ if(e.dataTransfer.files) addFiles(e.dataTransfer.files); });
+  // paste
+  window.addEventListener('paste', e=>{
+    const files = [...(e.clipboardData?.files||[])].filter(f=>f.type.startsWith('image/'));
+    if(files.length){ const v=document.getElementById('view-image2pdf'); if(v?.classList.contains('active')) addFiles(files); }
+  });
+  btnClear.addEventListener('click', ()=>{ images=[]; renderThumbs(); statusEl.textContent='Cleared.'; });
+  btnDemo.addEventListener('click', async ()=>{
+    try{
+      const c=document.createElement('canvas'); c.width=1200; c.height=800;
+      const g=c.getContext('2d');
+      const grad=g.createLinearGradient(0,0,1200,800); grad.addColorStop(0,'#0ea5e9'); grad.addColorStop(1,'#8b5cf6');
+      g.fillStyle=grad; g.fillRect(0,0,1200,800);
+      g.fillStyle='#fff'; g.font='800 64px Inter, system-ui'; g.fillText('KDP SCOUT PRO', 80, 300);
+      g.font='400 28px Inter, system-ui'; g.fillText('Demo image → PDF (upload your own to replace)', 80, 360);
+      g.fillStyle='rgba(255,255,255,.9)'; g.fillRect(80,420,360,8);
+      const src=c.toDataURL('image/png');
+      images.push({id:Math.random().toString(36).slice(2), name:'demo-cover.png', src, w:1200, h:800, type:'image/png'});
+      renderThumbs(); statusEl.textContent='Demo image added — add more or Generate PDF';
+    }catch(e){ toast('Demo failed: '+e.message); }
+  });
+
+  btnMake.addEventListener('click', async ()=>{
+    if(!images.length){ toast('Add at least one image'); return; }
+    if(!window.jspdf || !window.jspdf.jsPDF){ toast('PDF engine not loaded — refresh (CDN)'); return; }
+    const { jsPDF } = window.jspdf;
+    statusEl.textContent = 'Building PDF…';
+    btnMake.disabled=true; btnMake.textContent='⏳ Building…';
+    try{
+      let format = selSize.value;
+      let pdf;
+      const bg = selBg.value;
+      const fileName = (inpName.value.trim()||'images.pdf').replace(/[^a-zA-Z0-9._-]/g,'_') || 'images.pdf';
+      const first = images[0];
+
+      function pageSizeFor(img){
+        if(format==='auto') return [img.w * 0.264583, img.h * 0.264583].map(v=> Math.min(500, Math.max(50, v))); // px→mm
+        const s = sizeMap[format];
+        return [s.w, s.h];
+      }
+      function orientFor(w,h, pw, ph){
+        if(orientation==='portrait') return 'portrait';
+        if(orientation==='landscape') return 'landscape';
+        // auto: match image orientation
+        return (w>h) ? 'landscape':'portrait';
+      }
+
+      // init with first page size
+      let [pw,ph] = pageSizeFor(first);
+      let orient = orientFor(first.w, first.h, pw, ph);
+      if(orient==='landscape' && pw<ph) [pw,ph]=[ph,pw];
+      if(orient==='portrait' && ph<pw) [pw,ph]=[ph,pw];
+
+      pdf = new jsPDF({orientation: orient, unit:'mm', format:[pw,ph], compress:true});
+
+      for(let idx=0; idx<images.length; idx++){
+        const im = images[idx];
+        let [w,h] = (format==='auto') ? pageSizeFor(im) : [sizeMap[format].w, sizeMap[format].h];
+        let o = orientFor(im.w, im.h, w, h);
+        let needAddPage = idx>0;
+        if(format==='auto'){
+          // dynamic page size per image — need new format each page
+          let [nw,nh] = pageSizeFor(im);
+          let no = o;
+          if(no==='landscape' && nw<nh) [nw,nh]=[nh,nw];
+          if(no==='portrait' && nh<nw) [nw,nh]=[nh,nw];
+          if(idx===0){ w=nw; h=nh; }
+          else {
+            if(needAddPage) pdf.addPage([nw,nh], no);
+            w=nw; h=nh; o=no;
+            // bg fill for this page
+            if(bg!=='white'){ pdf.setFillColor(bg==='black'?0:255); pdf.rect(0,0,nw,nh,'F'); }
+            // compute placement for this dynamic page
+            const m = margin;
+            let pw2 = nw - m*2, ph2 = nh - m*2;
+            let iw = im.w, ih = im.h;
+            let scale = (fitMode==='contain') ? Math.min(pw2/ (iw*0.264583), ph2/(ih*0.264583)) : Math.max(pw2/(iw*0.264583), ph2/(ih*0.264583));
+            // use px→mm factor 0.264583
+            let rw = iw * 0.264583 * scale, rh = ih * 0.264583 * scale;
+            let x = (nw - rw)/2, y = (nh - rh)/2;
+            // add image — detect type
+            let fmt = im.type.includes('png') ? 'PNG' : 'JPEG';
+            try{ pdf.addImage(im.src, fmt, x, y, rw, rh, undefined, 'FAST'); }catch{ pdf.addImage(im.src, 'JPEG', x, y, rw, rh, undefined, 'FAST'); }
+            continue;
+          }
+        }
+        if(needAddPage) pdf.addPage([w,h], o);
+        if(bg!=='white'){ pdf.setFillColor(bg==='black'?0:255); pdf.rect(0,0,w,h,'F'); }
+        const m = margin;
+        let availW = w - m*2, availH = h - m*2;
+        let iw = im.w * 0.264583, ih = im.h * 0.264583;
+        let scale = (fitMode==='contain') ? Math.min(availW/iw, availH/ih) : Math.max(availW/iw, availH/ih);
+        let rw = iw * scale, rh = ih * scale;
+        let x = (w - rw)/2, y = (h - rh)/2;
+        let fmt = im.type.includes('png') ? 'PNG' : 'JPEG';
+        try{ pdf.addImage(im.src, fmt, x, y, rw, rh, undefined, 'FAST'); }catch{ pdf.addImage(im.src, 'JPEG', x, y, rw, rh, undefined, 'FAST'); }
+      }
+
+      pdf.save(fileName.endsWith('.pdf')? fileName : fileName+'.pdf');
+      statusEl.textContent = `✅ PDF downloaded: ${fileName} (${images.length} pages, ${format.toUpperCase()})`;
+      toast('PDF downloaded ✓');
+    }catch(err){
+      console.error(err);
+      statusEl.textContent = 'Failed: '+err.message;
+      toast('PDF failed: '+err.message, 4000);
+    }finally{
+      btnMake.disabled=false; btnMake.textContent='⬇ Download PDF';
+    }
+  });
+})();
