@@ -1,0 +1,15 @@
+{
+  "name": "motion-studio-os",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Motion Studio OS — vector scene source + headless render pipeline for The Equity Machine",
+  "scripts": {
+    "render": "node tools/render-scene.mjs",
+    "serve": "python3 tools/serve.py 3000"
+  },
+  "dependencies": {
+    "@sparticuz/chromium": "^153.0.0",
+    "puppeteer-core": "^25.16.0"
+  }
+}

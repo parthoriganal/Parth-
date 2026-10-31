@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Motion Studio OS — Scene 10 deliverables</title>
+<style>
+  :root{--bg:#0A0E1A;--panel:#121A2C;--line:rgba(255,255,255,.12);--orange:#FF6A3D;--muted:#8A93A6;--text:#F2F4F8}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 'DejaVu Sans',system-ui,-apple-system,Segoe UI,sans-serif;padding:48px 24px}
+  .wrap{max-width:1180px;margin:0 auto}
+  .tag{display:inline-flex;align-items:center;gap:8px;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
+  .dot{width:9px;height:9px;background:var(--orange);border-radius:2px}
+  h1{font-size:38px;line-height:1.15;margin:0 0 10px;letter-spacing:.02em}
+  .lede{color:var(--muted);margin:0 0 34px;max-width:70ch}
+  h2{font-size:15px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:44px 0 16px;font-weight:700}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+  a.dl{display:block;padding:18px 20px;background:var(--panel);border:1px solid var(--line);border-radius:14px;text-decoration:none;color:var(--text);transition:.15s}
+  a.dl:hover{border-color:var(--orange);transform:translateY(-2px)}
+  a.dl .k{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--orange);font-weight:700}
+  a.dl .n{font-size:19px;font-weight:700;margin:6px 0 4px}
+  a.dl .m{font-size:14px;color:var(--muted)}
+  .frame{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#000}
+  .frame img,.frame video{display:block;width:100%;height:auto}
+  pre{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;overflow:auto;color:#C6CEDD;font-size:13.5px;line-height:1.55}
+  code{font-family:'DejaVu Sans Mono',ui-monospace,Menlo,monospace}
+  .note{border-left:3px solid var(--orange);padding:12px 18px;background:rgba(255,106,61,.07);border-radius:0 10px 10px 0;color:#C6CEDD}
+  footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);color:#5C6578;font-size:14px}
+  a{color:#FF8A5B}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="tag"><span class="dot"></span> Motion Studio OS · The Equity Machine</div>
+  <h1>Scene 10 — A fortune in shares</h1>
+  <p class="lede">Vector source and rendered motion for the closing scene of Episode 01.
+     The SVG is the source of truth — it carries a SMIL timeline, and the MP4 is rendered from it
+     frame-by-frame at 1920×1080 / 30fps.</p>
+
+  <h2>Download</h2>
+  <div class="grid">
+    <a class="dl" href="downloads/motion-studio-scene-10.zip" download>
+      <div class="k">Bundle</div><div class="n">Full package</div>
+      <div class="m">SVG + MP4 + poster + tools — .zip</div>
+    </a>
+    <a class="dl" href="scenes/scene-10-fortune-in-shares.svg" download>
+      <div class="k">Vector source</div><div class="n">scene-10-fortune-in-shares.svg</div>
+      <div class="m">14 KB · animated · editable</div>
+    </a>
+    <a class="dl" href="renders/scene-10-fortune-in-shares.mp4" download>
+      <div class="k">Rendered film</div><div class="n">scene-10-fortune-in-shares.mp4</div>
+      <div class="m">7.03s · 1920×1080 · 30fps · 549 KB</div>
+    </a>
+    <a class="dl" href="renders/scene-10/still_6p5.png" download>
+      <div class="k">Poster still</div><div class="n">still_6p5.png</div>
+      <div class="m">1920×1080 still at t = 6.5s</div>
+    </a>
+  </div>
+
+  <h2>The vector source</h2>
+  <div class="frame"><img src="scenes/scene-10-fortune-in-shares.svg" alt="Scene 10 — A fortune in shares"></div>
+
+  <h2>Rendered motion</h2>
+  <div class="frame">
+    <video src="renders/scene-10-fortune-in-shares.mp4" controls autoplay loop muted playsinline></video>
+  </div>
+
+  <h2>Re-render</h2>
+  <pre><code>npm install                                   # puppeteer-core + @sparticuz/chromium
+
+# seek the SMIL clock -&gt; frames (deterministic, frame-accurate)
+node tools/render-scene.mjs --svg scenes/scene-10-fortune-in-shares.svg \
+     --out renders/scene-10 --fps 30 --end 7
+
+# encode
+ffmpeg -y -framerate 30 -i renders/scene-10/frames/f%05d.png \
+       -c:v libx264 -preset slow -crf 19 -pix_fmt yuv420p -movflags +faststart \
+       renders/scene-10-fortune-in-shares.mp4</code></pre>
+
+  <p class="note">Claim discipline is preserved in the vector work: every figure on the frame maps to a dated
+     row in <strong>📚 Research Sources</strong>, and “equity ≠ cash” stays on screen, not in a footnote.</p>
+
+  <footer>Notion page: <a href="https://app.notion.com/p/Scene-Art-SVG-Source-Episode-01-40a2d2c9ef80814ca52cec8306d33f80">🎨 Scene Art — SVG Source (Episode 01)</a></footer>
+</div>
+</body>
+</html>

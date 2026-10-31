@@ -1,0 +1,4 @@
+node_modules/
+renders/*/frames/
+downloads/*.zip
+.DS_Store
