@@ -1,0 +1,78 @@
+{
+  "generator": "Picsart-AI-Research/Text2Video-Zero",
+  "generator_url": "https://github.com/Picsart-AI-Research/Text2Video-Zero",
+  "generator_commit": "fd76734e06aadb1dee83d2b7a368b14bdaa35565",
+  "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+  "model_revision": "451f4fe16113bff5a5d2269ed5ad43b0592e9a14",
+  "prompt": "An astronaut walking across the surface of the Moon, side view, legs taking steps and arms swinging, lunar dust rising from the boots, Earth hanging in the black sky, cinematic realistic science fiction, smooth tracking shot",
+  "negative_prompt": "still image, static pose, duplicate person, extra limbs, bad anatomy, blurry, low quality, distorted face, text, subtitles, logo",
+  "method": "text-conditioned diffusion with cross-frame attention and latent motion field",
+  "input_image": null,
+  "frame_interpolation": false,
+  "zoom_or_pan": false,
+  "generated_frames": 8,
+  "resolution": [
+    512,
+    512
+  ],
+  "fps": 4,
+  "duration_seconds": 2.0,
+  "inference_steps": 50,
+  "seed": 42,
+  "device": "CPU",
+  "generation_seconds": 4305.52,
+  "python": "3.10.22",
+  "torch": "2.2.2+cpu",
+  "diffusers": "0.14.0",
+  "transformers": "4.26.1",
+  "cpu_compatibility_patch": [
+    "from annotator.util import resize_image, HWC3",
+    "from annotator.canny import CannyDetector",
+    "from annotator.openpose import OpenposeDetector",
+    "from annotator.midas import MidasDetector",
+    "apply_canny = CannyDetector()",
+    "apply_openpose = OpenposeDetector()",
+    "apply_midas = MidasDetector()"
+  ],
+  "export_note": "Generated HWC frames written directly; upstream make_grid helper bypassed",
+  "postprocessing": "H.264 transcode and fast-start only; frame content unchanged",
+  "frame_sha256": [
+    "3f56d1f17e2b94af3595d12a2f0330c69fa2fccfbe3c3d9f06e3cd709803ad2f",
+    "09e1917cc7df381c6b442e3c1fc8f29df38d2f716d80562be933cba8b9bb0873",
+    "4ca84db6dc40d1a86b25c8f819781ace32e5b4d592d80159c653faaad0edf9e4",
+    "50640a0834757914a1b5a524f21b67813b18c2e112e2651db429f12923add3ce",
+    "31a0498b42236faedf1ffe4e6ebc6cf32ed7b70387a87c6c5c9cc9adba4811a2",
+    "7557ff5e7ed84b4db11b88926555cb76ce28063460f101c64d596d538571a6e8",
+    "7cb67d5a4872c5ce79e6a78078d91d9436cc03cb82acdb8df0f16868d8041c51",
+    "e9c412f7a698014b28a442c77b93f8f488dfdffdea6259b894c804f42e4299f3"
+  ],
+  "mean_absolute_frame_differences_0_255": [
+    46.11819839477539,
+    43.90775680541992,
+    47.70940017700195,
+    54.02737045288086,
+    54.0775032043457,
+    59.33770751953125,
+    65.28038024902344
+  ],
+  "sha256": "36bc08a42fffcfa5167b7fe709e27cf9b0130b633f05c3ea6f759796ff650c65",
+  "bytes": 713150,
+  "source_metadata": {
+    "plugin": "ffmpeg",
+    "nframes": Infinity,
+    "ffmpeg_version": "4.2.2-static https://johnvansickle.com/ffmpeg/ built with gcc 8 (Debian 8.3.0-6)",
+    "codec": "h264",
+    "pix_fmt": "yuv420p",
+    "fps": 4.0,
+    "source_size": [
+      512,
+      512
+    ],
+    "size": [
+      512,
+      512
+    ],
+    "rotate": 0,
+    "duration": 2.0
+  }
+}
