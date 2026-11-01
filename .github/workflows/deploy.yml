@@ -32,6 +32,14 @@ jobs:
 
       - run: npm run build
 
+      # Gravity Lab is fully static (no build step), so it ships verbatim
+      # inside the Pages artifact at /gravity-lab/
+      - name: Include Gravity Lab in the Pages artifact
+        run: |
+          mkdir -p dist/gravity-lab
+          cp -r gravity-lab/index.html gravity-lab/README.md dist/gravity-lab/
+          cp -r gravity-lab/assets gravity-lab/docs dist/gravity-lab/
+
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3

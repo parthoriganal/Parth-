@@ -8,6 +8,21 @@ Built on [rxpelle/kdp-scout](https://github.com/rxpelle/kdp-scout) (MIT) as the 
 
 ---
 
+## 🪐 Also in this repo: two zero-dependency visual toys
+
+| Project | What it is |
+|---|---|
+| **[Gravity Lab](./gravity-lab/)** | A Barnes–Hut N-body gravitational simulator — leapfrog integration, inelastic merging, and eight real astrophysical initial conditions (solar system, galaxy collision, the figure-eight three-body choreography, a Plummer-sphere cluster, an accreting black hole…). No WebGL, no libraries. [`README`](./gravity-lab/README.md) · [`test/physics.cjs`](./gravity-lab/test/physics.cjs) |
+| **[Contribution City](./contribution-city/)** | Your GitHub contribution graph rebuilt as a beveled 3D city by a hand-rolled software renderer inside a Blender-flavoured UI. |
+
+```bash
+npm run sim            # serve Gravity Lab at :8080
+npm run test:physics   # numerical acceptance suite
+npm run test:sim       # headless jsdom smoke test
+```
+
+---
+
 ## ✨ What it does
 
 | Module | Source | Status |

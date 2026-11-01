@@ -3,13 +3,17 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Advanced Amazon KDP Keyword & Niche Research Platform",
+  "description": "Advanced Amazon KDP research platform + Gravity Lab, a dependency-free N-body simulator",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0 --port 4173",
     "backend": "python backend/app.py",
-    "verify": "node scripts/verify.mjs"
+    "verify": "node scripts/verify.mjs",
+    "sim": "python3 -m http.server 8080 --bind 0.0.0.0 --directory gravity-lab",
+    "test:physics": "node gravity-lab/test/physics.cjs",
+    "test:sim": "node gravity-lab/test/smoke.cjs",
+    "shot:sim": "node gravity-lab/test/render-shot.cjs"
   },
   "dependencies": {
     "chart.js": "^4.4.4"
