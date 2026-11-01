@@ -215,7 +215,8 @@ all_pages.append(("blank", blank_page()))                # Page 10
 
 # 40 illustrations - alternate types for variety
 # Order: flower, garden, landscape, bird, nostalgic, repeat
-illustrations = [
+# Replacements: coffee mug → birdbath, kettle → picket fence
+final_40 = [
     # 14 existing (kept from v2)
     ("page_rose.png", "flower"),
     ("page_sunflower.png", "flower"),
@@ -227,11 +228,11 @@ illustrations = [
     ("page_butterfly.png", "garden"),
     ("page_teacup.png", "nostalgic"),
     ("page_tree.png", "nature"),
-    ("page_coffee_mug.png", "nostalgic"),   # will be replaced by birdbath
-    ("page_teapot.png", "nostalgic"),       # will be replaced by picket fence
+    ("page_birdbath.png", "garden"),        # replaces coffee mug
+    ("page_teapot.png", "nostalgic"),
     ("page_apple.png", "nature"),
     ("page_cupcake.png", "nostalgic"),
-    # 26 new (some replacements)
+    # 26 new (some redrawn simpler)
     ("page_hydrangea.png", "flower"),       # redrawn simpler
     ("page_lily.png", "flower"),
     ("page_poppy.png", "flower"),           # redrawn simpler
@@ -256,22 +257,9 @@ illustrations = [
     ("page_daffodils.png", "flower"),
     ("page_wheelbarrow.png", "garden"),     # redrawn
     ("page_picnic_basket.png", "nostalgic"),
-    ("page_kettle.png", "nostalgic"),       # replaced by picket fence
-    ("page_pumpkin_patch.png", "nature"),   # redrawn simpler
-    # Replacements
-    ("page_birdbath.png", "garden"),        # replaces mug
     ("page_picket_fence.png", "garden"),    # replaces kettle
+    ("page_pumpkin_patch.png", "nature"),   # redrawn simpler
 ]
-
-# Build the final 40-design list (replacing mug→birdbath, kettle→picket_fence)
-final_40 = []
-for fname, ctype in illustrations:
-    if fname == "page_coffee_mug.png":
-        final_40.append(("page_birdbath.png", "garden"))
-    elif fname == "page_kettle.png":
-        final_40.append(("page_picket_fence.png", "garden"))
-    else:
-        final_40.append((fname, ctype))
 
 print(f"Total illustrations: {len(final_40)}")
 
