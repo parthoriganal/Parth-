@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Gravity Lab — an N-body simulator with no dependencies</title>
+<meta name="description" content="Barnes–Hut N-body gravity, leapfrog integration and eight real astrophysical initial conditions, rendered on a 2D canvas. No WebGL, no libraries, no build step." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0d10'/%3E%3Ccircle cx='16' cy='16' r='4.2' fill='%23ffd27a'/%3E%3Cellipse cx='16' cy='16' rx='12' ry='5' fill='none' stroke='%236fa8ff' stroke-width='1.6' transform='rotate(-24 16 16)'/%3E%3Ccircle cx='26' cy='11' r='2' fill='%235cc47a'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="20" height="20">
+          <circle cx="12" cy="12" r="3.1" fill="#ffd27a"/>
+          <ellipse cx="12" cy="12" rx="9.2" ry="3.9" fill="none" stroke="#6fa8ff" stroke-width="1.3" transform="rotate(-24 12 12)"/>
+          <circle cx="19.4" cy="8.6" r="1.5" fill="#5cc47a"/>
+        </svg>
+      </span>
+      <span class="brand-title">Gravity&nbsp;Lab</span>
+      <span class="brand-tag">N-body&nbsp;·&nbsp;no&nbsp;deps</span>
+    </div>
+
+    <div class="transport" role="group" aria-label="Transport">
+      <button id="playBtn" class="tbtn is-on" type="button" title="Play / pause (Space)" aria-label="Play or pause">
+        <svg viewBox="0 0 20 20" class="i-pause"><path d="M7 5h2.2v10H7zM10.8 5H13v10h-2.2z" fill="currentColor"/></svg>
+        <svg viewBox="0 0 20 20" class="i-play"><path d="M7 4.8 15 10l-8 5.2z" fill="currentColor"/></svg>
+      </button>
+      <button id="stepBtn" class="tbtn" type="button" title="Advance one step (.)" aria-label="Single step">
+        <svg viewBox="0 0 20 20"><path d="M6.4 4.8 13 10l-6.6 5.2z" fill="currentColor"/><path d="M14 5h1.8v10H14z" fill="currentColor"/></svg>
+      </button>
+      <button id="resetBtn" class="tbtn" type="button" title="Reload this universe (R)" aria-label="Reset">
+        <svg viewBox="0 0 20 20"><path d="M15.2 8.4A5.4 5.4 0 1 0 15 12.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M16.4 4.2v4h-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <label class="speed-field" title="Simulation speed">
+        <span class="mini">speed</span>
+        <input id="speed" type="range" min="0" max="300" value="100" aria-label="Simulation speed" />
+        <output id="speedOut">1.00×</output>
+      </label>
+    </div>
+
+    <div class="presets" role="tablist" aria-label="Scenes" id="presetTabs"></div>
+
+    <div class="topbar-right">
+      <button id="fitBtn" class="tbtn" type="button" title="Frame the whole scene (F)" aria-label="Fit to scene">
+        <svg viewBox="0 0 20 20"><path d="M3.5 7V3.5H7M13 3.5h3.5V7M16.5 13v3.5H13M7 16.5H3.5V13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <button id="sidebarBtn" class="tbtn only-narrow" type="button" title="Toggle panels" aria-label="Toggle panels">
+        <svg viewBox="0 0 20 20"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <button id="renderBtn" class="render-btn" type="button" title="Save a still (F12)">
+        <span>Render</span><kbd>F12</kbd>
+      </button>
+    </div>
+  </header>
+
+  <div class="workarea">
+
+    <aside class="toolbar" aria-label="Viewport tools">
+      <button class="tool is-active" data-tool="camera" title="Camera — drag to pan (C)" aria-label="Camera tool">
+        <svg viewBox="0 0 20 20"><path d="M10 3v14M3 10h14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M10 3l-2 2.4M10 3l2 2.4M10 17l-2-2.4M10 17l2-2.4M3 10l2.4-2M3 10l2.4 2M17 10l-2.4-2M17 10l-2.4 2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </button>
+      <button class="tool" data-tool="spawn" title="Spawn — drag to fling a new body (S)" aria-label="Spawn tool">
+        <svg viewBox="0 0 20 20"><circle cx="6.6" cy="13.4" r="2.6" fill="currentColor" opacity=".85"/><path d="M8.6 11.4 15.6 4.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M15.8 4.2 12 5l3.8 3.8z" fill="currentColor"/></svg>
+      </button>
+      <button class="tool" data-tool="hole" title="Black hole — drag to place a heavy one (H)" aria-label="Black hole tool">
+        <svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="3.2" fill="#0b0d10" stroke="currentColor" stroke-width="1.4"/><ellipse cx="10" cy="10" rx="7.4" ry="2.8" fill="none" stroke="currentColor" stroke-width="1.3" transform="rotate(-20 10 10)"/></svg>
+      </button>
+      <button class="tool" data-tool="grab" title="Grab — drag a body, release to fling it (G)" aria-label="Grab tool">
+        <svg viewBox="0 0 20 20"><path d="M6.6 10.4V6.2a1.2 1.2 0 0 1 2.4 0v3.2m0-.6V5a1.2 1.2 0 0 1 2.4 0v3.8m0-.4V5.8a1.2 1.2 0 0 1 2.4 0v5.6c0 2.6-1.7 4.6-4.2 4.6-2 0-3.2-.9-4.1-2.6l-1.5-2.9a1.2 1.2 0 0 1 2-1.3z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="tool" data-tool="erase" title="Erase — click to delete (X)" aria-label="Erase tool">
+        <svg viewBox="0 0 20 20"><path d="M5 5l10 10M15 5 5 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+
+      <div class="tool-sep" aria-hidden="true"></div>
+
+      <button class="tool is-on" data-show="grid" title="World grid" aria-label="Toggle grid">
+        <svg viewBox="0 0 20 20"><path d="M3 7h14M3 13h14M7 3v14M13 3v14" stroke="currentColor" stroke-width="1.2"/></svg>
+      </button>
+      <button class="tool" data-show="vectors" title="Velocity vectors (V)" aria-label="Toggle velocity vectors">
+        <svg viewBox="0 0 20 20"><path d="M4 16 15 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M16 4l-4.6.9L15 9.4z" fill="currentColor"/></svg>
+      </button>
+      <button class="tool" data-show="quadtree" title="Barnes–Hut quadtree (Q)" aria-label="Toggle quadtree">
+        <svg viewBox="0 0 20 20"><rect x="3.4" y="3.4" width="13.2" height="13.2" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M10 3.4v13.2M3.4 10h13.2" stroke="currentColor" stroke-width="1.2"/><path d="M10 6.7h3.3M13.3 6.7V10" stroke="currentColor" stroke-width="1"/></svg>
+      </button>
+    </aside>
+
+    <main class="viewport" id="viewport">
+      <canvas id="bg"></canvas>
+      <canvas id="scene"></canvas>
+      <canvas id="overlay"></canvas>
+
+      <div class="vp-hud" id="hud" aria-hidden="true">
+        <div class="hud-row"><span>fps</span><b id="hFps">—</b></div>
+        <div class="hud-row"><span>bodies</span><b id="hCount">—</b></div>
+        <div class="hud-row"><span>tree nodes</span><b id="hNodes">—</b></div>
+        <div class="hud-row"><span>t</span><b id="hTime">—</b></div>
+        <div class="hud-row"><span>steps</span><b id="hSteps">—</b></div>
+        <div class="hud-row"><span>KE</span><b id="hKe">—</b></div>
+        <div class="hud-row"><span>PE</span><b id="hPe">—</b></div>
+        <div class="hud-row"><span>E drift</span><b id="hDrift">—</b></div>
+        <div class="hud-row"><span>|p|</span><b id="hMom">—</b></div>
+      </div>
+
+      <div class="vp-card" id="sceneCard">
+        <h2 id="sceneName">Solar System</h2>
+        <p id="sceneBlurb"></p>
+        <div class="vp-card-actions">
+          <button type="button" id="cardClose">Got it</button>
+          <button type="button" id="cardHide" class="ghost">Don't show again</button>
+        </div>
+      </div>
+
+      <div class="vp-hint" id="vpHint">drag to pan · scroll to zoom · <kbd>space</kbd> pause</div>
+      <div class="toast" id="toast" hidden></div>
+    </main>
+
+    <aside class="sidebar" id="sidebar" aria-label="Properties">
+
+      <section class="panel">
+        <header class="panel-head" data-collapse="scene">Scene</header>
+        <div class="panel-body" id="panelScene">
+          <div class="field">
+            <label for="preset">Preset</label>
+            <select id="preset"></select>
+          </div>
+          <div class="field">
+            <label for="seed">Seed</label>
+            <div class="row">
+              <input id="seed" type="number" value="1" min="1" max="999999" step="1" />
+              <button type="button" id="diceBtn" class="btn" title="Random seed">🎲</button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="bodyCount">Bodies <output id="bodyCountOut">—</output></label>
+            <div class="row">
+              <input id="bodyCount" type="range" min="50" max="4000" step="10" value="1000" />
+            </div>
+            <p class="help">Scales the particle population of the current preset.</p>
+          </div>
+          <button type="button" id="regenBtn" class="btn wide">Rebuild universe</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <header class="panel-head" data-collapse="physics">Physics</header>
+        <div class="panel-body" id="panelPhysics">
+          <div class="field">
+            <label for="gSlider">G <output id="gOut">1.00</output></label>
+            <input id="gSlider" type="range" min="0" max="400" value="100" />
+            <p class="help">Gravitational constant, ×preset. Turn it to 0 for straight-line drift.</p>
+          </div>
+          <div class="field">
+            <label for="dtSlider">Time step <output id="dtOut">0.030</output></label>
+            <input id="dtSlider" type="range" min="0" max="100" value="50" />
+          </div>
+          <div class="field">
+            <label for="subSlider">Substeps <output id="subOut">3</output></label>
+            <input id="subSlider" type="range" min="1" max="8" step="1" value="3" />
+            <p class="help">Integration quality. More substeps = tighter orbits, fewer fps.</p>
+          </div>
+          <div class="field">
+            <label for="softSlider">Softening <output id="softOut">1.20</output></label>
+            <input id="softSlider" type="range" min="0" max="100" value="30" />
+            <p class="help">ε in the Plummer-softened force. Stops close pairs from producing infinite accelerations.</p>
+          </div>
+          <div class="field">
+            <label for="thetaSlider">Barnes–Hut θ <output id="thetaOut">0.70</output></label>
+            <input id="thetaSlider" type="range" min="0" max="100" value="47" />
+            <p class="help">0 = exact O(n²), 1 = fast and sloppy. Cell used as one mass when size/distance &lt; θ.</p>
+          </div>
+          <div class="field check">
+            <label for="mergeChk"><input id="mergeChk" type="checkbox" /> Merge on contact</label>
+            <p class="help">Perfectly inelastic: momentum and mass conserved, radius from volume.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <header class="panel-head" data-collapse="new">New body</header>
+        <div class="panel-body" id="panelNew">
+          <div class="field">
+            <label for="newMass">Mass <output id="newMassOut">1.00</output></label>
+            <input id="newMass" type="range" min="0" max="100" value="34" />
+            <p class="help">Log scale, 0.01 → 40,000. Drag in the viewport to set its velocity.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <header class="panel-head" data-collapse="display">Display</header>
+        <div class="panel-body" id="panelDisplay">
+          <div class="field">
+            <label for="colorMode">Colour by</label>
+            <select id="colorMode">
+              <option value="group">Origin group</option>
+              <option value="speed">Speed (blackbody ramp)</option>
+              <option value="mass">Mass</option>
+              <option value="kind">Body kind</option>
+              <option value="mono">Mono</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="trailMode">Trails</label>
+            <select id="trailMode">
+              <option value="glow">Screen glow (long exposure)</option>
+              <option value="world">World-space lines</option>
+              <option value="off">Off</option>
+            </select>
+          </div>
+          <div class="field" id="trailField">
+            <label for="trailSlider">Persistence <output id="trailOut">0.16</output></label>
+            <input id="trailSlider" type="range" min="0" max="100" value="16" />
+          </div>
+          <div class="field">
+            <label for="glowSlider">Glow <output id="glowOut">1.00</output></label>
+            <input id="glowSlider" type="range" min="0" max="250" value="100" />
+          </div>
+          <div class="field">
+            <label for="sizeSlider">Body size <output id="sizeOut">1.00</output></label>
+            <input id="sizeSlider" type="range" min="10" max="400" value="100" />
+          </div>
+          <div class="field check">
+            <label for="starChk"><input id="starChk" type="checkbox" checked /> Background starfield</label>
+          </div>
+          <button type="button" id="clearTrails" class="btn wide">Clear trails</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <header class="panel-head" data-collapse="about">How it works</header>
+        <div class="panel-body is-collapsed" id="panelAbout">
+          <p class="help">
+            Gravity is computed with a <b>Barnes–Hut quadtree</b>: distant cells are
+            collapsed to their centre of mass when <code>size/distance &lt; θ</code>,
+            turning an O(n²) sum into O(n log n). Integration is
+            <b>leapfrog KDK</b> — symplectic, so orbits stay closed instead of
+            spiralling away the way Euler would. Accelerations are cached across
+            substeps, so each step costs exactly one tree build.
+          </p>
+          <p class="help">
+            Everything is drawn on a 2D canvas with <code>lighter</code> compositing
+            and a pre-baked glow sprite LUT. No WebGL, no Three.js, no build step.
+            Same seed, same preset, same universe — the PRNG is deterministic.
+          </p>
+        </div>
+      </section>
+
+    </aside>
+  </div>
+
+  <footer class="statusbar">
+    <div class="status-left" id="statusLeft">Gravity Lab</div>
+    <div class="status-right">
+      <span id="statusTool">camera</span>
+      <span class="dot" aria-hidden="true">·</span>
+      <span id="statusZoom">zoom 1.00</span>
+      <span class="dot" aria-hidden="true">·</span>
+      <span id="statusPerf">—</span>
+    </div>
+  </footer>
+
+</div>
+
+<div class="menu-pop" id="menuPop" hidden></div>
+
+<script src="assets/physics.js"></script>
+<script src="assets/render.js"></script>
+<script src="assets/ui.js"></script>
+</body>
+</html>
