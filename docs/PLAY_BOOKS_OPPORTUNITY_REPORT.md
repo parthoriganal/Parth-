@@ -4,17 +4,32 @@
 **Market researched:** Google Play Books only. No other ebook storefront data was used.  
 **Decision standard:** evidence-led, conservative. Store search visibility, Google web-search visibility and reader discussions are not sales evidence.
 
+> ## RECHECK / CORRECTION — 2 November 2026
+> **This recheck supersedes the earlier “overall winner” and 79/100 score below.** A direct US-locale Google Play Books search now surfaces at least a dozen very close freelancer-finance ebooks, including multiple 2026 titles priced from $0.99 sale prices to $5.99. The broad “freelancer irregular-income cash-flow system” is **not credibly underserved**. The earlier score overstated its competition opportunity and treated a qualitative desk screen as more conclusive than it was.
+>
+> **Best candidate to validate—not a proven commercial winner:** a **multicurrency cash-flow and invoice-reconciliation workbook for solo freelancers paid by overseas clients**: track the invoice currency, amount due, payment date, actual received currency/amount, processor/bank fee, exchange-rate source, converted take-home amount, and local-currency cash runway. Keep tax instructions jurisdiction-neutral and link to local official sources; do not present a universal FX or tax rule.
+>
+> **Rechecked score: 68/100 (provisional judgment, not measured demand).** Demand 13/20; competition opportunity 9/15; organic discovery 8/15; purchase intent 11/15; evergreen 8/10; international 7/10; differentiation 9/10; feasibility 3/5. This is only a test candidate. **No evidence here proves it will sell organically or that it is commercially viable.**
+>
+> **Real Play Books sample (US locale, 2 Nov 2026):** the search page itself surfaced *Freelancer Finances* ($5.49), *Taxes for Freelancers* ($3.99), *Personal Finance for the Self-Employed* ($3.99), *The Freelancer’s Budget* ($2.99), *The Freelancer’s Financial Playbook* ($0.99), *Freelancer Income Blueprint* ($4.99, displayed sale $0.99), *The Freelancer’s Guide to Budgeting and Taxes* ($5.99), and *Freelance Finances for the First Year* ($3.99). Separate direct listing/category searches surfaced *The Irregular Income Handbook* ($4.99), *The Freelancer’s Cash Flow Playbook for Irregular Income* ($5.99), *Feast or Famine* ($7.49), *The Freelancer’s Cash Flow Playbook: Get Paid on Time, Every Time* ($7.49), *The Irregular Income Playbook* ($4.99), and *The Freelance Money Blueprint*. These are observed catalogue entries/prices in a locale-specific snapshot—not total-market counts, sales, or stable prices [41](https://play.google.com/store/search?q=Freelancer%20Finances%20Taxes%20Budgeting%20Expense%20Tracking&c=books&hl=en_US&gl=US) [42](https://play.google.com/store/books/details/Nathan_Sterling_Freelancer_Finances_Taxes_Budgetin?id=c6VaEQAAQBAJ&hl=en_US&gl=US) [43](https://play.google.com/store/books/details/Ryan_Sanborn_The_Freelancer_s_Budget?id=_nL5EQAAQBAJ&hl=en_US&gl=US) [44](https://play.google.com/store/books/details/Ashley_Green_The_Irregular_Income_Handbook?id=Fg_zEQAAQBAJ&hl=en_US&gl=US) [45](https://play.google.com/store/books/details/SAM_BUSH_The_Freelancer_s_Financial_Playbook?id=HiL_EQAAQBAJ&hl=en_US&gl=US) [46](https://play.google.com/store/books/details/LINUS_WALLETTE_Freelancer_Income_Blueprint?id=eu_8EQAAQBAJ&hl=en_US&gl=US) [47](https://play.google.com/store/books/details/Jacquelyn_Baker_Freelance_Finances_for_the_First_Y?id=MbX4EQAAQBAJ&hl=en_US&gl=US).
+>
+> **Demand evidence, bounded:** public discussions include freelancers concerned about foreign-currency exposure and exchange-rate losses, and international freelancers asking about managing multiple currencies and converting income for regular expenses [48](https://www.reddit.com/r/freelance/comments/1jqg9kw/exchange_rate_fluctuations_are_just_heartbreaking/) [49](https://www.reddit.com/r/digitalnomad/comments/1tnrl6q/best_accounting_software_for_freelancers_with/) [50](https://www.reddit.com/r/phinvest/comments/su8gsr/freelancers_or_independent_contractors_how_do_you_budget_their_finances_since_we_have_a_fluctuating_source_of_income/). These are qualitative, self-selected posts—not representative demand or book-purchase evidence. No exact-match multicurrency freelancer-finance ebook was found in the sampled Play searches; that is **not** proof that none exists.
+>
+> **Compliance audit of the earlier report:** It does **not** pass every requirement in the original master prompt. It screened 36 niches, gave 10 provisional scores, researched official Play policy/royalty documentation, and created a blueprint. But it did not obtain a usable Google Trends series (the Trends request returned HTTP 429), did not capture and date locale-specific Search autocomplete suggestions, did not access Keyword Planner volumes, did not inspect 10 full listing/review sets for each shortlisted niche, and did not analyze a meaningful body of negative reviews. Some earlier Google Sheets “competitor” examples were only adjacent or not truly relevant. Accordingly, no monthly search volumes, book sales, ranking effects or review-derived content gaps are claimed. See the limitations and proposed validation steps below.
+>
+> **Final decision after recheck:** **NO-GO for writing the broad freelancer-finance book as previously framed. Conditional GO only for a low-cost validation of the much narrower multicurrency cash-flow workbook.** If interviews and a working prototype do not show repeated unmet need and willingness to pay, do not publish it.
+
 > **Important limitations.** Google Play Books does not expose public unit sales, conversion rates, keyword volumes, impression counts, or a complete public catalogue search API. Storefront results vary by territory, language, account, personalization, promotions, and time. This is a desk-research screen—not a quantified demand forecast. Listing details below are what public Google Play pages and indexed snippets exposed on the research date; prices and availability can change. A low observed review count is not proof of low sales, and a title appearing in a category is not proof that it is selling well.
 
 ## A. Executive summary
 
-**Overall winner:** a practical, internationally adaptable **cash-flow and income-smoothing system for solo freelancers with irregular project income**, distinguished by a tested spreadsheet/workbook, worked examples, payment-delay scenarios, and jurisdiction-neutral tax-recordkeeping (not tax advice).
+**Rechecked recommendation:** test a **multicurrency cash-flow and invoice-reconciliation workbook for solo freelancers paid by overseas clients**, not a general freelancer money book. It narrows the job to converting invoice/payment data into actual local-currency cash runway. The evidence supports a real problem, but not market size or sales: recent and older freelancer discussions describe currency losses, conversion fees and trouble reconciling multiple currencies [48](https://www.reddit.com/r/freelance/comments/1jqg9kw/exchange_rate_fluctuations_are_just_heartbreaking/) [49](https://www.reddit.com/r/digitalnomad/comments/1tnrl6q/best_accounting_software_for_freelancers_with/) [50](https://www.reddit.com/r/phinvest/comments/su8gsr/freelancers_or_independent_contractors_how_do_you_budget_their_finances_since_we_have_a_fluctuating_source_of_income/).
 
-**Why this is the strongest test—not a sure thing:** there is direct reader-problem evidence in public freelancer discussions: uncertainty around variable pay, slow months, late client payments, tax set-asides, and how to set a consistent personal draw [14](https://www.reddit.com/r/freelance/comments/1dp42vv/how_to_deal_with_inconsistent_income/) [15](https://www.reddit.com/r/UKPersonalFinance/comments/10cob6s/how_to_budget_as_a_freelancer/) [16](https://www.reddit.com/r/phinvest/comments/su8gsr/freelancers_or_independent_contractors_how_do_you_budget_their_finances_since_we_have_a_fluctuating_source_of_income/). The Google Play catalogue confirms direct paid products exist, including a long-standing 2010 book and several newer, tightly targeted 2026 titles. That is evidence of category presence and purchase intent, but it also means this is **not an empty niche** [7](https://play.google.com/store/books/details/Joseph_D_Agnese_The_Money_Book_for_Freelancers_Par?id=_Lbr6Qah9vgC) [8](https://play.google.com/store/books/details/AsarSong_Studio_The_Freelance_Money_Blueprint?id=bc3zEQAAQBAJ) [9](https://play.google.com/store/books/category/coll_1205?hl=en_US&gl=US).
+Google Play Books search/category results now show many directly relevant freelancer-finance titles. That confirms active competition and price pressure, not actual sales. Specific multicurrency tracker coverage was not established, and an absent exact-match result is not proof there is none [41](https://play.google.com/store/search?q=Freelancer%20Finances%20Taxes%20Budgeting%20Expense%20Tracking&c=books&hl=en_US&gl=US) [42](https://play.google.com/store/books/details/Nathan_Sterling_Freelancer_Finances_Taxes_Budgetin?id=c6VaEQAAQBAJ&hl=en_US&gl=US) [43](https://play.google.com/store/books/details/Ryan_Sanborn_The_Freelancer_s_Budget?id=_nL5EQAAQBAJ&hl=en_US&gl=US) [44](https://play.google.com/store/books/details/Ashley_Green_The_Irregular_Income_Handbook?id=Fg_zEQAAQBAJ&hl=en_US&gl=US) [45](https://play.google.com/store/books/details/SAM_BUSH_The_Freelancer_s_Financial_Playbook?id=HiL_EQAAQBAJ&hl=en_US&gl=US) [46](https://play.google.com/store/books/details/LINUS_WALLETTE_Freelancer_Income_Blueprint?id=eu_8EQAAQBAJ&hl=en_US&gl=US) [47](https://play.google.com/store/books/details/Jacquelyn_Baker_Freelance_Finances_for_the_First_Y?id=MbX4EQAAQBAJ&hl=en_US&gl=US).
 
 **Commercial reality:** absent an audience and paid promotion, no topic alone makes organic sales likely. Google Play Books offers browse/search and Google Books preview/search pathways; Google documents full-text matching in Google Books, not a guaranteed boost for new books [2](https://support.google.com/books/partner/answer/10010291?hl=en) [3](https://support.google.com/books/partner/answer/1079107?hl=en). It would be irresponsible to forecast sales from search interest or titles listed in the store.
 
-**GO / NO-GO:** **Conditional GO for a lean validation and prototype; NO-GO for commissioning or writing a full manuscript before validation.** First build and test a 10–15 page sample plus a genuinely usable spreadsheet with 15–20 target readers in at least three English-speaking markets. Proceed only if readers complete the tool, report a specific improvement, and would pay the proposed price. This is the highest-ranked opportunity in the screened set, not a guarantee of commercially viable sales.
+**GO / NO-GO after recheck:** **Conditional GO only for validating the multicurrency freelancer cash-flow workbook; NO-GO for writing the broad freelancer-finance book or commissioning a full manuscript now.** First test a working ledger and a short sample with 15–20 target readers in at least three markets. Proceed only if readers can reconcile realistic payments and demonstrate willingness to pay. This is not a sales forecast.
 
 ## B. Research methodology
 
@@ -70,7 +85,9 @@ These are candidates, not recommendations. The screen looks for a defined job-to
 | 35 | Practical travel planning for adults caring for an older relative | Medium | Demand episodic and situation-specific |
 | 36 | Personal knowledge management for researchers using a single simple toolset | Medium | Strong incumbent concepts; likely crowded and tool-sensitive |
 
-## D. Top 10 shortlist
+## D. Top 10 shortlist (first-pass screen; recheck winner is narrower)
+
+> The initial ten ideas below were screened before the additional targeted Play Books query. They are not a final top-ten market ranking. The rechecked candidate—multicurrency invoice/cash reconciliation for freelancers—is a narrower refinement of item 1 and has its separate 68/100 provisional score at the top of this report.
 
 1. **Freelancer cash-flow stability for irregular income** — direct need, tangible outcomes, multiple markets; direct competitors exist.
 2. **Google Sheets business admin for nontechnical freelancers** — concrete searchable software problem; practical skills sell more clearly than general productivity.
@@ -85,9 +102,9 @@ These are candidates, not recommendations. The screen looks for a defined job-to
 
 ## E. Google Play Books competition: top three
 
-### E1. Winner candidate — irregular-income cash flow for solo freelancers
+### E1. Broad freelancer-finance benchmark (first-pass shortlist; recheck supersedes it)
 
-The storefront exposes both established and very recent books. This signals that buyers can find relevant products, but it also reveals rapid title proliferation. Some 2026 titles have short page counts or broad, promotional copy; that is a potential opening for a substantive, tested workbook, not proof that those books are poor. Reviews are sparse for the observable recent titles; sparse reviews mean uncertain evidence, not necessarily reader complaints.
+The storefront exposes established and very recent books. The 2 November recheck found at least a dozen close titles across the targeted Play search/category results, including multiple 2026 listings. This is active supply and price competition—not evidence of sales. Some public listing descriptions are formulaic/repetitive, but the book contents were not read, so this is not a quality verdict. Accessible review counts are small; no meaningful negative-review analysis was completed.
 
 **Ten relevant Google Play Books listings reviewed** (directness shown; a category entry is included only when the storefront surfaced the exact title, and must be rechecked in the buyer’s territory):
 
@@ -210,6 +227,8 @@ These are pure multiplication examples, not earnings estimates or forecasts. A 5
 
 ## H. Top three ranked opportunities and transparent scores
 
+> **Scoring correction:** the original 79/100 score for a broad freelancer cash-flow book is withdrawn. It was based on an incomplete competitor sample. The recheck identifies many close substitutes and materially weakens the competition and organic-discovery scores. The replacement multicurrency micro-niche score (68/100) is provisional and shown in the recheck at the top of this report. The table below is preserved as a first-pass screen for comparison; its old row 1 is not the final recommendation.
+
 Scores are research judgments, not measurements of sales or algorithmic reach. Components are points out of the weighted maximum. Organic discovery score measures how naturally a book can meet searchable needs / be sampled, not expected traffic.
 
 | Rank / opportunity | Demand /20 | Competition opportunity /15 | Organic discovery /15 | Purchase intent /15 | Evergreen /10 | International /10 | Differentiation /10 | Feasibility /5 | Total |
@@ -256,34 +275,51 @@ Scores are research judgments, not measurements of sales or algorithmic reach. C
 | Length | 25,000–32,000 words | 20,000–28,000 words plus accessible linked workbook | 18,000–24,000 words, version date and update cadence |
 | Differentiation | Worked year for three freelancer profiles, cash runway model, invoice-aging routine, do-not-spend / exception rules, neutral global guidance | Build one end-to-end tracker from blank sheet, explain each cell/formula, test mobile and locale differences | End-to-end workflow cards with test date/tool tier, privacy screening, human review and failure examples |
 
-## I. Single overall winner
+## I. Single overall winner — rechecked, conditional
 
-**Choose: The freelancer cash-flow operating system for irregular income, supported by an optional Google Sheets workbook.**
+**Best candidate to validate:** *A Multicurrency Cash-Flow Workbook for Freelancers with Overseas Clients* — a book-led, spreadsheet-supported system to reconcile invoices and receipts across currencies, fees, delayed/partial payments and a local-currency spending runway.
 
-The combined concept is stronger than either a general finance guide or a standalone formula guide: it solves the “what can I safely pay myself this month?” problem and gives the reader a mechanism to act. Keep the core ebook tool-agnostic; make Google Sheets one downloadable implementation, with a print-friendly alternative. Avoid treating fixed tax percentages, emergency-fund sizes or one budgeting formula as universal financial advice. Provide scenario-based decision support, not guaranteed savings.
+The distinction is the day-to-day reconciliation work: record the currency and amount invoiced; payment date and received amount; conversion rate and source; processing/bank fee; net local-currency receipt; and what is actually safe to allocate. Make the spreadsheet testable, with example data and a paper/manual path. Keep tax content to recordkeeping and local-authority links; do not prescribe one global exchange-rate convention or tax treatment.
 
-This remains a **conditional market test**, not a finding that demand exceeds competition. Fresh direct titles already exist. The right to win depends on demonstrably superior usability and trustworthy advice—not an SEO-heavy title or inflated promise.
+**Decision is not “this will sell.”** This micro-niche has credible reader pain and weaker exact-match competition in the sampled Google Play searches, but broad freelancer-money titles are numerous and low-priced. Search volumes, conversion and purchases are unknown. Continue only if target-reader interviews and a working prototype show clear preference over accounting software, free templates and the books already listed. Without that evidence: **NO-GO**.
 
 ## J. Complete winning ebook blueprint
 
 ### Three title options
 
-1. **The Freelancer’s Cash-Flow System** — *A Practical Plan for Irregular Income, Late Invoices, Tax Reserves, and a Reliable Monthly Paycheck*  
-2. **Freelance Money, Month by Month** — *Build a Cash Buffer, Track Client Payments, and Pay Yourself Consistently on Variable Income*  
-3. **From Feast or Famine to a Clear Cash Plan** — *A Step-by-Step Workbook for Freelancers Who Need to Budget Around Unpredictable Payments*
+1. **The Multicurrency Freelancer’s Cash-Flow Workbook** — *Track Invoices, Exchange Rates, Fees, and Take-Home Income Across Borders*  
+2. **Getting Paid Across Currencies** — *A Practical Cash-Flow System for Freelancers with International Clients*  
+3. **From Invoice to Local-Currency Income** — *A Freelancer’s Guide to Payment Reconciliation, FX Fees, and Cash Runway*
 
-**Recommended listing title:** *The Freelancer’s Cash-Flow System*  
-**Recommended subtitle:** *A Practical Plan for Irregular Income, Late Invoices, Tax Reserves, and a Reliable Monthly Paycheck*
+**Recommended listing title:** *The Multicurrency Freelancer’s Cash-Flow Workbook*  
+**Recommended subtitle:** *Track Invoices, Exchange Rates, Fees, and Take-Home Income Across Borders*
 
 ### Exact target reader
 
-An independent English-speaking service freelancer or solo consultant who has at least one paying client, receives money at uneven dates or amounts, tracks income inconsistently, and wants an understandable system before hiring an accountant or adopting complex software. It should work in the US, UK, Canada, Australia, India and other English-reading markets at the principle level. It must clearly flag that tax, registration, pension, VAT/GST and insurance decisions are jurisdiction-specific.
+An independent English-speaking freelancer/consultant with one or more clients in a different currency from their home spending currency, who uses multiple payment providers or bank accounts and cannot easily reconcile invoice amounts to what actually arrives. Examples: a UK creator paid in USD, an Indian consultant paid in USD/EUR, or an Australian designer invoicing clients in several currencies. This is not a tax manual, forex/trading guide or accounting-software replacement. Country-specific tax treatment must be left to current official local guidance and qualified professionals.
 
 ### Unique selling proposition
 
-**Not another “save 30%” list:** a cash operating routine that separates *earned, invoiced, expected and received* money, plans around pay dates rather than hypothetical monthly income, tests a lean-month scenario, and gives readers a reusable workbook plus a print option. The manuscript should show formula logic and examples openly and avoid implying the author’s framework predicts income.
+A transparent, tested ledger that follows every payment from **invoice currency → payment due → actual receipt → conversion/fees → local-currency amount → cash runway**. It shows the distinction between quoted, invoiced, expected and received value, including partial payments and delays. It offers a Sheets implementation and a print/manual fallback, states FX assumptions, and does not promise savings or prescribe speculative currency timing.
 
-### Detailed chapter outline (approx. 27,000 words)
+### Detailed chapter outline (approx. 24,000–28,000 words)
+
+1. **The mismatch between invoice value and money you can spend** (1,500): currencies, invoice vs cash, gross vs net, exchange spread, processing fees and book boundaries.
+2. **Choose a base currency and record policy** (1,800): home spending currency vs accounting currency; consistent recordkeeping; professional advice needed for accounting/tax choice.
+3. **Map the payment path** (2,000): invoice, due date, client currency, payment platform, intermediary fees, conversion, bank settlement.
+4. **Build the multicurrency ledger** (3,000): fields, data validation, FX rate/source/date, receipts, fees, local equivalent, exception handling.
+5. **Reconcile invoices to deposits** (2,000): partial payments, short-pays, refunds, chargebacks, wire deductions and delayed funds.
+6. **Understand FX movement without speculating** (1,800): distinguish rate movement from provider fee/spread; compare actual received amount; no market-timing advice.
+7. **Forecast local-currency cash runway** (2,000): confirmed vs forecast income, conservative rate assumptions, fixed local expenses and scenario ranges.
+8. **Manage client and currency concentration** (1,500): client share, one-currency exposure, payment cadence and contingency planning.
+9. **Invoices, contracts and payment clarity** (1,800): state invoice currency, due date, recipient fees and exchange responsibility; sample neutral checklist, not legal advice.
+10. **Recordkeeping for tax time—without tax prescriptions** (1,800): store source documents and dates; local authority links; questions for an accountant; no universal conversion rule.
+11. **Three illustrative cases** (3,000): UK video editor paid USD; Indian consultant with USD receipts; Australian designer with USD/EUR/GBP clients. Explicitly fictional and with no live FX rate claim.
+12. **Spreadsheet walkthrough and QA** (3,000): formulas, rounding, dates, locale formats, currency codes, access, mobile, accessibility and error cases.
+13. **A 30-day reconciliation routine** (1,500): weekly matching, monthly close, exception list and update log.
+14. **Country-specific verification checklist and glossary** (1,500): official tax authority / accounting references to check for the reader’s residence; last-verified dates.
+
+**Production length:** target 24,000–28,000 words plus a tested spreadsheet and printable ledger. Do not pad. Use current, dated sources for any tax/accounting claim.
 
 1. **The cash-flow problem is a timing problem** (1,500): distinguish revenue, profit, cash, unpaid invoice, tax reserve and personal draw; glossary; book limitations.
 2. **Build a one-page baseline** (2,000): recurring needs, business costs, irregular annual expenses; minimum viable monthly number; 3/6/12-month lookback options.
@@ -328,7 +364,7 @@ Use primary public sources: local tax authority guidance for each jurisdiction c
 
 ### Google Play Books title and metadata strategy
 
-- Use a distinctive, truthful title plus descriptive subtitle. Include the phrase “freelancer,” “cash flow,” “irregular income,” “late invoices” and “pay yourself” naturally where relevant. Do not keyword-stuff or promise financial outcomes.
+- Use a distinctive, truthful title plus descriptive subtitle. Include “multicurrency,” “freelancer,” “cash flow,” “invoice reconciliation,” “exchange rates,” “fees,” and “take-home income” naturally where genuinely relevant. Do not keyword-stuff or promise savings or financial outcomes.
 - Write a description with: exact reader/problem; tangible items delivered; contents; spreadsheet compatibility/access; limitations; author qualifications; date/edition note. State clearly that it is educational, not personal tax/investment advice.
 - Set primary book language to English. Use correct author/editor/publisher fields, publication date and page count. Supply the appropriate ISBN if available or use the platform’s permitted ID option; verify current Partner Center requirements.
 - Select **BISAC** because Google recommends it and Play genres are based on BISAC; select no more than three applicable genres and place the most relevant first [32](https://support.google.com/books/partner/answer/3237055?hl=en) [33](https://support.google.com/books/partner/answer/9259956?hl=en). Likely candidate categories, subject to the live BISAC/Partner Center selector: **Business & Economics / Personal Finance / Money Management** and **Business & Economics / Small Business / Finance** or **Business & Economics / Personal Finance / Budgeting**. Do not force a tax category if the book does not teach tax law.
@@ -385,7 +421,7 @@ Test **US$4.99** as a reasonable initial list-price hypothesis for a concise but
 5. Make a sample chapter and mock listing; test reader comprehension and willingness to pay. A stated “sounds useful” is weaker than a completed task or preorder intent.
 6. Write only if the interviews reveal a repeated unsolved workflow and users prefer the tested system to available free resources / existing books.
 
-**Final commercial judgment:** There is a real and evergreen reader problem; there are direct Google Play Books products; public discussion corroborates the pain. But no public evidence establishes purchase volume, store rank, conversion or likely organic traffic. The niche deserves a low-cost validation experiment, not an income forecast. If the author cannot bring domain credibility, build a genuinely tested worksheet, and sustain professional accuracy, the rational decision is **NO-GO**.
+**Final commercial judgment after recheck:** the generic freelancer-finance niche is visibly crowded on Google Play Books. The narrower multicurrency reconciliation problem has qualitative reader-pain evidence and no exact-match book was found in the sampled Play searches, but this does not establish query demand or book-purchase potential. The rational decision is **NO-GO on full production; conditional GO on a low-cost prototype test only**. If the author cannot build a robust workbook, obtain professional review of any tax/accounting material, and demonstrate willingness to pay, stop.
 
 ---
 
@@ -409,7 +445,17 @@ All storefront evidence is from Google Play Books pages/category listings; all p
 37. [Excel haladóknak (Hungarian-language Excel book)](https://play.google.com/store/books/details/Excel_halad%C3%B3knak?id=MueTDwAAQBAJ&hl=en_US&gl=US)  
 38. [Excel-based financial accounting system (Traditional Chinese listing)](https://play.google.com/store/books/details/%E8%B2%A1%E5%8B%99%E6%9C%83%E8%A8%88%E9%80%99%E6%A8%A3%E5%81%9A_%E7%94%A8Excel%E5%AE%8C%E6%88%90%E7%9A%84%E5%B0%88%E6%A5%AD%E6%9C%83%E8%A8%88%E7%B3%BB%E7%B5%B1_IN21213?id=JQTUDgAAQBAJ&hl=en_US)  
 39. [Excel work formulas guide (Korean-language listing)](https://play.google.com/store/books/details/%EC%97%91%EC%85%80_%EC%97%85%EB%AC%B4_%EA%B3%B5%EB%9E%B5%EC%A7%91_%ED%95%84%EC%88%98_%EA%B3%B5%EC%8B%9D%EC%9C%BC%EB%A1%9C_%ED%95%98%EB%A3%A8%EC%97%90_%ED%95%98%EB%82%98%EC%94%A9_%EC%A0%95%EB%B3%B5%ED%95%98%EB%8A%94?id=gKXsDwAAQBAJ&hl=en)  
-40. [Google Play Business & Investing category](https://play.google.com/store/books/category/coll_1205?hl=en_US&gl=US)
+40. [Google Play Business & Investing category](https://play.google.com/store/books/category/coll_1205?hl=en_US&gl=US)  
+41. [Google Play Books US search results: freelancer finances](https://play.google.com/store/search?q=Freelancer%20Finances%20Taxes%20Budgeting%20Expense%20Tracking&c=books&hl=en_US&gl=US)  
+42. [Freelancer Finances: Taxes, Budgeting, and Expense Tracking](https://play.google.com/store/books/details/Nathan_Sterling_Freelancer_Finances_Taxes_Budgetin?id=c6VaEQAAQBAJ&hl=en_US&gl=US)  
+43. [The Freelancer’s Budget](https://play.google.com/store/books/details/Ryan_Sanborn_The_Freelancer_s_Budget?id=_nL5EQAAQBAJ&hl=en_US&gl=US)  
+44. [The Irregular Income Handbook](https://play.google.com/store/books/details/Ashley_Green_The_Irregular_Income_Handbook?id=Fg_zEQAAQBAJ&hl=en_US&gl=US)  
+45. [The Freelancer’s Financial Playbook](https://play.google.com/store/books/details/SAM_BUSH_The_Freelancer_s_Financial_Playbook?id=HiL_EQAAQBAJ&hl=en_US&gl=US)  
+46. [Freelancer Income Blueprint](https://play.google.com/store/books/details/LINUS_WALLETTE_Freelancer_Income_Blueprint?id=eu_8EQAAQBAJ&hl=en_US&gl=US)  
+47. [Freelance Finances for the First Year](https://play.google.com/store/books/details/Jacquelyn_Baker_Freelance_Finances_for_the_First_Y?id=MbX4EQAAQBAJ&hl=en_US&gl=US)  
+48. [r/freelance: Exchange rate fluctuations are just heartbreaking as a freelancer](https://www.reddit.com/r/freelance/comments/1jqg9kw/exchange_rate_fluctuations_are_just_heartbreaking/)  
+49. [r/digitalnomad: accounting software for freelancers with international clients](https://www.reddit.com/r/digitalnomad/comments/1tnrl6q/best_accounting_software_for_freelancers_with/)  
+50. [r/phinvest: freelancer budgets with fluctuating income and foreign currency](https://www.reddit.com/r/phinvest/comments/su8gsr/freelancers_or_independent_contractors_how_do_you_budget_their_finances_since_we_have_a_fluctuating_source_of_income/)
 
 **Google Play Books competitor listings / categories**
 
