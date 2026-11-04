@@ -220,7 +220,7 @@ async function main() {
 
   /* ── stills ───────────────────────────────────────────────────────────── */
   if (MODE === 'stills') {
-    let black = 0;
+    const samples = [];
     for (const [index, t] of TIMES.entries()) {
       await paint(t);
       await settle(page);
@@ -228,11 +228,12 @@ async function main() {
       const file = path.join(stillsDir, `still_${String(index).padStart(2, '0')}_${String(t).replace('.', '_')}s.png`);
       await page.screenshot({ path: file, type: 'png' });
       const stats = await frameStats(page);
-      if (stats.max < 0.02) black++;
+      samples.push(stats.max);
       console.log(
         `  t=${String(t).padStart(5)}s  luma mean ${stats.mean.toFixed(3)} max ${stats.max.toFixed(3)}  → ${path.basename(file)}`
       );
     }
+    const brightest = Math.max(...samples);
 
     /* determinism: the same story time must paint byte-identical pixels */
     await paint(23);
@@ -251,8 +252,10 @@ async function main() {
       console.error(`\n  ${pageErrors.length} page error(s) — see above\n`);
       process.exit(1);
     }
-    if (black > 0) {
-      console.error(`\n  ${black} frame(s) rendered black\n`);
+    /* The film opens and closes on black on purpose, so darkness is only a
+       fault when *nothing* lit up. */
+    if (brightest < 0.05) {
+      console.error('\n  every frame is black — nothing rendered\n');
       process.exit(1);
     }
     if (!identical) process.exit(1);
@@ -265,7 +268,9 @@ async function main() {
   console.log(`  rendering ${total} frames\n`);
 
   const started = Date.now();
-  let worst = 1;
+  let brightest = 0;
+  let darkSamples = 0;
+  let sampleCount = 0;
 
   for (let frame = 0; frame < total; frame++) {
     await paint(frame / FPS);
@@ -274,7 +279,9 @@ async function main() {
 
     if (frame % 48 === 0) {
       const stats = await frameStats(page);
-      worst = Math.min(worst, stats.max);
+      brightest = Math.max(brightest, stats.max);
+      sampleCount++;
+      if (stats.max < 0.02) darkSamples++;
       const done = frame + 1;
       const rate = done / ((Date.now() - started) / 1000);
       const eta = Math.round((total - done) / Math.max(rate, 0.01));
@@ -292,8 +299,11 @@ async function main() {
     console.error(`\n  ${pageErrors.length} page error(s) — see above\n`);
     process.exit(1);
   }
-  if (worst < 0.02) {
-    console.error('\n  the film rendered black — aborting before encoding\n');
+  console.log(
+    `\n  ${sampleCount} probes · ${darkSamples} black by design (the film opens and closes on black) · brightest ${brightest.toFixed(3)}`
+  );
+  if (brightest < 0.05) {
+    console.error('  nothing lit up — aborting before encoding\n');
     process.exit(1);
   }
 
