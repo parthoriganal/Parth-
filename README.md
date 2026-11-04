@@ -14,11 +14,15 @@ Built on [rxpelle/kdp-scout](https://github.com/rxpelle/kdp-scout) (MIT) as the 
 |---|---|
 | **[Gravity Lab](./gravity-lab/)** | A Barnes–Hut N-body gravitational simulator — leapfrog integration, inelastic merging, and eight real astrophysical initial conditions (solar system, galaxy collision, the figure-eight three-body choreography, a Plummer-sphere cluster, an accreting black hole…). No WebGL, no libraries. [`README`](./gravity-lab/README.md) · [`test/physics.cjs`](./gravity-lab/test/physics.cjs) |
 | **[Contribution City](./contribution-city/)** | Your GitHub contribution graph rebuilt as a beveled 3D city by a hand-rolled software renderer inside a Blender-flavoured UI. |
+| **[VEILBREAK](./veilbreak/)** | A 96-second procedural sci-fi short in three.js — painted nebula, a colossal ring in the dark, a dimensional aperture, and the ember universe on its far side. Five acts, one continuous camera, no textures, no assets, no build step. [`README`](./veilbreak/README.md) · [`storyboard`](./veilbreak/docs/storyboard.md) |
 
 ```bash
 npm run sim            # serve Gravity Lab at :8080
 npm run test:physics   # numerical acceptance suite
 npm run test:sim       # headless jsdom smoke test
+
+npm run film           # serve VEILBREAK at :8080
+npm run test:film      # shader compile + direction + project integrity
 ```
 
 ---
