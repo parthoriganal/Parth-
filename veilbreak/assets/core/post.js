@@ -52,7 +52,8 @@ export class FilmPipeline {
       vertexShader: FS_VERT,
       fragmentShader: BRIGHT_FRAG,
       depthTest: false,
-      depthWrite: false
+      depthWrite: false,
+      side: THREE.DoubleSide
     });
 
     this.blurMaterial = new THREE.ShaderMaterial({
@@ -64,7 +65,8 @@ export class FilmPipeline {
       vertexShader: FS_VERT,
       fragmentShader: BLUR_FRAG,
       depthTest: false,
-      depthWrite: false
+      depthWrite: false,
+      side: THREE.DoubleSide
     });
 
     this.compositeMaterial = new THREE.ShaderMaterial({
@@ -91,7 +93,8 @@ export class FilmPipeline {
       vertexShader: FS_VERT,
       fragmentShader: COMPOSITE_FRAG,
       depthTest: false,
-      depthWrite: false
+      depthWrite: false,
+      side: THREE.DoubleSide
     });
 
     this.lensWorld = new THREE.Vector3(0, 0, 0);
