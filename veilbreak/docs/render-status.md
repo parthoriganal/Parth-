@@ -1,102 +1,91 @@
 # VEILBREAK — last render
 
-run `41837475768` · mode `stills` · commit `3df279d7c47d196f6eea49c928955b5b99a679a5`
+run `41841858263` · mode `video` · commit `4220c7b23ca2c5c48a0d97fc7a9d87d518a5f495`
 
 ## `out/render.log`
 
 ```
 
   VEILBREAK — frame renderer
-  1600×900 · stills · server :44207
+  1920×1080 · video · 24fps · server :37473
 
   story time: 96s · renderer: ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)
 
-  t=    1s  luma mean 0.102 max 0.308  → still_00_1s.png
-  t=    6s  luma mean 0.315 max 0.953  → still_01_6s.png
-  t=   12s  luma mean 0.331 max 0.961  → still_02_12s.png
-  t=   18s  luma mean 0.384 max 0.954  → still_03_18s.png
-  t=   23s  luma mean 0.378 max 0.979  → still_04_23s.png
-  t=   28s  luma mean 0.375 max 0.983  → still_05_28s.png
-  t=   34s  luma mean 0.416 max 0.988  → still_06_34s.png
-  t=   40s  luma mean 0.502 max 0.992  → still_07_40s.png
-  t=   46s  luma mean 0.612 max 1.000  → still_08_46s.png
-  t=   52s  luma mean 0.592 max 1.000  → still_09_52s.png
-  t=   58s  luma mean 0.717 max 1.000  → still_10_58s.png
-  t=   61s  luma mean 0.887 max 1.000  → still_11_61s.png
-  t= 62.4s  luma mean 0.934 max 0.976  → still_12_62_4s.png
-  t= 64.5s  luma mean 0.549 max 0.956  → still_13_64_5s.png
-  t=   70s  luma mean 0.494 max 0.952  → still_14_70s.png
-  t=   78s  luma mean 0.490 max 0.939  → still_15_78s.png
-  t=   84s  luma mean 0.514 max 0.950  → still_16_84s.png
-  t=   88s  luma mean 0.510 max 0.957  → still_17_88s.png
-  t=   92s  luma mean 0.503 max 0.942  → still_18_92s.png
+  rendering 2304 frames
 
-  determinism: frame @23s re-painted identical
-  stills OK
+  frame     1 / 2304 · 0.24 fps · eta 9666s · luma 0.000     frame    49 / 2304 · 0.48 fps · eta 4737s · luma 0.269     frame    97 / 2304 · 0.49 fps · eta 4543s · luma 0.314     frame   145 / 2304 · 0.49 fps · eta 4424s · luma 0.314     frame   193 / 2304 · 0.49 fps · eta 4330s · luma 0.321     frame   241 / 2304 · 0.49 fps · eta 4252s · luma 0.324     frame   289 / 2304 · 0.48 fps · eta 4186s · luma 0.330     frame   337 / 2304 · 0.48 fps · eta 4137s · luma 0.343     frame   385 / 2304 · 0.47 fps · eta 4106s · luma 0.357     frame   433 / 2304 · 0.46 fps · eta 4093s · luma 0.383     frame   481 / 2304 · 0.45 fps · eta 4081s · luma 0.395     frame   529 / 2304 · 0.44 fps · eta 4059s · luma 0.390     frame   577 / 2304 · 0.43 fps · eta 4022s · luma 0.370     frame   625 / 2304 · 0.42 fps · eta 3975s · luma 0.365     frame   673 / 2304 · 0.42 fps · eta 3922s · luma 0.373     frame   721 / 2304 · 0.41 fps · eta 3866s · luma 0.385     frame   769 / 2304 · 0.40 fps · eta 3806s · luma 0.406     frame   817 / 2304 · 0.40 fps · eta 3742s · luma 0.413     frame   865 / 2304 · 0.39 fps · eta 3673s · luma 0.419     frame   913 / 2304 · 0.39 fps · eta 3599s · luma 0.442     frame   961 / 2304 · 0.38 fps · eta 3519s · luma 0.498     frame  1009 / 2304 · 0.38 fps · eta 3425s · luma 0.556     frame  1057 / 2304 · 0.38 fps · eta 3321s · luma 0.595     frame  1105 / 2304 · 0.37 fps · eta 3205s · luma 0.608     frame  1153 / 2304 · 0.37 fps · eta 3079s · luma 0.595     frame  1201 / 2304 · 0.37 fps · eta 2951s · luma 0.609     frame  1249 / 2304 · 0.37 fps · eta 2824s · luma 0.588     frame  1297 / 2304 · 0.37 fps · eta 2697s · luma 0.598     frame  1345 / 2304 · 0.37 fps · eta 2571s · luma 0.672     frame  1393 / 2304 · 0.37 fps · eta 2445s · luma 0.713     frame  1441 / 2304 · 0.37 fps · eta 2316s · luma 0.804     frame  1489 / 2304 · 0.37 fps · eta 2192s · luma 0.953     frame  1537 / 2304 · 0.37 fps · eta 2061s · luma 0.558     frame  1585 / 2304 · 0.37 fps · eta 1931s · luma 0.530     frame  1633 / 2304 · 0.37 fps · eta 1799s · luma 0.513     frame  1681 / 2304 · 0.37 fps · eta 1666s · luma 0.493     frame  1729 / 2304 · 0.38 fps · eta 1532s · luma 0.477     frame  1777 / 2304 · 0.38 fps · eta 1400s · luma 0.468     frame  1825 / 2304 · 0.38 fps · eta 1268s · luma 0.473     frame  1873 / 2304 · 0.38 fps · eta 1137s · luma 0.489     frame  1921 / 2304 · 0.38 fps · eta 1007s · luma 0.496     frame  1969 / 2304 · 0.38 fps · eta 878s · luma 0.506     frame  2017 / 2304 · 0.38 fps · eta 750s · luma 0.513     frame  2065 / 2304 · 0.38 fps · eta 623s · luma 0.506     frame  2113 / 2304 · 0.38 fps · eta 496s · luma 0.509     frame  2161 / 2304 · 0.39 fps · eta 371s · luma 0.506     frame  2209 / 2304 · 0.39 fps · eta 246s · luma 0.503     frame  2257 / 2304 · 0.39 fps · eta 122s · luma 0.391   
+
+  48 probes · 1 black by design (the film opens and closes on black) · brightest 1.000
+
+  encoding → out/veilbreak_1920x1080.mp4
+
+
+  done · 441.89 MB · 107.6 min · /home/runner/work/Parth-/Parth-/out/veilbreak_1920x1080.mp4
 
 ```
 
-## `out/sheet.log`
+## `out/inspect.log`
 
 ```
-Input #0, image2, from 'out/stills/*.png':
-  Duration: 00:00:00.76, start: 0.000000, bitrate: N/A
-  Stream #0:0: Video: png, rgb24(pc, gbr/unknown/unknown), 1600x900, 25 fps, 25 tbr, 25 tbn
-Stream mapping:
-  Stream #0:0 -> #0:0 (png (native) -> png (native))
-Press [q] to stop, [?] for help
-Output #0, image2, to 'veilbreak/docs/ci-stills.png':
-  Metadata:
-    encoder         : Lavf62.3.100
-  Stream #0:0: Video: png, rgb24(pc, gbr/unknown/unknown, progressive), 2424x1098, q=2-31, 200 kb/s, 1.25 fps, 1.25 tbn
-    Metadata:
-      encoder         : Lavc62.11.100 png
-frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:00:00.50    [out#0/image2 @ 0x58ed4e548d40] video:3359KiB audio:0KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: unknown
-frame=    1 fps=0.0 q=-0.0 Lsize=N/A time=00:00:00.80 bitrate=N/A speed=0.828x elapsed=0:00:00.96    
--rw-r--r-- 1 runner runner 2999107 Nov  4 13:23 veilbreak/docs/ci-detail.png
--rw-r--r-- 1 runner runner 3439765 Nov  4 13:23 veilbreak/docs/ci-stills.png
+{
+  "file": "veilbreak_1920x1080.mp4",
+  "codec": "h264 / yuv420p",
+  "size": "1920x1080",
+  "fps": "24/1",
+  "frames": 2304,
+  "duration_s": 96.0,
+  "megabytes": 441.89,
+  "megabits_per_second": 38.61
+}
+total 1840
+drwxr-xr-x 2 runner runner    4096 Nov  4 16:33 .
+drwxr-xr-x 3 runner runner    4096 Nov  4 16:33 ..
+-rw-r--r-- 1 runner runner 1868648 Nov  4 16:33 contact-sheet.png
+-rw-r--r-- 1 runner runner     203 Nov  4 16:33 ffprobe.json
 ```
 
 ## workspace
 
 ```
  M veilbreak/docs/render-status.md
-?? veilbreak/docs/ci-detail.png
+?? veilbreak/docs/video/
 ```
 
 ## out
 
 ```
-total 15332
-drwxr-xr-x  3 runner runner    4096 Nov  4 13:23 .
-drwxr-xr-x 14 runner runner    4096 Nov  4 13:23 ..
--rw-r--r--  1 runner runner 2123165 Nov  4 13:23 detail_0.png
--rw-r--r--  1 runner runner 1934102 Nov  4 13:23 detail_1.png
--rw-r--r--  1 runner runner 1760568 Nov  4 13:23 detail_2.png
--rw-r--r--  1 runner runner 2011159 Nov  4 13:23 detail_3.png
--rw-r--r--  1 runner runner 2123165 Nov  4 13:23 detail_approach.png
--rw-r--r--  1 runner runner 2011159 Nov  4 13:23 detail_farside.png
--rw-r--r--  1 runner runner 1760568 Nov  4 13:23 detail_flash.png
--rw-r--r--  1 runner runner 1934102 Nov  4 13:23 detail_surge.png
--rw-r--r--  1 runner runner    1400 Nov  4 13:23 render.log
--rw-r--r--  1 runner runner    1056 Nov  4 13:23 sheet.log
-drwxr-xr-x  2 runner runner    4096 Nov  4 13:23 stills
+total 454348
+drwxr-xr-x  2 runner runner      4096 Nov  4 16:33 .
+drwxr-xr-x 14 runner runner      4096 Nov  4 14:45 ..
+-rw-r--r--  1 runner runner       411 Nov  4 16:33 ffprobe.json
+-rw-r--r--  1 runner runner       443 Nov  4 16:33 inspect.log
+-rw-r--r--  1 runner runner       460 Nov  4 16:32 notes.md
+-rw-r--r--  1 runner runner      3482 Nov  4 16:32 render.log
+-rw-r--r--  1 runner runner    281180 Nov  4 16:33 sheet_0.png
+-rw-r--r--  1 runner runner    344503 Nov  4 16:33 sheet_1.png
+-rw-r--r--  1 runner runner    346730 Nov  4 16:33 sheet_2.png
+-rw-r--r--  1 runner runner    340553 Nov  4 16:33 sheet_3.png
+-rw-r--r--  1 runner runner    215946 Nov  4 16:33 sheet_4.png
+-rw-r--r--  1 runner runner    315781 Nov  4 16:33 sheet_5.png
+-rw-r--r--  1 runner runner 463360293 Nov  4 16:32 veilbreak_1920x1080.mp4
 ```
 
 ## veilbreak/docs
 
 ```
-total 6528
-drwxr-xr-x 2 runner runner    4096 Nov  4 13:23 .
-drwxr-xr-x 5 runner runner    4096 Nov  4 13:22 ..
--rw-r--r-- 1 runner runner 2999107 Nov  4 13:23 ci-detail.png
--rw-r--r-- 1 runner runner 3439765 Nov  4 13:23 ci-stills.png
--rw-r--r-- 1 runner runner   39150 Nov  4 13:22 proxy-t23.png
--rw-r--r-- 1 runner runner   35636 Nov  4 13:22 proxy-t44.png
--rw-r--r-- 1 runner runner   24897 Nov  4 13:22 proxy-t6.png
--rw-r--r-- 1 runner runner   34399 Nov  4 13:22 proxy-t60.png
--rw-r--r-- 1 runner runner   35477 Nov  4 13:22 proxy-t64_5.png
--rw-r--r-- 1 runner runner   37399 Nov  4 13:22 proxy-t90.png
--rw-r--r-- 1 runner runner    3570 Nov  4 13:23 render-status.md
--rw-r--r-- 1 runner runner    6257 Nov  4 13:22 storyboard.md
+total 6540
+drwxr-xr-x 3 runner runner    4096 Nov  4 16:33 .
+drwxr-xr-x 5 runner runner    4096 Nov  4 14:44 ..
+-rw-r--r-- 1 runner runner 2999107 Nov  4 14:44 ci-detail.png
+-rw-r--r-- 1 runner runner 3439765 Nov  4 14:44 ci-stills.png
+-rw-r--r-- 1 runner runner     750 Nov  4 14:44 proxy-t0.png
+-rw-r--r-- 1 runner runner   39150 Nov  4 14:44 proxy-t23.png
+-rw-r--r-- 1 runner runner   35636 Nov  4 14:44 proxy-t44.png
+-rw-r--r-- 1 runner runner   24897 Nov  4 14:44 proxy-t6.png
+-rw-r--r-- 1 runner runner   34399 Nov  4 14:44 proxy-t60.png
+-rw-r--r-- 1 runner runner   35477 Nov  4 14:44 proxy-t64_5.png
+-rw-r--r-- 1 runner runner   37399 Nov  4 14:44 proxy-t90.png
+-rw-r--r-- 1 runner runner    5048 Nov  4 16:33 render-status.md
+-rw-r--r-- 1 runner runner    6257 Nov  4 14:44 storyboard.md
+drwxr-xr-x 2 runner runner    4096 Nov  4 16:33 video
 ```
