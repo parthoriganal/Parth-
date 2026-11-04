@@ -86,6 +86,7 @@ jobs:
       - name: Render stills
         if: steps.mode.outputs.mode == 'stills'
         run: |
+          mkdir -p out
           set -o pipefail
           node scripts/render-veilbreak.mjs --mode stills --width 1600 --height 900 2>&1 \
             | tee out/render.log
@@ -107,6 +108,7 @@ jobs:
         if: success() && steps.mode.outputs.mode == 'stills'
         continue-on-error: true
         run: |
+          mkdir -p out
           set -eo pipefail
           {
             ffmpeg -hide_banner -pattern_type glob -i 'out/stills/*.png' \
@@ -120,6 +122,7 @@ jobs:
       - name: Render the film
         if: steps.mode.outputs.mode == 'video'
         run: |
+          mkdir -p out
           set -o pipefail
           node scripts/render-veilbreak.mjs --mode video \
             --fps "${{ github.event.inputs.fps || '24' }}" \
@@ -164,6 +167,7 @@ jobs:
         if: success() && steps.mode.outputs.mode == 'video'
         continue-on-error: true
         run: |
+          mkdir -p out
           set -eo pipefail
           {
             MP4=$(ls out/*.mp4 | head -1)
