@@ -1,13 +1,13 @@
 # VEILBREAK — last render
 
-run `41836922821` · mode `stills` · commit `601c2811bfdbcb502b18ecb65bf4169aa8c538e9`
+run `41837198203` · mode `stills` · commit `47b3b22f3730e37ca989eacccec60dba4eaff869`
 
 ## `out/render.log`
 
 ```
 
   VEILBREAK — frame renderer
-  1600×900 · stills · server :35825
+  1600×900 · stills · server :41175
 
   story time: 96s · renderer: ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)
 
@@ -42,17 +42,27 @@ run `41836922821` · mode `stills` · commit `601c2811bfdbcb502b18ecb65bf4169aa8
 Input #0, image2, from 'out/stills/*.png':
   Duration: 00:00:00.76, start: 0.000000, bitrate: N/A
   Stream #0:0: Video: png, rgb24(pc, gbr/unknown/unknown), 1600x900, 25 fps, 25 tbr, 25 tbn
-File 'veilbreak/docs/ci-stills.png' already exists. Overwrite? [y/N] Not overwriting - exiting
-Error opening output file veilbreak/docs/ci-stills.png.
+Stream mapping:
+  Stream #0:0 -> #0:0 (png (native) -> png (native))
+Press [q] to stop, [?] for help
+Output #0, image2, to 'veilbreak/docs/ci-stills.png':
+  Metadata:
+    encoder         : Lavf62.3.100
+  Stream #0:0: Video: png, rgb24(pc, gbr/unknown/unknown, progressive), 2424x1098, q=2-31, 200 kb/s, 1.25 fps, 1.25 tbn
+    Metadata:
+      encoder         : Lavc62.11.100 png
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A elapsed=0:00:00.50    [out#0/image2 @ 0x5cc52d709d40] video:3359KiB audio:0KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: unknown
+frame=    1 fps=0.0 q=-0.0 Lsize=N/A time=00:00:00.80 bitrate=N/A speed=1.16x elapsed=0:00:00.68    
 total 37300
-drwxr-xr-x 2 runner runner    4096 Nov  4 13:19 .
-drwxr-xr-x 3 runner runner    4096 Nov  4 13:20 ..
--rw-r--r-- 1 runner runner 33881 Nov  4 13:18 veilbreak/docs/ci-stills.png
+drwxr-xr-x 2 runner runner    4096 Nov  4 13:21 .
+drwxr-xr-x 3 runner runner    4096 Nov  4 13:21 ..
+-rw-r--r-- 1 runner runner 3439765 Nov  4 13:21 veilbreak/docs/ci-stills.png
 ```
 
 ## workspace
 
 ```
+ M veilbreak/docs/ci-stills.png
  M veilbreak/docs/render-status.md
 ```
 
@@ -60,26 +70,26 @@ drwxr-xr-x 3 runner runner    4096 Nov  4 13:20 ..
 
 ```
 total 20
-drwxr-xr-x  3 runner runner 4096 Nov  4 13:20 .
-drwxr-xr-x 14 runner runner 4096 Nov  4 13:19 ..
--rw-r--r--  1 runner runner 1400 Nov  4 13:19 render.log
--rw-r--r--  1 runner runner  529 Nov  4 13:20 sheet.log
-drwxr-xr-x  2 runner runner 4096 Nov  4 13:19 stills
+drwxr-xr-x  3 runner runner 4096 Nov  4 13:21 .
+drwxr-xr-x 14 runner runner 4096 Nov  4 13:21 ..
+-rw-r--r--  1 runner runner 1400 Nov  4 13:21 render.log
+-rw-r--r--  1 runner runner 1091 Nov  4 13:21 sheet.log
+drwxr-xr-x  2 runner runner 4096 Nov  4 13:21 stills
 ```
 
 ## veilbreak/docs
 
 ```
-total 272
-drwxr-xr-x 2 runner runner  4096 Nov  4 13:18 .
-drwxr-xr-x 5 runner runner  4096 Nov  4 13:18 ..
--rw-r--r-- 1 runner runner 33881 Nov  4 13:18 ci-stills.png
--rw-r--r-- 1 runner runner 39150 Nov  4 13:18 proxy-t23.png
--rw-r--r-- 1 runner runner 35636 Nov  4 13:18 proxy-t44.png
--rw-r--r-- 1 runner runner 24897 Nov  4 13:18 proxy-t6.png
--rw-r--r-- 1 runner runner 34399 Nov  4 13:18 proxy-t60.png
--rw-r--r-- 1 runner runner 35477 Nov  4 13:18 proxy-t64_5.png
--rw-r--r-- 1 runner runner 37399 Nov  4 13:18 proxy-t90.png
--rw-r--r-- 1 runner runner  2476 Nov  4 13:20 render-status.md
--rw-r--r-- 1 runner runner  6257 Nov  4 13:18 storyboard.md
+total 3596
+drwxr-xr-x 2 runner runner    4096 Nov  4 13:20 .
+drwxr-xr-x 5 runner runner    4096 Nov  4 13:20 ..
+-rw-r--r-- 1 runner runner 3439765 Nov  4 13:21 ci-stills.png
+-rw-r--r-- 1 runner runner   39150 Nov  4 13:20 proxy-t23.png
+-rw-r--r-- 1 runner runner   35636 Nov  4 13:20 proxy-t44.png
+-rw-r--r-- 1 runner runner   24897 Nov  4 13:20 proxy-t6.png
+-rw-r--r-- 1 runner runner   34399 Nov  4 13:20 proxy-t60.png
+-rw-r--r-- 1 runner runner   35477 Nov  4 13:20 proxy-t64_5.png
+-rw-r--r-- 1 runner runner   37399 Nov  4 13:20 proxy-t90.png
+-rw-r--r-- 1 runner runner    3070 Nov  4 13:21 render-status.md
+-rw-r--r-- 1 runner runner    6257 Nov  4 13:20 storyboard.md
 ```
