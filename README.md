@@ -1,3 +1,11 @@
+## AETHERBOUND — cinematic multiverse sequence
+
+New standalone Three.js project: **[multiverse/](./multiverse/)**.
+Five movements, 78 seconds, procedural environments, portal effects and ambient score.
+See its [run, controls and Google Sites guide](./multiverse/README.md).
+
+---
+
 # KDP Scout Pro — Advanced Amazon KDP Keyword & Niche Research Platform
 
 **Mobile-responsive SaaS dashboard for KDP authors** — keyword mining, demand vs competition scoring, BSR/reviews, profit, categories, trends, content gaps, and a transparent 0–100 opportunity score.
