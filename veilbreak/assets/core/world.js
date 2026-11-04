@@ -181,8 +181,6 @@ export function buildWorld(options = {}) {
   scene.add(coldGroup, emberGroup);
 
   const billboards = [];
-  const billboardQuat = new THREE.Quaternion();
-  const parentInverse = new THREE.Quaternion();
   const disposables = [];
   const track = (obj) => {
     disposables.push(obj);
@@ -617,9 +615,11 @@ export function buildWorld(options = {}) {
       side: THREE.DoubleSide
     })
   );
+  /* glow cards hang off unrotated groups, so billboarding is exactly
+     "copy the camera's orientation" — no parent-space maths, no one-frame lag */
   const portalHalo = new THREE.Mesh(track(new THREE.PlaneGeometry(96, 96)), haloMaterial);
   portalHalo.position.set(...STAGE.portal.center);
-  portal.add(portalHalo);
+  coldGroup.add(portalHalo);
   billboards.push(portalHalo);
 
   /* spiral infall: matter falling into the aperture */
@@ -1084,18 +1084,8 @@ export function buildWorld(options = {}) {
     watcher.position.y = STAGE.watcher.islandTop + island.position.y;
     watcher.rotation.y = Math.PI * 0.86 + Math.sin(t * 0.19) * 0.03;
 
-    /* every glow card is a billboard: bring the camera's world orientation
-       into each card's parent space (the gate is tilted, so these differ) */
-    for (const card of billboards) {
-      if (card.parent) {
-        card.parent.getWorldQuaternion(parentInverse);
-        parentInverse.invert();
-        billboardQuat.copy(camera.quaternion).premultiply(parentInverse);
-        card.quaternion.copy(billboardQuat);
-      } else {
-        card.quaternion.copy(camera.quaternion);
-      }
-    }
+    /* every glow card is a billboard (they all live on unrotated groups) */
+    for (const card of billboards) card.quaternion.copy(camera.quaternion);
 
     /* dust brightness reacts to the aperture surge */
     coldDust.material.uniforms.uOpacity.value = 0.62 + power * 0.5;

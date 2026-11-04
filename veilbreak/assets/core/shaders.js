@@ -77,7 +77,19 @@ float fbm(vec3 p) {
   return s;
 }
 
-/* 6 octaves — reserved for the sky, where detail is the whole point. */
+/* 3 octaves — the workhorse for secondary detail. */
+float fbm3(vec3 p) {
+  float s = 0.0;
+  float a = 0.5;
+  for (int i = 0; i < 3; i++) {
+    s += a * vnoise(p);
+    p = p * 2.11 + vec3(-1.9, 2.7, 1.3);
+    a *= 0.5;
+  }
+  return s;
+}
+
+/* 6 octaves — reserved for the sky's main cloud mass, where detail is the point. */
 float fbm6(vec3 p) {
   float s = 0.0;
   float a = 0.5;
@@ -152,7 +164,7 @@ void main() {
   /* ── painted clouds ────────────────────────────────────────────────────── */
   vec3 flow = vec3(uTime * 0.0045, uTime * 0.0021, -uTime * 0.0032);
   float cloudA = fbm6(dir * 2.4 + flow + 4.0);
-  float cloudB = fbm(dir * 6.1 - flow * 1.7 + 11.0);
+  float cloudB = fbm3(dir * 6.1 - flow * 1.7 + 11.0);
   float cloudC = vnoise(dir * 17.0 + flow * 3.0);
 
   /* keep the sky readable behind the structure: denser high and low */

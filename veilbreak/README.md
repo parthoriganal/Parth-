@@ -19,7 +19,7 @@ veilbreak/
 │   │   ├── timeline.js         five acts · camera keys · light & grade beats
 │   │   ├── staging.js          world positions of every subject
 │   │   ├── shaders.js          the look — 12 shader pairs, all GLSL ES 1.00
-│   │   ├── world.js            the set: both universes, ~36k tris, ~48 draws
+│   │   ├── world.js            the set: both universes, ~42k tris, ~50 draws
 │   │   └── post.js             bright → blur ×2 → film composite
 │   └── vendor/
 │       ├── three.module.min.js three.js r166 (MIT)
@@ -124,8 +124,8 @@ rather keep the player, drop the flag.
 | bloom levels | 2 (soft + wide anamorphic) | 1 |
 | dust / embers | 3 600 / 2 100 | 1 500 / 900 |
 | shards | 142 | 62 |
-| draw calls | ~48 | ~40 |
-| triangles | ~36 k | ~26 k |
+| draw calls | ~50 | ~40 |
+| triangles | ~42 k | ~30 k |
 
 Nothing is allocated per frame: the world is built once, every animated value
 lives in a uniform, and repeated geometry is merged on the CPU at load time and
