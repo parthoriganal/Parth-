@@ -1,13 +1,13 @@
 # VEILBREAK — last render
 
-run `41836287148` · mode `stills` · commit `73825c1610b5dfb5932189253c7ffd8ae145f9e4`
+run `41836523188` · mode `stills` · commit `c75152f8ad62ee514989bba5a5ed00e53d3c104f`
 
 ## `out/render.log`
 
 ```
 
   VEILBREAK — frame renderer
-  1600×900 · stills · server :44207
+  1600×900 · stills · server :33019
 
   story time: 96s · renderer: ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)
 
@@ -39,38 +39,57 @@ run `41836287148` · mode `stills` · commit `73825c1610b5dfb5932189253c7ffd8ae1
 ## `out/sheet.log`
 
 ```
-/home/runner/work/_temp/f3f84e75-4730-4c90-96e5-7b9e36903667.sh: line 4: ffmpeg: command not found
+Input #0, image2, from 'out/stills/*.png':
+  Duration: 00:00:00.76, start: 0.000000, bitrate: N/A
+  Stream #0:0: Video: png, rgb24(pc, gbr/unknown/unknown), 1600x900, 25 fps, 25 tbr, 25 tbn
+Stream mapping:
+  Stream #0:0 -> #0:0 (png (native) -> png (native))
+Press [q] to stop, [?] for help
+Output #0, image2, to 'veilbreak/docs/ci-stills.png':
+  Metadata:
+    encoder         : Lavf62.3.100
+  Stream #0:0: Video: png, rgb24(pc, gbr/unknown/unknown, progressive), 2424x1098, q=2-31, 200 kb/s, 1.25 fps, 1.25 tbn
+    Metadata:
+      encoder         : Lavc62.11.100 png
+[out#0/image2 @ 0x630e35841d00] video:33KiB audio:0KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: unknown
+frame=    1 fps=0.0 q=-0.0 Lsize=N/A time=00:00:00.80 bitrate=N/A speed=6.79x elapsed=0:00:00.11    
+total 388
+drwxr-xr-x 2 runner runner  4096 Nov  4 13:17 .
+drwxr-xr-x 3 runner runner  4096 Nov  4 13:17 ..
+-rw-r--r-- 1 runner runner 33881 Nov  4 13:17 veilbreak/docs/ci-stills.png
 ```
 
 ## workspace
 
 ```
  M veilbreak/docs/render-status.md
+?? veilbreak/docs/ci-stills.png
 ```
 
 ## out
 
 ```
 total 20
-drwxr-xr-x  3 runner runner 4096 Nov  4 13:15 .
-drwxr-xr-x 14 runner runner 4096 Nov  4 13:14 ..
--rw-r--r--  1 runner runner 1400 Nov  4 13:15 render.log
--rw-r--r--  1 runner runner   99 Nov  4 13:15 sheet.log
-drwxr-xr-x  2 runner runner 4096 Nov  4 13:15 stills
+drwxr-xr-x  3 runner runner 4096 Nov  4 13:17 .
+drwxr-xr-x 14 runner runner 4096 Nov  4 13:17 ..
+-rw-r--r--  1 runner runner 1400 Nov  4 13:17 render.log
+-rw-r--r--  1 runner runner  984 Nov  4 13:17 sheet.log
+drwxr-xr-x  2 runner runner 4096 Nov  4 13:17 stills
 ```
 
 ## veilbreak/docs
 
 ```
-total 236
-drwxr-xr-x 2 runner runner  4096 Nov  4 13:14 .
-drwxr-xr-x 5 runner runner  4096 Nov  4 13:14 ..
--rw-r--r-- 1 runner runner 39150 Nov  4 13:14 proxy-t23.png
--rw-r--r-- 1 runner runner 35636 Nov  4 13:14 proxy-t44.png
--rw-r--r-- 1 runner runner 24897 Nov  4 13:14 proxy-t6.png
--rw-r--r-- 1 runner runner 34399 Nov  4 13:14 proxy-t60.png
--rw-r--r-- 1 runner runner 35477 Nov  4 13:14 proxy-t64_5.png
--rw-r--r-- 1 runner runner 37399 Nov  4 13:14 proxy-t90.png
--rw-r--r-- 1 runner runner  2046 Nov  4 13:15 render-status.md
--rw-r--r-- 1 runner runner  6257 Nov  4 13:14 storyboard.md
+total 272
+drwxr-xr-x 2 runner runner  4096 Nov  4 13:17 .
+drwxr-xr-x 5 runner runner  4096 Nov  4 13:16 ..
+-rw-r--r-- 1 runner runner 33881 Nov  4 13:17 ci-stills.png
+-rw-r--r-- 1 runner runner 39150 Nov  4 13:16 proxy-t23.png
+-rw-r--r-- 1 runner runner 35636 Nov  4 13:16 proxy-t44.png
+-rw-r--r-- 1 runner runner 24897 Nov  4 13:16 proxy-t6.png
+-rw-r--r-- 1 runner runner 34399 Nov  4 13:16 proxy-t60.png
+-rw-r--r-- 1 runner runner 35477 Nov  4 13:16 proxy-t64_5.png
+-rw-r--r-- 1 runner runner 37399 Nov  4 13:16 proxy-t90.png
+-rw-r--r-- 1 runner runner  2963 Nov  4 13:17 render-status.md
+-rw-r--r-- 1 runner runner  6257 Nov  4 13:16 storyboard.md
 ```
