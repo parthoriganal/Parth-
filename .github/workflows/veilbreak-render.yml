@@ -1,13 +1,14 @@
 name: Render VEILBREAK
 
-# VEILBREAK is deterministic: `?capture=1` stops the clock and lets the renderer
-# paint any story time on demand, so the browser is only a rasteriser. GitHub
-# Actions supplies the software-GL Chromium and ffmpeg; the result is published
-# as a release asset, which is the film's download link.
+# VEILBREAK is deterministic: `?capture=1` stops the clock and lets the page
+# paint any story time on demand, so the browser is only a rasteriser and the
+# runner needs no GPU (Chromium falls back to SwiftShader). GitHub Actions
+# supplies Chromium and ffmpeg, then publishes the finished film as a release
+# asset — that download URL is the film's permanent link.
 #
-#   push with [video] in the commit message  → render the MP4 and publish it
-#   any other push touching veilbreak/       → render 19 stills (fast sanity pass)
-#   workflow_dispatch                        → choose either
+#   push with [video] in   → render all 2304 frames, publish the MP4
+#   any other push         → render 19 stills (a 20-second sanity pass)
+#   workflow_dispatch      → choose either, and the frame size
 
 on:
   push:
@@ -63,7 +64,7 @@ jobs:
             fi
           fi
           echo "mode=$MODE" >> "$GITHUB_OUTPUT"
-          echo "Rendering VEILBREAK: $MODE"
+          echo "VEILBREAK: rendering $MODE"
 
       - name: Install Chromium (software WebGL) and ffmpeg
         run: |
@@ -78,6 +79,7 @@ jobs:
           node veilbreak/test/timeline.mjs
           node veilbreak/test/project.mjs
 
+      # ── stills ──────────────────────────────────────────────────────────
       - name: Render stills
         if: steps.mode.outputs.mode == 'stills'
         run: node scripts/render-veilbreak.mjs --mode stills --width 1600 --height 900
@@ -91,6 +93,19 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
+      # Artifacts are the fast way to look at a render; the contact sheet is the
+      # durable one — it lives in the repository, next to the storyboard.
+      - name: Stills contact sheet
+        if: success() && steps.mode.outputs.mode == 'stills'
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          ffmpeg -y -v error -pattern_type glob -i 'out/stills/*.png' \
+            -vf "scale=480:-2,tile=5x4:padding=6:color=0x0a0d14" -frames:v 1 \
+            veilbreak/docs/ci-stills.png
+          ls -la veilbreak/docs/ci-stills.png
+
+      # ── the film ────────────────────────────────────────────────────────
       - name: Render the film
         if: steps.mode.outputs.mode == 'video'
         run: |
@@ -115,9 +130,63 @@ jobs:
           TAG="veilbreak-$(date +%Y%m%d-%H%M)"
           gh release create "$TAG" out/*.mp4 \
             --title "VEILBREAK · $(date +%Y-%m-%d) · a 96-second procedural short" \
-            --notes "Rendered from source by the film's own timeline: 2304 deterministic frames, painter with headless Chromium's software rasteriser, encoded with ffmpeg. No footage, no models, no textures — every pixel is procedural geometry and GLSL.
+            --notes "Rendered from the film's own source. No footage, no models, no textures: every pixel is procedural geometry and GLSL, painted frame by frame in deterministic story time and encoded with ffmpeg.
 
-          Watch it live: https://$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]').github.io/$(echo '${{ github.event.repository.name }}')/veilbreak/" \
+          - watch it live: https://$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]').github.io/${{ github.event.repository.name }}/veilbreak/
+          - read the film: https://github.com/${{ github.repository }}/blob/${{ github.ref_name }}/veilbreak/README.md" \
             --latest
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Proof that the encoded file is what was rendered: its real duration and
+      # frame count, plus frames decoded back out of the MP4 itself.
+      - name: Inspect the encoded film
+        if: success() && steps.mode.outputs.mode == 'video'
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          MP4=$(ls out/*.mp4 | head -1)
+          mkdir -p veilbreak/docs/video
+          ffprobe -v error -show_entries format=duration,size,bit_rate \
+            -show_entries stream=codec_name,width,height,nb_frames,r_frame_rate,pix_fmt \
+            -of json "$MP4" > out/ffprobe.json
+          python3 - "$MP4" <<'PY'
+          import json, sys, os
+          d = json.load(open('out/ffprobe.json'))
+          f, v = d['format'], d['streams'][0]
+          out = {
+              'file': os.path.basename(sys.argv[1]),
+              'codec': f"{v['codec_name']} / {v['pix_fmt']}",
+              'size': f"{v['width']}x{v['height']}",
+              'fps': v['r_frame_rate'],
+              'frames': int(v['nb_frames']),
+              'duration_s': round(float(f['duration']), 3),
+              'megabytes': round(int(f['size']) / 1048576, 2),
+              'megabits_per_second': round(int(f['bit_rate']) / 1e6, 2),
+          }
+          json.dump(out, open('veilbreak/docs/video/ffprobe.json', 'w'), indent=2)
+          print(json.dumps(out, indent=2))
+          PY
+          i=0
+          for t in 5 20 33 47 61 84; do
+            ffmpeg -y -v error -ss "$t" -i "$MP4" -frames:v 1 -vf "scale=640:-2" "out/sheet_$i.png"
+            i=$((i+1))
+          done
+          ffmpeg -y -v error -i out/sheet_%d.png -filter_complex "tile=3x2:padding=6:color=0x0a0d14" \
+            -frames:v 1 veilbreak/docs/video/contact-sheet.png
+          ls -la veilbreak/docs/video
+
+      - name: Commit the render report
+        if: success()
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          git config user.name "VEILBREAK render"
+          git config user.email "veilbreak@users.noreply.github.com"
+          git add veilbreak/docs
+          if git diff --cached --quiet; then
+            echo "nothing new to commit"
+            exit 0
+          fi
+          git commit -m "VEILBREAK: render report from CI [skip ci]"
+          git push

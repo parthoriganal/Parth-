@@ -205,10 +205,11 @@ async function main() {
   /* ── stills ───────────────────────────────────────────────────────────── */
   if (MODE === 'stills') {
     let black = 0;
-    for (const t of TIMES) {
+    for (const [index, t] of TIMES.entries()) {
       await paint(t);
       await settle(page);
-      const file = path.join(stillsDir, `still_${String(t).replace('.', '_')}s.png`);
+      /* numbered, so a glob sorts them the way the film plays them */
+      const file = path.join(stillsDir, `still_${String(index).padStart(2, '0')}_${String(t).replace('.', '_')}s.png`);
       await page.screenshot({ path: file, type: 'png' });
       const stats = await frameStats(page);
       if (stats.max < 0.02) black++;
