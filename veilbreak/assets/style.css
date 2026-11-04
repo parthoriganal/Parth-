@@ -384,6 +384,20 @@ body { overscroll-behavior: none; }
 .vb.is-chromeless .vb-controls { display: none; }
 .vb.is-chromeless .vb-chapter { bottom: clamp(28px, 6vh, 64px); }
 
+/* frame-by-frame export (?capture=1): the picture only. No chrome, no
+   transitions, no animations — every captured frame is exactly one state. */
+.vb.is-capture .vb-head,
+.vb.is-capture .vb-controls,
+.vb.is-capture .vb-loading { display: none; }
+.vb.is-capture .vb-chapter { bottom: clamp(40px, 9vh, 96px); }
+.vb.is-capture .vb-card-btn { display: none; }
+.vb.is-capture *,
+.vb.is-capture *::before,
+.vb.is-capture *::after {
+  transition: none !important;
+  animation: none !important;
+}
+
 /* ── loading & fallback ─────────────────────────────────────────────────── */
 
 .vb-loading {

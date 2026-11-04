@@ -24,6 +24,9 @@ const params = new URLSearchParams(location.search);
 const embed = params.get('embed') === '1';
 const showUi = !embed && params.get('ui') !== '0';
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* frame-by-frame export mode: no clock, no idle timers, no transitions — the
+   harness asks for a story time and gets that exact frame, every time */
+const capture = params.get('capture') === '1';
 
 const root = document.getElementById('vb');
 const canvas = document.getElementById('vb-canvas');
@@ -60,6 +63,7 @@ try {
     antialias: false,
     alpha: false,
     stencil: false,
+    preserveDrawingBuffer: capture,
     powerPreference: 'high-performance'
   });
 } catch (err) {
@@ -93,6 +97,8 @@ let quality = params.get('quality') === 'low' || params.get('quality') === 'high
     ? 'low'
     : 'high';
 
+if (capture) quality = 'high';
+
 let maxPixelRatio = Math.min(window.devicePixelRatio || 1, quality === 'high' ? 1.5 : 1.15);
 let pixelRatio = maxPixelRatio;
 
@@ -125,7 +131,6 @@ let playing = true;
 let endHold = 0;
 let lastFrame = performance.now();
 let currentAct = -1;
-let chapterTimer = 0;
 let idleTimer = 0;
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -152,8 +157,21 @@ function showChapter(act) {
   el.chapterTitle.textContent = act.title;
   el.chapterLine.textContent = act.line;
   if (el.actBadge) el.actBadge.textContent = `ACT ${act.numeral}`;
-  el.chapter.classList.add('is-visible');
-  chapterTimer = 5.4;
+}
+
+/** Captions and the end card are a function of story time, not of wall time. */
+function updateChrome(state) {
+  if (state.actIndex !== currentAct) {
+    currentAct = state.actIndex;
+    showChapter(state.act);
+  }
+  if (el.chapter) {
+    const captionUp = state.time - state.act.start < 5.4;
+    el.chapter.classList.toggle('is-visible', captionUp);
+  }
+  if (el.card) {
+    el.card.classList.toggle('is-visible', state.titleCard > 0.55);
+  }
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -356,6 +374,35 @@ const target = new THREE.Vector3();
 let firstFrame = true;
 let lastUiWrite = -1;
 
+/* ────────────────────────────────────────────────────────────────────────────
+   One frame, at any story time. The film is a pure function of this number:
+   the same t always paints the same pixels, in the browser and in the export.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+function paintAt(time) {
+  storyTime = Math.min(DURATION, Math.max(0, time));
+  const state = sampleTimeline(storyTime);
+
+  camera.position.fromArray(state.camera.position);
+  target.fromArray(state.camera.target);
+  camera.up.set(0, 1, 0);
+  camera.lookAt(target);
+  camera.rotateZ(state.camera.roll);
+  /* the lens opens up on portrait screens so the framing survives the crop */
+  const fov = effectiveFov(state.camera.fov, camera.aspect);
+  if (Math.abs(camera.fov - fov) > 1e-4) {
+    camera.fov = fov;
+    camera.updateProjectionMatrix();
+  }
+  camera.updateMatrixWorld(true);
+
+  world.update(state, camera);
+  pipeline.render(world.scene, camera, state);
+  updateChrome(state);
+
+  return state;
+}
+
 function frame(now) {
   requestAnimationFrame(frame);
 
@@ -383,41 +430,7 @@ function frame(now) {
       }
     }
   }
-  const state = sampleTimeline(storyTime);
-
-  /* ── camera ─────────────────────────────────────────────────────────── */
-  camera.position.fromArray(state.camera.position);
-  target.fromArray(state.camera.target);
-  camera.up.set(0, 1, 0);
-  camera.lookAt(target);
-  camera.rotateZ(state.camera.roll);
-  /* the lens opens up on portrait screens so the framing survives the crop */
-  const fov = effectiveFov(state.camera.fov, camera.aspect);
-  if (Math.abs(camera.fov - fov) > 1e-4) {
-    camera.fov = fov;
-    camera.updateProjectionMatrix();
-  }
-  camera.updateMatrixWorld(true);
-
-  /* ── world ──────────────────────────────────────────────────────────── */
-  world.update(state, camera);
-
-  /* ── grade & present ────────────────────────────────────────────────── */
-  pipeline.render(world.scene, camera, state);
-
-  /* ── chrome ─────────────────────────────────────────────────────────── */
-  if (state.actIndex !== currentAct) {
-    currentAct = state.actIndex;
-    showChapter(state.act);
-  }
-  if (chapterTimer > 0) {
-    chapterTimer -= dt;
-    if (chapterTimer <= 0 && el.chapter) el.chapter.classList.remove('is-visible');
-  }
-
-  if (el.card) {
-    el.card.classList.toggle('is-visible', state.titleCard > 0.55 && storyTime > 87);
-  }
+  paintAt(storyTime);
 
   const rounded = Math.round(storyTime * 10) / 10;
   if (rounded !== lastUiWrite) {
@@ -429,6 +442,7 @@ function frame(now) {
 
   if (firstFrame) {
     firstFrame = false;
+    api.ready = true;
     if (loading) {
       loading.classList.add('is-done');
       setTimeout(() => {
@@ -448,13 +462,11 @@ function timecode(seconds) {
    Go
    ──────────────────────────────────────────────────────────────────────────── */
 
-resize();
-setPlaying(true);
-showChapter(ACTS[0]);
-requestAnimationFrame(frame);
-
-/* expose a tiny handle for the tests and for curious visitors */
-window.VEILBREAK = {
+/* A tiny handle for the tests, the video exporter and curious visitors. */
+const api = {
+  ready: false,
+  duration: DURATION,
+  fps: 24,
   seek,
   play: () => setPlaying(true),
   pause: () => setPlaying(false),
@@ -462,5 +474,25 @@ window.VEILBREAK = {
   world,
   pipeline,
   renderer,
-  camera
+  camera,
+  /** Paint a single frame at an exact story time (deterministic). */
+  paintAt(time) {
+    const state = paintAt(time);
+    api.ready = true;
+    return state;
+  }
 };
+window.VEILBREAK = api;
+
+resize();
+
+if (capture) {
+  /* the exporter drives the clock; nothing here may tick on its own */
+  root?.classList.add('is-capture');
+  setPlaying(false);
+  api.paintAt(storyTime);
+  if (loading) loading.hidden = true;
+} else {
+  setPlaying(true);
+  requestAnimationFrame(frame);
+}

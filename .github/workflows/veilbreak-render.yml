@@ -1,0 +1,123 @@
+name: Render VEILBREAK
+
+# VEILBREAK is deterministic: `?capture=1` stops the clock and lets the renderer
+# paint any story time on demand, so the browser is only a rasteriser. GitHub
+# Actions supplies the software-GL Chromium and ffmpeg; the result is published
+# as a release asset, which is the film's download link.
+#
+#   push with [video] in the commit message  → render the MP4 and publish it
+#   any other push touching veilbreak/       → render 19 stills (fast sanity pass)
+#   workflow_dispatch                        → choose either
+
+on:
+  push:
+    paths:
+      - 'veilbreak/**'
+      - 'scripts/render-veilbreak.mjs'
+      - '.github/workflows/veilbreak-render.yml'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'What to render'
+        type: choice
+        options: [stills, video]
+        default: stills
+      fps:
+        description: 'Frames per second'
+        default: '24'
+      width:
+        description: 'Width'
+        default: '1600'
+      height:
+        description: 'Height'
+        default: '900'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: veilbreak-render
+  cancel-in-progress: false
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Decide what to render
+        id: mode
+        run: |
+          MODE="${{ github.event.inputs.mode }}"
+          if [ -z "$MODE" ]; then
+            if echo "${{ github.event.head_commit.message }}" | grep -q '\[video\]'; then
+              MODE=video
+            else
+              MODE=stills
+            fi
+          fi
+          echo "mode=$MODE" >> "$GITHUB_OUTPUT"
+          echo "Rendering VEILBREAK: $MODE"
+
+      - name: Install Chromium (software WebGL) and ffmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends fonts-liberation fonts-dejavu
+          npm install --no-save --no-package-lock playwright
+          npx playwright install --with-deps chromium
+          ffmpeg -version | head -1
+
+      - name: Verify the film's own suites
+        run: |
+          node veilbreak/test/timeline.mjs
+          node veilbreak/test/project.mjs
+
+      - name: Render stills
+        if: steps.mode.outputs.mode == 'stills'
+        run: node scripts/render-veilbreak.mjs --mode stills --width 1600 --height 900
+
+      - name: Upload stills
+        if: always() && steps.mode.outputs.mode == 'stills'
+        uses: actions/upload-artifact@v4
+        with:
+          name: veilbreak-stills
+          path: out/stills/*.png
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Render the film
+        if: steps.mode.outputs.mode == 'video'
+        run: |
+          node scripts/render-veilbreak.mjs --mode video \
+            --fps "${{ github.event.inputs.fps || '24' }}" \
+            --width "${{ github.event.inputs.width || '1600' }}" \
+            --height "${{ github.event.inputs.height || '900' }}" \
+            --crf 19
+
+      - name: Keep the frames if anything went wrong
+        if: failure() && steps.mode.outputs.mode == 'video'
+        uses: actions/upload-artifact@v4
+        with:
+          name: veilbreak-frames-partial
+          path: out/veilbreak-frames/*.png
+          if-no-files-found: ignore
+          retention-days: 3
+
+      - name: Publish the film as a release asset
+        if: success() && steps.mode.outputs.mode == 'video'
+        run: |
+          TAG="veilbreak-$(date +%Y%m%d-%H%M)"
+          gh release create "$TAG" out/*.mp4 \
+            --title "VEILBREAK · $(date +%Y-%m-%d) · a 96-second procedural short" \
+            --notes "Rendered from source by the film's own timeline: 2304 deterministic frames, painter with headless Chromium's software rasteriser, encoded with ffmpeg. No footage, no models, no textures — every pixel is procedural geometry and GLSL.
+
+          Watch it live: https://$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]').github.io/$(echo '${{ github.event.repository.name }}')/veilbreak/" \
+            --latest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

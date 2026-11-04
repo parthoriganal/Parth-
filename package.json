@@ -16,7 +16,9 @@
     "shot:film": "node veilbreak/test/preview.mjs",
     "test:physics": "node gravity-lab/test/physics.cjs",
     "test:sim": "node gravity-lab/test/smoke.cjs",
-    "shot:sim": "node gravity-lab/test/render-shot.cjs"
+    "shot:sim": "node gravity-lab/test/render-shot.cjs",
+    "render:stills": "node scripts/render-veilbreak.mjs --mode stills",
+    "render:film": "node scripts/render-veilbreak.mjs --mode video"
   },
   "dependencies": {
     "chart.js": "^4.4.4"
