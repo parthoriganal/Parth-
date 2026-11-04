@@ -160,17 +160,32 @@ function showChapter(act) {
 }
 
 /** Captions and the end card are a function of story time, not of wall time. */
+const clamp01 = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
+
 function updateChrome(state) {
   if (state.actIndex !== currentAct) {
     currentAct = state.actIndex;
     showChapter(state.act);
   }
+  const since = state.time - state.act.start;
+
   if (el.chapter) {
-    const captionUp = state.time - state.act.start < 5.4;
-    el.chapter.classList.toggle('is-visible', captionUp);
+    el.chapter.classList.toggle('is-visible', since < 5.4);
+    if (capture) {
+      /* The exporter has no CSS transitions — a caption would snap. Story time
+         drives the fade instead, so every frame is still a pure function of t. */
+      const p = clamp01(Math.min(since / 0.9, (5.4 - since) / 1.1));
+      el.chapter.style.opacity = p.toFixed(3);
+      el.chapter.style.transform = `translateY(${((1 - p) * 14).toFixed(2)}px)`;
+    }
   }
+
   if (el.card) {
-    el.card.classList.toggle('is-visible', state.titleCard > 0.55);
+    const cardUp = state.titleCard > 0.55;
+    el.card.classList.toggle('is-visible', cardUp);
+    if (capture) {
+      el.card.style.opacity = clamp01((state.titleCard - 0.55) / 0.45).toFixed(3);
+    }
   }
 }
 

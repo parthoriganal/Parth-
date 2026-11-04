@@ -36,8 +36,8 @@ const arg = (name, fallback) => {
 };
 
 const MODE = arg('mode', 'stills');
-const WIDTH = Number(arg('width', '1600'));
-const HEIGHT = Number(arg('height', '900'));
+const WIDTH = Number(arg('width', '1920'));
+const HEIGHT = Number(arg('height', '1080'));
 const FPS = Number(arg('fps', '24'));
 const CRF = String(arg('crf', '19'));
 const OUT_NAME = arg('name', 'veilbreak');

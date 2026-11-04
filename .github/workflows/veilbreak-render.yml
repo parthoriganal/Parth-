@@ -31,10 +31,10 @@ on:
         default: '24'
       width:
         description: 'Width'
-        default: '1600'
+        default: '1920'
       height:
         description: 'Height'
-        default: '900'
+        default: '1080'
 
 permissions:
   contents: write
@@ -46,7 +46,7 @@ concurrency:
 jobs:
   render:
     runs-on: ubuntu-latest
-    timeout-minutes: 150
+    timeout-minutes: 180
 
     steps:
       - uses: actions/checkout@v4
@@ -144,8 +144,8 @@ jobs:
           set -o pipefail
           node scripts/render-veilbreak.mjs --mode video \
             --fps "${{ github.event.inputs.fps || '24' }}" \
-            --width "${{ github.event.inputs.width || '1600' }}" \
-            --height "${{ github.event.inputs.height || '900' }}" \
+            --width "${{ github.event.inputs.width || '1920' }}" \
+            --height "${{ github.event.inputs.height || '1080' }}" \
             --crf 19 2>&1 | tee out/render.log
 
       - name: Keep the frames if anything went wrong
