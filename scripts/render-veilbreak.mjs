@@ -192,6 +192,22 @@ async function main() {
   await page.goto(`http://127.0.0.1:${port}/?capture=1&quality=high`, { waitUntil: 'load' });
   await page.waitForFunction(() => window.VEILBREAK && window.VEILBREAK.ready, null, { timeout: 180000 });
 
+  /* A hidden-attribute bug once left the "needs WebGL" panel covering the
+     canvas: the GL buffer was fine and every screenshot was a black page. */
+  const stage = await page.evaluate(() => {
+    const fallback = document.getElementById('vb-fallback');
+    const canvas = document.getElementById('vb-canvas');
+    const shown = (node) => !!node && getComputedStyle(node).display !== 'none';
+    return {
+      fallbackVisible: shown(fallback),
+      canvasVisible: shown(canvas),
+      unsupported: !!document.querySelector('.vb-root.is-unsupported')
+    };
+  });
+  if (stage.fallbackVisible || stage.unsupported || !stage.canvasVisible) {
+    throw new Error(`the stage is obstructed: ${JSON.stringify(stage)}`);
+  }
+
   const duration = await page.evaluate(() => window.VEILBREAK.duration);
   const renderer = await page.evaluate(() => {
     const gl = window.VEILBREAK.renderer.getContext();

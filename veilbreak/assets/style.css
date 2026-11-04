@@ -56,6 +56,11 @@ body { overscroll-behavior: none; }
 
 /* ── anamorphic bars ────────────────────────────────────────────────────── */
 
+/* `hidden` only beats the UA stylesheet: any author `display` rule silently
+   overrides it, which is how a fallback panel once covered the whole film.
+   Restate it once, for everything. */
+[hidden] { display: none !important; }
+
 .vb-bar { display: none; }
 
 @media (min-aspect-ratio: 12/5) {
