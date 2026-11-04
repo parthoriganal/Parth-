@@ -118,8 +118,22 @@ jobs:
             ffmpeg -y -hide_banner -pattern_type glob -i 'out/stills/*.png' \
               -vf "scale=480:-2,tile=5x4:padding=6:color=0x0a0d14" \
               -frames:v 1 -update 1 veilbreak/docs/ci-stills.png
-            ls -la out/stills | head -3
-            ls -la veilbreak/docs/ci-stills.png
+            # a legible look at the loudest moments: the approach, the flash, the
+            # far side. Cheap to regenerate, so it is not precious.
+            for pair in 8:approach 10:surge 12:flash 13:farside; do
+              n=${pair%%:*}
+              tag=${pair##*:}
+              cp "out/stills/$(ls out/stills | sed -n "$((n + 1))p")" "out/detail_${tag}.png"
+            done
+            i=0
+            for tag in approach surge flash farside; do
+              cp "out/detail_${tag}.png" "out/detail_$i.png"
+              i=$((i + 1))
+            done
+            ffmpeg -y -v error -i out/detail_%d.png \
+              -vf "scale=1000:-2,tile=2x2:padding=6:color=0x0a0d14" \
+              -frames:v 1 -update 1 veilbreak/docs/ci-detail.png
+            ls -la veilbreak/docs/ci-*.png
           } 2>&1 | tee out/sheet.log
 
       # ── the film ────────────────────────────────────────────────────────
