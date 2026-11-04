@@ -71,10 +71,14 @@ jobs:
 
       - name: Install Chromium (software WebGL) and ffmpeg
         run: |
+          set -euo pipefail
           sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends fonts-liberation fonts-dejavu
+          # the runner image no longer ships ffmpeg, so install it rather than
+          # discover its absence at the encoding step
+          sudo apt-get install -y --no-install-recommends ffmpeg fonts-liberation fonts-dejavu
           npm install --no-save --no-package-lock playwright
           npx playwright install --with-deps chromium
+          command -v ffmpeg
           ffmpeg -version | head -1
 
       - name: Verify the film's own suites
