@@ -30,6 +30,14 @@ jobs:
       - name: Verify timeline and graphic systems
         run: npm run verify
 
+      # VEILBREAK ships as a static folder (no build step). Its own suites are
+      # dependency-free, so they run here; the shader compile test degrades to
+      # static checks unless glslangValidator is installed.
+      - name: Verify VEILBREAK
+        run: |
+          node veilbreak/test/timeline.mjs
+          node veilbreak/test/project.mjs
+
       - run: npm run build
 
       # Gravity Lab is fully static (no build step), so it ships verbatim
@@ -39,6 +47,12 @@ jobs:
           mkdir -p dist/gravity-lab
           cp -r gravity-lab/index.html gravity-lab/README.md dist/gravity-lab/
           cp -r gravity-lab/assets gravity-lab/docs dist/gravity-lab/
+
+      - name: Include VEILBREAK in the Pages artifact
+        run: |
+          mkdir -p dist/veilbreak
+          cp -r veilbreak/index.html veilbreak/README.md dist/veilbreak/
+          cp -r veilbreak/assets veilbreak/docs dist/veilbreak/
 
       - uses: actions/configure-pages@v5
 

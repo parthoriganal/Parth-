@@ -1,0 +1,269 @@
+name: Render VEILBREAK
+
+# VEILBREAK is deterministic: `?capture=1` stops the clock and lets the page
+# paint any story time on demand, so the browser is only a rasteriser and the
+# runner needs no GPU (Chromium falls back to SwiftShader). GitHub Actions
+# supplies Chromium and ffmpeg, then publishes the finished film as a release
+# asset — that download URL is the film's permanent link.
+#
+#   push with [video] in   → render all 2304 frames, publish the MP4
+#   any other push         → render 19 stills (a 20-second sanity pass)
+#   workflow_dispatch      → choose either, and the frame size
+#
+# Every run ends by committing veilbreak/docs/render-status.md, so the render
+# can be read back from the repository.
+
+on:
+  push:
+    paths:
+      - 'veilbreak/**'
+      - 'scripts/render-veilbreak.mjs'
+      - '.github/workflows/veilbreak-render.yml'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'What to render'
+        type: choice
+        options: [stills, video]
+        default: stills
+      fps:
+        description: 'Frames per second'
+        default: '24'
+      width:
+        description: 'Width'
+        default: '1920'
+      height:
+        description: 'Height'
+        default: '1080'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: veilbreak-render
+  cancel-in-progress: false
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Decide what to render
+        id: mode
+        run: |
+          MODE="${{ github.event.inputs.mode }}"
+          if [ -z "$MODE" ]; then
+            if echo "${{ github.event.head_commit.message }}" | grep -q '\[video\]'; then
+              MODE=video
+            else
+              MODE=stills
+            fi
+          fi
+          echo "mode=$MODE" >> "$GITHUB_OUTPUT"
+          echo "VEILBREAK: rendering $MODE"
+
+      - name: Install Chromium (software WebGL) and ffmpeg
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          # the runner image no longer ships ffmpeg, so install it rather than
+          # discover its absence at the encoding step
+          sudo apt-get install -y --no-install-recommends ffmpeg fonts-liberation fonts-dejavu
+          npm install --no-save --no-package-lock playwright
+          npx playwright install --with-deps chromium
+          command -v ffmpeg
+          ffmpeg -version | head -1
+
+      - name: Verify the film's own suites
+        run: |
+          node veilbreak/test/timeline.mjs
+          node veilbreak/test/project.mjs
+
+      # ── stills ──────────────────────────────────────────────────────────
+      - name: Render stills
+        if: steps.mode.outputs.mode == 'stills'
+        run: |
+          mkdir -p out
+          set -o pipefail
+          node scripts/render-veilbreak.mjs --mode stills --width 1600 --height 900 2>&1 \
+            | tee out/render.log
+
+      - name: Upload stills
+        if: always() && steps.mode.outputs.mode == 'stills'
+        uses: actions/upload-artifact@v4
+        with:
+          name: veilbreak-stills
+          path: out/stills/*.png
+          if-no-files-found: warn
+          retention-days: 14
+
+      # Artifacts are the fast way to look at a render; the contact sheet is the
+      # durable one — it lives in the repository, next to the storyboard.
+      # (ffmpeg's image2 muxer refuses an unnumbered single-image output unless
+      # -update 1 is given, which is why every PNG write here has it.)
+      - name: Stills contact sheet
+        if: success() && steps.mode.outputs.mode == 'stills'
+        continue-on-error: true
+        run: |
+          mkdir -p out
+          set -eo pipefail
+          {
+            ffmpeg -y -hide_banner -pattern_type glob -i 'out/stills/*.png' \
+              -vf "scale=480:-2,tile=5x4:padding=6:color=0x0a0d14" \
+              -frames:v 1 -update 1 veilbreak/docs/ci-stills.png
+            # a legible look at the loudest moments: the approach, the flash, the
+            # far side. Cheap to regenerate, so it is not precious.
+            for pair in 8:approach 10:surge 12:flash 13:farside; do
+              n=${pair%%:*}
+              tag=${pair##*:}
+              cp "out/stills/$(ls out/stills | sed -n "$((n + 1))p")" "out/detail_${tag}.png"
+            done
+            i=0
+            for tag in approach surge flash farside; do
+              cp "out/detail_${tag}.png" "out/detail_$i.png"
+              i=$((i + 1))
+            done
+            ffmpeg -y -v error -i out/detail_%d.png \
+              -vf "scale=1000:-2,tile=2x2:padding=6:color=0x0a0d14" \
+              -frames:v 1 -update 1 veilbreak/docs/ci-detail.png
+            ls -la veilbreak/docs/ci-*.png
+          } 2>&1 | tee out/sheet.log
+
+      # ── the film ────────────────────────────────────────────────────────
+      - name: Render the film
+        if: steps.mode.outputs.mode == 'video'
+        run: |
+          mkdir -p out
+          set -o pipefail
+          node scripts/render-veilbreak.mjs --mode video \
+            --fps "${{ github.event.inputs.fps || '24' }}" \
+            --width "${{ github.event.inputs.width || '1920' }}" \
+            --height "${{ github.event.inputs.height || '1080' }}" \
+            --crf 19 2>&1 | tee out/render.log
+
+      - name: Keep the frames if anything went wrong
+        if: failure() && steps.mode.outputs.mode == 'video'
+        uses: actions/upload-artifact@v4
+        with:
+          name: veilbreak-frames-partial
+          path: out/veilbreak-frames/*.png
+          if-no-files-found: ignore
+          retention-days: 3
+
+      - name: Publish the film as a release asset
+        if: success() && steps.mode.outputs.mode == 'video'
+        run: |
+          set -euo pipefail
+          TAG="veilbreak-$(date +%Y%m%d-%H%M)"
+          OWNER=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')
+          cat > out/notes.md <<EOF
+          Rendered from the film's own source: 2304 deterministic frames of procedural
+          geometry and GLSL, painted one story time at a time in headless Chromium and
+          encoded with ffmpeg. No footage, no models, no textures.
+
+          - **Watch it live** — https://$OWNER.github.io/${{ github.event.repository.name }}/veilbreak/
+          - **Read the film** — https://github.com/${{ github.repository }}/blob/${{ github.ref_name }}/veilbreak/README.md
+          - **Embed it** — append `?embed=1` to the live URL for a chromeless cut
+          EOF
+          gh release create "$TAG" out/*.mp4 \
+            --title "VEILBREAK · $(date +%Y-%m-%d) · a 96-second procedural short" \
+            --notes-file out/notes.md \
+            --latest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Proof that the encoded file is what was rendered: its real duration and
+      # frame count, plus frames decoded back out of the MP4 itself.
+      - name: Inspect the encoded film
+        if: success() && steps.mode.outputs.mode == 'video'
+        continue-on-error: true
+        run: |
+          mkdir -p out
+          set -eo pipefail
+          {
+            MP4=$(ls out/*.mp4 | head -1)
+            mkdir -p veilbreak/docs/video
+            ffprobe -v error -show_entries format=duration,size,bit_rate \
+              -show_entries stream=codec_name,width,height,nb_frames,r_frame_rate,pix_fmt \
+              -of json "$MP4" > out/ffprobe.json
+            python3 - "$MP4" <<'PY'
+          import json, sys, os
+          d = json.load(open('out/ffprobe.json'))
+          f, v = d['format'], d['streams'][0]
+          out = {
+              'file': os.path.basename(sys.argv[1]),
+              'codec': f"{v['codec_name']} / {v['pix_fmt']}",
+              'size': f"{v['width']}x{v['height']}",
+              'fps': v['r_frame_rate'],
+              'frames': int(v['nb_frames']),
+              'duration_s': round(float(f['duration']), 3),
+              'megabytes': round(int(f['size']) / 1048576, 2),
+              'megabits_per_second': round(int(f['bit_rate']) / 1e6, 2),
+          }
+          json.dump(out, open('veilbreak/docs/video/ffprobe.json', 'w'), indent=2)
+          print(json.dumps(out, indent=2))
+          PY
+            i=0
+            for t in 5 20 33 47 61 84; do
+              ffmpeg -y -v error -ss "$t" -i "$MP4" -frames:v 1 -update 1 \
+                -vf "scale=640:-2" "out/sheet_$i.png"
+              i=$((i+1))
+            done
+            ffmpeg -y -v error -i out/sheet_%d.png \
+              -filter_complex "tile=3x2:padding=6:color=0x0a0d14" \
+              -frames:v 1 -update 1 veilbreak/docs/video/contact-sheet.png
+            ls -la veilbreak/docs/video
+          } 2>&1 | tee out/inspect.log
+
+      # The only way to read a run back from outside: leave the report in git.
+      - name: Commit the render report
+        if: always()
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          mkdir -p veilbreak/docs
+          {
+            echo "# VEILBREAK — last render"
+            echo
+            echo "run \`${{ github.run_id }}\` · mode \`${{ steps.mode.outputs.mode }}\` · commit \`${{ github.sha }}\`"
+            echo
+            for log in out/render.log out/sheet.log out/inspect.log; do
+              if [ -f "$log" ]; then
+                echo "## \`$log\`"
+                echo
+                echo '```'
+                tail -80 "$log"
+                echo '```'
+                echo
+              fi
+            done
+            echo "## workspace"
+            echo
+            echo '```'
+            git status --porcelain
+            echo '```'
+            echo
+            echo "## out"
+            echo
+            echo '```'
+            ls -la out 2>/dev/null || true
+            echo '```'
+            echo
+            echo "## veilbreak/docs"
+            echo
+            echo '```'
+            ls -la veilbreak/docs | head -30
+            echo '```'
+          } > veilbreak/docs/render-status.md
+          git config user.name "VEILBREAK render"
+          git config user.email "veilbreak@users.noreply.github.com"
+          git add -A veilbreak/docs
+          git commit -m "VEILBREAK: render report from CI [skip ci]"
+          git push

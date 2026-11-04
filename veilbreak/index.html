@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>VEILBREAK — a cinematic multiverse sequence</title>
+<meta name="description" content="VEILBREAK: a five-act procedural sci-fi film built with three.js. Cel-shaded monoliths, a painted nebula, a dimensional aperture and the ember universe on its far side. No textures, no assets, no build step." />
+<meta name="theme-color" content="#05060d" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2305060d'/%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%2374e6ff' stroke-width='1.6'/%3E%3Ccircle cx='16' cy='16' r='3.4' fill='%23e8faff'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="./assets/style.css" />
+</head>
+<body>
+
+<div id="vb" class="vb">
+
+  <canvas id="vb-canvas" aria-label="VEILBREAK — an animated short film. Act I: a painted cosmic void. Act II: a colossal ring structure in space. Act III: a dimensional aperture ignites. Act IV: the camera crosses into an alternate universe. Act V: an ember world wide shot with a lone watcher."></canvas>
+
+  <!-- anamorphic frame lines: only on screens wider than 2.4:1 -->
+  <div class="vb-bar vb-bar--top" aria-hidden="true"></div>
+  <div class="vb-bar vb-bar--bottom" aria-hidden="true"></div>
+
+  <header class="vb-head">
+    <div class="vb-brand">
+      <span class="vb-mark">VEILBREAK</span>
+      <span class="vb-tagline">a multiverse sequence</span>
+    </div>
+    <div class="vb-badge">
+      <span class="vb-badge-line" aria-hidden="true"></span>
+      <span id="vb-act">ACT I</span>
+    </div>
+  </header>
+
+  <div class="vb-chapter" id="vb-chapter" aria-live="polite">
+    <div class="vb-chapter-num" id="vb-chapter-num">I</div>
+    <h2 class="vb-chapter-title" id="vb-chapter-title">The Long Dark</h2>
+    <p class="vb-chapter-line" id="vb-chapter-line">Before the door, there was only distance.</p>
+  </div>
+
+  <div class="vb-card" id="vb-card">
+    <p class="vb-card-rule" aria-hidden="true"></p>
+    <h1 class="vb-card-title">VEILBREAK</h1>
+    <p class="vb-card-sub">a multiverse sequence</p>
+    <button class="vb-card-btn" id="vb-replay" type="button">Watch again</button>
+  </div>
+
+  <div class="vb-controls" id="vb-controls">
+    <div class="vb-progress" aria-hidden="true">
+      <div class="vb-progress-fill" id="vb-progress"></div>
+      <div class="vb-ticks" id="vb-ticks"></div>
+    </div>
+    <div class="vb-controls-row">
+      <button class="vb-btn" id="vb-play" type="button" data-state="playing" aria-label="Pause">
+        <svg class="vb-ico vb-ico--play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
+        <svg class="vb-ico vb-ico--pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.4v14H7zM13.6 5H17v14h-3.4z"/></svg>
+      </button>
+      <button class="vb-btn" id="vb-restart" type="button" aria-label="Restart from the beginning">
+        <svg class="vb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5a7 7 0 1 1-6.6 4.7l1.9.7A5 5 0 1 0 12 7V9L7.5 5.2 12 1.5z"/></svg>
+      </button>
+      <input class="vb-scrub" id="vb-scrub" type="range" min="0" max="96" step="0.05" value="0" aria-label="Story time" />
+      <span class="vb-time" id="vb-time">00:00 / 01:36</span>
+      <button class="vb-btn" id="vb-fs" type="button" aria-label="Fullscreen">
+        <svg class="vb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5v2H6v3zm11-5h5v5h-2V6h-3zM4 15h2v3h3v2H4zm14 3v-3h2v5h-5v-2z"/></svg>
+      </button>
+      <button class="vb-btn" id="vb-hide" type="button" aria-label="Hide the interface">
+        <svg class="vb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6zm9 3.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="vb-loading" id="vb-loading">
+    <div class="vb-loading-mark">VEILBREAK</div>
+    <div class="vb-loading-track"><span></span></div>
+  </div>
+
+  <div class="vb-fallback" id="vb-fallback" hidden>
+    <h2>This film needs WebGL</h2>
+    <p>The sequence renders in real time on the GPU. Enable hardware acceleration, or open it in a recent Chrome, Safari, Firefox or Edge.</p>
+  </div>
+
+  <noscript>
+    <div class="vb-fallback"><h2>JavaScript required</h2><p>VEILBREAK is generated in the browser, frame by frame.</p></div>
+  </noscript>
+</div>
+
+<script type="module" src="./assets/main.js"></script>
+</body>
+</html>

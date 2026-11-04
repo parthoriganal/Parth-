@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Advanced Amazon KDP research platform + Gravity Lab, a dependency-free N-body simulator",
+  "description": "Amazon KDP research platform, a dependency-free N-body simulator, and VEILBREAK, a procedural three.js short film",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -11,9 +11,14 @@
     "backend": "python backend/app.py",
     "verify": "node scripts/verify.mjs",
     "sim": "python3 -m http.server 8080 --bind 0.0.0.0 --directory gravity-lab",
+    "film": "python3 -m http.server 8080 --bind 0.0.0.0 --directory veilbreak",
+    "test:film": "node veilbreak/test/shaders.mjs && node veilbreak/test/timeline.mjs && node veilbreak/test/project.mjs",
+    "shot:film": "node veilbreak/test/preview.mjs",
     "test:physics": "node gravity-lab/test/physics.cjs",
     "test:sim": "node gravity-lab/test/smoke.cjs",
-    "shot:sim": "node gravity-lab/test/render-shot.cjs"
+    "shot:sim": "node gravity-lab/test/render-shot.cjs",
+    "render:stills": "node scripts/render-veilbreak.mjs --mode stills",
+    "render:film": "node scripts/render-veilbreak.mjs --mode video"
   },
   "dependencies": {
     "chart.js": "^4.4.4"
