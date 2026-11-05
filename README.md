@@ -1,3 +1,11 @@
+## LIGHTFALL — narrated cinematic science film
+
+**[Watch / run / export LIGHTFALL](./lightfall/README.md)** — a 74-second original
+black hole documentary with generated narration, numerical light bending,
+schematic ray diagrams, an original score and MP4 export tools.
+
+---
+
 ## AETHERBOUND — cinematic multiverse sequence
 
 New standalone Three.js project: **[multiverse/](./multiverse/)**.

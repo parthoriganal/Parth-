@@ -43,6 +43,9 @@ jobs:
       - name: Include AETHERBOUND in the Pages artifact
         run: cp -r multiverse dist/multiverse
 
+      - name: Include LIGHTFALL in the Pages artifact
+        run: cp -r lightfall dist/lightfall
+
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3

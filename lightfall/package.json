@@ -1,0 +1,14 @@
+{
+  "name": "lightfall-cinematic-science",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A narrated, 74-second black hole documentary built with Three.js, GLSL and GSAP",
+  "scripts": {
+    "serve": "python3 -m http.server 8090 --bind 0.0.0.0",
+    "test": "node tools/smoke.cjs",
+    "render": "node tools/render.cjs"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^24.0.0"
+  }
+}
