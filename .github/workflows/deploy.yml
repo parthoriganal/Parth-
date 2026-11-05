@@ -40,6 +40,12 @@ jobs:
           cp -r gravity-lab/index.html gravity-lab/README.md dist/gravity-lab/
           cp -r gravity-lab/assets gravity-lab/docs dist/gravity-lab/
 
+      - name: Include AETHERBOUND in the Pages artifact
+        run: cp -r multiverse dist/multiverse
+
+      - name: Include LIGHTFALL in the Pages artifact
+        run: cp -r lightfall dist/lightfall
+
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3
