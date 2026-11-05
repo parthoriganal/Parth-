@@ -16,7 +16,8 @@
     "shot:sim": "node gravity-lab/test/render-shot.cjs"
   },
   "dependencies": {
-    "chart.js": "^4.4.4"
+    "chart.js": "^4.4.4",
+    "three": "^0.187.0"
   },
   "devDependencies": {
     "vite": "8.3.5"

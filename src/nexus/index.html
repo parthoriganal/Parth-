@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Nexus Core — Immersive Data Cosmos</title>
+<meta name="description" content="Full-stack immersive data visualization: Three.js particle cosmos, custom GLSL shaders, bloom post-processing, Flask API backend." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./style.css" />
+<style>
+  #loading{position:fixed;inset:0;background:#05070a;display:grid;place-items:center;z-index:50;transition:opacity 0.6s;}
+  #loading.hidden{opacity:0;pointer-events:none;}
+  .load-text{font-family:"Space Grotesk",sans-serif;font-weight:700;letter-spacing:0.2em;color:#38bdf8;font-size:1.1rem;}
+  .load-bar{width:220px;height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;margin-top:14px;}
+  .load-bar i{display:block;height:100%;width:0%;background:linear-gradient(90deg,#38bdf8,#7c3aed);transition:width 0.6s;}
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="load-text">NEXUS CORE<sub style="opacity:0.6;font-size:0.55em;">initializing</sub></div>
+  <div class="load-bar"><i id="loadBar"></i></div>
+</div>
+
+<div id="nexus">
+  <!-- canvas injected by Three.js -->
+
+  <!-- HUD -->
+  <div class="hud">
+    <!-- top left: identity -->
+    <div class="panel top-left">
+      <div class="label">nexus.core</div>
+      <h2>Data Cosmos</h2>
+      <p>Immersive full-stack data visualization. Three.js particle system with custom GLSL shaders, bloom post-processing, and live telemetry from the Flask Nexus API.</p>
+      <div class="ctrl">
+        <button id="btnMode">▸ Cycle color mode <span style="opacity:0.6">spectrum → thermal → neon</span></button>
+        <button id="btnRotate">▸ Toggle auto-rotate <span class="status-dot live"></span></button>
+        <button id="btnCore">▸ Toggle core <span style="opacity:0.6">nucleus</span></button>
+        <button id="btnFetch">⟳ Refresh data <span style="opacity:0.6">from API</span></button>
+      </div>
+    </div>
+
+    <!-- top right: live metrics -->
+    <div class="panel top-right">
+      <div class="label">live telemetry</div>
+      <div class="metric"><span>particles</span><span class="val" id="metric-particles">—</span></div>
+      <div class="metric"><span>sim clock</span><span class="val" id="metric-clock">—</span></div>
+      <div class="metric"><span>energy</span><span class="val" id="metric-energy">—</span></div>
+      <div class="metric"><span>coherence</span><span class="val" id="metric-coherence">—</span></div>
+      <div class="toggle">
+        <input type="checkbox" id="togGrid" checked />
+        <label for="togGrid">show orbit rings</label>
+      </div>
+      <div class="feed" id="eventFeed" data-seenIds=""></div>
+    </div>
+
+    <!-- center title -->
+    <div class="center-title">
+      <h1>NEXUS CORE</h1>
+      <p>immersive data visualization</p>
+      <span class="sub">full stack • three.js • glsl • flask</span>
+    </div>
+
+    <div class="core-badge" id="coreBadge"></div>
+  </div>
+
+  <!-- bottom left: status -->
+  <div class="panel bottom-left">
+    <div class="label">system status</div>
+    <div class="metric"><span>api</span><span class="val ok" id="status-api">● live</span></div>
+    <div class="metric"><span>engine</span><span class="val ok">three.js r160</span></div>
+    <div class="metric"><span>shaders</span><span class="val ok">glsl custom</span></div>
+    <div class="metric"><span>post-fx</span><span class="val ok">bloom + color</span></div>
+    <div class="tiny" style="margin-top:10px;opacity:0.7;">Drag to orbit • Scroll to zoom • Click to stop auto-rotate</div>
+  </div>
+
+  <!-- bottom right: legend -->
+  <div class="panel bottom-right">
+    <div class="label">color reference</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+      <span style="display:flex;align-items:center;gap:6px;font-size:0.75rem;color:var(--muted);"><span style="width:10px;height:10px;border-radius:50%;background:#38bdf8;box-shadow:0 0 8px #38bdf8;"></span>spectrum</span>
+      <span style="display:flex;align-items:center;gap:6px;font-size:0.75rem;color:var(--muted);"><span style="width:10px;height:10px;border-radius:50%;background:#f59e0b;box-shadow:0 0 8px #f59e0b;"></span>thermal</span>
+      <span style="display:flex;align-items:center;gap:6px;font-size:0.75rem;color:var(--muted);"><span style="width:10px;height:10px;border-radius:50%;background:#7c3aed;box-shadow:0 0 8px #7c3aed;"></span>neon</span>
+    </div>
+    <div class="tiny" style="line-height:1.5;">
+      Particles respond to live API telemetry:<br>
+      • <b>Energy</b> drives brightness &amp; size<br>
+      • <b>Coherence</b> shifts color mode<br>
+      • <b>Density</b> modulates warp displacement<br>
+      • Mouse creates a repulsion field
+    </div>
+  </div>
+</div>
+
+<button class="btn-glass" onclick="location.reload()">↻ Restart Nexus</button>
+
+<div class="toast" id="toast"></div>
+
+<script type="module" src="./main.js"></script>
+</body>
+</html>
