@@ -6,6 +6,11 @@ accretion disks, bent light, and the distinction between a shadow and a horizon.
 
 ![Light bent around a black hole](docs/preview.jpg)
 
+## Downloads
+
+- [Finished MP4 — 74s, 960×540, 24fps, with narration and music](https://github.com/parthoriganal/Parth-/raw/refs/heads/arena/055467fd-parth/lightfall/downloads/LIGHTFALL.mp4)
+- [Standalone source ZIP — including narration and mix](https://github.com/parthoriganal/Parth-/raw/refs/heads/arena/055467fd-parth/lightfall/downloads/LIGHTFALL-source.zip)
+
 ## Watch the working project
 
 ```sh
