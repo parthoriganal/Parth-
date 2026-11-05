@@ -16,7 +16,16 @@
     "shot:sim": "node gravity-lab/test/render-shot.cjs"
   },
   "dependencies": {
-    "chart.js": "^4.4.4"
+    "@napi-rs/canvas": "^1.1.0",
+    "@remotion/cli": "^4.0.540",
+    "@remotion/renderer": "^4.0.540",
+    "chart.js": "^4.4.4",
+    "gsap": "^3.15.1",
+    "lottie-web": "^5.13.0",
+    "motion": "^14.9.1",
+    "pixi.js": "^8.22.0",
+    "remotion": "^4.0.540",
+    "three": "^0.187.0"
   },
   "devDependencies": {
     "vite": "8.3.5"

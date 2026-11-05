@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Singularity / An endless fall</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:#03030b;color:#f7f5ff;font-family:Arial,sans-serif;overflow:hidden}canvas{display:block;width:100%;height:100%}.overlay{position:absolute;inset:0;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(24px,5vw,72px)}header,footer{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}.brand{font-size:11px;letter-spacing:.32em;font-weight:bold}.tag{color:#b1a9ce;font-size:10px;letter-spacing:.22em;text-transform:uppercase;text-align:right;line-height:1.8}footer{align-items:end}.title{font-size:clamp(36px,7vw,96px);font-weight:800;line-height:.82;letter-spacing:-.07em;margin:0;text-transform:uppercase}.subtitle{color:#b9a9d8;font-size:10px;letter-spacing:.23em;line-height:2;text-transform:uppercase;margin-top:20px}.controls{pointer-events:auto;display:flex;gap:8px;align-items:center}button{background:rgba(10,7,30,.55);border:1px solid #a78bfa77;border-radius:40px;padding:12px 17px;color:white;font:10px Arial;letter-spacing:.17em;cursor:pointer;backdrop-filter:blur(10px)}button:hover{background:#6b3db1}.small{font-size:10px;color:#d2c3ed;letter-spacing:.15em}@media(max-width:600px){.tag{font-size:8px}.title{font-size:40px}footer{flex-direction:column;align-items:flex-start}.controls{align-self:flex-end}}
+</style>
+</head><body><canvas id="art" aria-label="Animated cosmic wormhole with neon rings and stars"></canvas><div class="overlay"><header><div class="brand">✦ &nbsp; PARTH / MOTION LAB</div><div class="tag">An experiment in infinite motion<br>001 — 2026</div></header><footer><div><h1 class="title">The<br>Singularity<span style="color:#c68bff">.</span></h1><div class="subtitle">A portal to somewhere else<br>Built from light, math &amp; imagination</div></div><div class="controls"><span class="small" id="state">LIVE LOOP</span><button id="toggle" aria-label="Pause animation">PAUSE &#10074;&#10074;</button></div></footer></div>
+<script>
+const canvas=document.getElementById('art'),ctx=canvas.getContext('2d');let w,h,dpr,paused=false,elapsed=0,last=0;
+function resize(){dpr=Math.min(devicePixelRatio||1,2);w=innerWidth;h=innerHeight;canvas.width=w*dpr;canvas.height=h*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)}addEventListener('resize',resize);resize();
+function rand(n){let x=Math.sin(n*127.1+43.7)*43758.5453;return x-Math.floor(x)}
+function render(t){ctx.clearRect(0,0,w,h);let bg=ctx.createRadialGradient(w*.52,h*.45,0,w*.5,h*.5,Math.max(w,h)*.7);bg.addColorStop(0,'#160c32');bg.addColorStop(.4,'#08091a');bg.addColorStop(1,'#020208');ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
+for(let i=0;i<260;i++){let x=rand(i*3)*w,y=rand(i*3+1)*h,r=rand(i*3+2)*1.5+.15;ctx.fillStyle=`rgba(214,206,255,${.15+.65*(.5+.5*Math.sin(t*.8+i))})`;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}
+let cx=w*.53,cy=h*.43,scale=Math.min(w*.48,h*.52);ctx.save();ctx.translate(cx,cy);ctx.rotate(-.24);
+let glow=ctx.createRadialGradient(0,0,scale*.05,0,0,scale*.8);glow.addColorStop(0,'rgba(255,137,245,.3)');glow.addColorStop(.35,'rgba(121,43,233,.19)');glow.addColorStop(1,'rgba(50,12,110,0)');ctx.fillStyle=glow;ctx.fillRect(-scale,-scale,scale*2,scale*2);
+// Orbital streaks recede into an impossible central point.
+for(let j=34;j>=0;j--){let phase=((j/35+t*.035)%1),r=scale*(.09+phase*.93),alpha=Math.sin(phase*Math.PI)*.75;ctx.beginPath();ctx.ellipse(0,0,r,r*.38,0,0,Math.PI*2);ctx.strokeStyle=`hsla(${275+phase*70},100%,${60+phase*15}%,${alpha*.75})`;ctx.lineWidth=1+phase*2;ctx.shadowBlur=10+phase*12;ctx.shadowColor='#a342ff';ctx.stroke()}
+// Long colored threads spiral around the hole.
+for(let k=0;k<10;k++){ctx.beginPath();for(let i=0;i<260;i++){let p=i/259,ang=p*18+k*Math.PI*2/10+t*.28,rr=scale*(.08+p*.95);let x=Math.cos(ang)*rr,y=Math.sin(ang)*rr*.38;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)}ctx.strokeStyle=k%2?'rgba(255,103,205,.4)':'rgba(92,215,255,.35)';ctx.lineWidth=1;ctx.shadowBlur=9;ctx.shadowColor=k%2?'#ff51c5':'#53bfff';ctx.stroke()}
+ctx.shadowBlur=35;ctx.shadowColor='#eb91ff';let halo=ctx.createRadialGradient(0,0,scale*.02,0,0,scale*.17);halo.addColorStop(0,'#05020d');halo.addColorStop(.52,'#10051e');halo.addColorStop(.7,'#eb82ff');halo.addColorStop(.8,'#6832c7');halo.addColorStop(1,'rgba(40,2,80,0)');ctx.fillStyle=halo;ctx.beginPath();ctx.arc(0,0,scale*.17,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+// Traveling sparks in front of the rings.
+for(let i=0;i<100;i++){let p=(rand(i+500)+t*(.025+rand(i+600)*.04))%1,a=rand(i+800)*Math.PI*2+t*.15,rr=scale*(.12+p*.98);let x=Math.cos(a)*rr,y=Math.sin(a)*rr*.38;ctx.fillStyle=i%2?'#ff9bf6':'#a8f7ff';ctx.globalAlpha=Math.sin(p*Math.PI)*.9;ctx.beginPath();ctx.arc(x,y,.5+p*2,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;ctx.restore();
+let v=ctx.createRadialGradient(w*.5,h*.5,Math.min(w,h)*.15,w*.5,h*.5,Math.max(w,h)*.7);v.addColorStop(0,'transparent');v.addColorStop(1,'rgba(0,0,8,.8)');ctx.fillStyle=v;ctx.fillRect(0,0,w,h)}
+function tick(ts){if(!last)last=ts;if(!paused)elapsed+=Math.min(ts-last,100)/1000;last=ts;render(elapsed);requestAnimationFrame(tick)}requestAnimationFrame(tick);
+document.getElementById('toggle').onclick=()=>{paused=!paused;document.getElementById('toggle').innerHTML=paused?'PLAY &#9654;':'PAUSE &#10074;&#10074;';document.getElementById('toggle').setAttribute('aria-label',paused?'Play animation':'Pause animation');document.getElementById('state').textContent=paused?'PAUSED':'LIVE LOOP'};
+</script></body></html>
