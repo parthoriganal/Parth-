@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Singularity Bloom — procedural Blender sculpture</title>
+  <meta name="description" content="A fully procedural 3D sculpture generated with Blender 5.0 as a Python module, rendered with Cycles, and shown here as a real-time glTF viewer." />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <canvas id="stage"></canvas>
+
+  <div class="vignette" aria-hidden="true"></div>
+
+  <header class="hud hud--top">
+    <div class="brand">
+      <span class="dot"></span>
+      <span class="brand__name">SINGULARITY BLOOM</span>
+    </div>
+    <p class="brand__sub">
+      procedural sculpture · <strong>bpy&nbsp;5.0</strong> · Cycles path tracing · zero imported assets
+    </p>
+  </header>
+
+  <div class="hud hud--stats" id="stats">
+    <dl>
+      <div><dt>meshes</dt><dd id="s-meshes">—</dd></div>
+      <div><dt>triangles</dt><dd id="s-tris">—</dd></div>
+      <div><dt>materials</dt><dd id="s-mats">—</dd></div>
+      <div><dt>glb</dt><dd id="s-size">—</dd></div>
+    </dl>
+  </div>
+
+  <div class="hud hud--controls">
+    <button id="btn-spin" class="chip chip--on" type="button" aria-pressed="true">⟳ spin</button>
+    <button id="btn-bloom" class="chip chip--on" type="button" aria-pressed="true">✳ bloom</button>
+    <button id="btn-wire" class="chip" type="button" aria-pressed="false">◇ wireframe</button>
+    <button id="btn-reset" class="chip" type="button">⌂ reset view</button>
+  </div>
+
+  <div class="hud hud--hint">drag to orbit · scroll / pinch to zoom</div>
+
+  <div class="loader" id="loader">
+    <div class="loader__inner">
+      <div class="loader__ring"><span></span></div>
+      <p class="loader__label">forging the singularity</p>
+      <div class="loader__bar"><i id="bar"></i></div>
+      <p class="loader__pct" id="pct">0%</p>
+    </div>
+  </div>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

@@ -8,15 +8,18 @@ Built on [rxpelle/kdp-scout](https://github.com/rxpelle/kdp-scout) (MIT) as the 
 
 ---
 
-## 🪐 Also in this repo: two zero-dependency visual toys
+## 🪐 Also in this repo: three visual toys
 
 | Project | What it is |
 |---|---|
 | **[Gravity Lab](./gravity-lab/)** | A Barnes–Hut N-body gravitational simulator — leapfrog integration, inelastic merging, and eight real astrophysical initial conditions (solar system, galaxy collision, the figure-eight three-body choreography, a Plummer-sphere cluster, an accreting black hole…). No WebGL, no libraries. [`README`](./gravity-lab/README.md) · [`test/physics.cjs`](./gravity-lab/test/physics.cjs) |
 | **[Contribution City](./contribution-city/)** | Your GitHub contribution graph rebuilt as a beveled 3D city by a hand-rolled software renderer inside a Blender-flavoured UI. |
+| **[Singularity Bloom](./singularity-bloom/)** | A real 3D sculpture generated entirely by Python running inside **Blender 5.0** (headless, no display server), path-traced with Cycles, exported to glTF and spun in a three.js viewer. 25 crystal petals, two torus knots, 380 dust motes, an obsidian shell around a glowing heart. [`README`](./singularity-bloom/README.md) |
 
 ```bash
 npm run sim            # serve Gravity Lab at :8080
+npm run bloom          # serve the Singularity Bloom 3D viewer at :5180
+npm run bloom:render   # re-run the Blender/Cycles build + render
 npm run test:physics   # numerical acceptance suite
 npm run test:sim       # headless jsdom smoke test
 ```
