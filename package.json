@@ -13,7 +13,10 @@
     "sim": "python3 -m http.server 8080 --bind 0.0.0.0 --directory gravity-lab",
     "test:physics": "node gravity-lab/test/physics.cjs",
     "test:sim": "node gravity-lab/test/smoke.cjs",
-    "shot:sim": "node gravity-lab/test/render-shot.cjs"
+    "shot:sim": "node gravity-lab/test/render-shot.cjs",
+    "bloom": "vite --config singularity-bloom/viewer/vite.config.js",
+    "bloom:build": "vite build --config singularity-bloom/viewer/vite.config.js",
+    "bloom:render": "bash singularity-bloom/render.sh"
   },
   "dependencies": {
     "chart.js": "^4.4.4",
