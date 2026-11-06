@@ -1,0 +1,151 @@
+1
+00:00:00,000 --> 00:00:04,069
+You're probably installing AI skills you never actually
+run.
+
+2
+00:00:04,069 --> 00:00:10,240
+So I moved one folder out of a YouTube skill pack, and it
+broke somewhere I wasn't looking.
+
+3
+00:00:10,740 --> 00:00:16,158
+Eleven skills, six Python tools, five hundred thirty-five
+lines of code.
+
+4
+00:00:16,158 --> 00:00:20,070
+I installed all of it, and then I tried to break it.
+
+5
+00:00:20,070 --> 00:00:21,500
+This is what broke.
+
+6
+00:00:22,000 --> 00:00:24,762
+Here's the thing nobody says out loud.
+
+7
+00:00:24,762 --> 00:00:26,870
+Most skill packs are prompts.
+
+8
+00:00:26,870 --> 00:00:30,795
+You read them, the model reads them, nothing executes.
+
+9
+00:00:30,795 --> 00:00:36,828
+This one is different. It ships six Python tools that are
+supposed to actually run.
+
+10
+00:00:36,828 --> 00:00:42,280
+And that matters, because a tool that silently fails is
+worse than no tool.
+
+11
+00:00:42,780 --> 00:00:46,360
+So before trusting it, I audited it.
+
+12
+00:00:46,360 --> 00:00:49,343
+Every import in all six files.
+
+13
+00:00:49,343 --> 00:00:52,824
+csv, json, os, re, statistics, sys.
+
+14
+00:00:52,824 --> 00:00:59,785
+That's the whole list. No network. No subprocess. No eval.
+No API key.
+
+15
+00:00:59,785 --> 00:01:04,260
+Which means it runs anywhere, including here.
+
+16
+00:01:04,760 --> 00:01:11,001
+Then I broke it. I moved one folder, yt edit, out of the
+pack. Seventeen checks.
+
+17
+00:01:11,001 --> 00:01:15,526
+Eight of them failed. And the error wasn't file not found.
+
+18
+00:01:15,526 --> 00:01:19,816
+It was module not found error, no module named deadair.
+
+19
+00:01:19,816 --> 00:01:24,419
+Because three of these tools import across sibling
+folders.
+
+20
+00:01:24,419 --> 00:01:29,880
+Move one, and two others break at runtime. Not at install.
+At runtime.
+
+21
+00:01:30,380 --> 00:01:32,939
+That's the payoff, and here it is.
+
+22
+00:01:32,939 --> 00:01:36,551
+An install that looks clean can still be broken.
+
+23
+00:01:36,551 --> 00:01:41,594
+The only way to know is to run the tools, not to count the
+folders.
+
+24
+00:01:41,594 --> 00:01:50,098
+So I wrote one script that runs all six against generated
+fixtures and asserts on their output. It's in the repo.
+
+25
+00:01:50,098 --> 00:01:53,259
+npm run verify yt-skill. Seventeen checks.
+
+26
+00:01:53,259 --> 00:01:56,420
+It fails loudly, which is the whole point.
+
+27
+00:01:56,920 --> 00:01:59,195
+One tool genuinely surprised me.
+
+28
+00:01:59,195 --> 00:02:04,882
+It ranks videos not by views, but by how far each beat its
+own channel's median.
+
+29
+00:02:04,882 --> 00:02:09,289
+A four hundred thousand view video on a huge channel?
+Ignored.
+
+30
+00:02:09,289 --> 00:02:11,706
+The same views on a small channel?
+
+31
+00:02:11,706 --> 00:02:15,829
+Fourteen point seven eight times its median. Ranked first.
+
+32
+00:02:15,829 --> 00:02:21,160
+That's a better idea detector than view count, and it's
+seventy-four lines.
+
+33
+00:02:21,660 --> 00:02:26,561
+If you install one skill pack this week, run it before you
+trust it.
+
+34
+00:02:26,561 --> 00:02:28,940
+The verify script is in the repo.
+
