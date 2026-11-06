@@ -81,6 +81,30 @@ console.log(
   `${Math.round(triangles).toLocaleString()} tris · ${vertices.toLocaleString()} verts`
 );
 
+// ------------------------------------------------------------------ OBJ twin
+const objPath = path.join(__dirname, '..', 'docs', 'singularity_bloom.obj');
+if (fs.existsSync(objPath)) {
+  const lines = fs.readFileSync(objPath, 'utf8').split('\n');
+  let v = 0, f = 0;
+  const mats = new Set();
+  for (const line of lines) {
+    if (line.startsWith('v ')) v++;
+    else if (line.startsWith('f ')) f++;
+    else if (line.startsWith('usemtl ')) mats.add(line.slice(7).trim());
+  }
+  const objChecks = [
+    ['obj: vertices present', v > 40000],
+    ['obj: triangles match glb (~92k)', Math.abs(f - Math.round(triangles)) < 2000],
+    ['obj: all 10 materials referenced', mats.size >= 10],
+  ];
+  for (const [label, ok] of objChecks) {
+    if (!ok) failed++;
+    console.log(`${ok ? '  ok  ' : ' FAIL '} ${label}`);
+  }
+  console.log(`\n${path.basename(objPath)} — ${(fs.statSync(objPath).size / 1e6).toFixed(2)} MB · ` +
+    `${v.toLocaleString()} verts · ${f.toLocaleString()} tris · ${mats.size} materials`);
+}
+
 if (failed) {
   console.error(`\n${failed} check(s) failed`);
   process.exit(1);

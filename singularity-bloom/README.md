@@ -86,6 +86,7 @@ viewer/assets/model.glb the exported model the viewer loads
 docs/bloom-hero.jpg        final Cycles still (README size)
 docs/bloom-900x1125.png    the same frame, full resolution
 docs/singularity_bloom.blend  the editable scene — open it in any Blender 5.0
+docs/singularity_bloom.obj    Wavefront export (+ .mtl), Y-up, triangles
 docs/turntable.gif         8-frame ping-pong spin
 docs/turntable-sheet.jpg   contact sheet of those 8 frames
 out/                    (git-ignored) .blend, .glb, full-res renders
@@ -107,6 +108,7 @@ out/                    (git-ignored) .blend, .glb, full-res renders
 | What | File |
 |---|---|
 | 3D model (glTF binary, 1.9 MB) | [`viewer/assets/model.glb`](./viewer/assets/model.glb) |
+| 3D model (Wavefront OBJ + MTL, 6.4 MB) | [`docs/singularity_bloom.obj`](./docs/singularity_bloom.obj) · [`docs/singularity_bloom.mtl`](./docs/singularity_bloom.mtl) |
 | Blender scene, editable (1.2 MB) | [`docs/singularity_bloom.blend`](./docs/singularity_bloom.blend) |
 | Still, 900×1125 PNG | [`docs/bloom-900x1125.png`](./docs/bloom-900x1125.png) |
 | Still, JPG preview | [`docs/bloom-hero.jpg`](./docs/bloom-hero.jpg) |
