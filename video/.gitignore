@@ -1,0 +1,8 @@
+# intermediates
+_wav/
+*.wav
+
+# the finished render is committed (video/final/video.mp4); per-beat clips are the source
+!audio/*.mp3
+
+__pycache__/

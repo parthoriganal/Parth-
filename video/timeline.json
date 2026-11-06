@@ -1,0 +1,224 @@
+{
+ "fps": 24,
+ "gap": 0.5,
+ "beats": [
+  {
+   "id": "hook",
+   "label": "THE HOOK",
+   "start": 0.0,
+   "dur": 10.74,
+   "kind": "hook",
+   "names": [
+    "yt-audit",
+    "yt-chapters",
+    "yt-comment",
+    "yt-edit",
+    "yt-package",
+    "yt-plan",
+    "yt-retention",
+    "yt-script",
+    "yt-seo",
+    "yt-shorts",
+    "yt-viral"
+   ],
+   "rows": [
+    "\u2713 install root exists",
+    "\u2713 all 11 skills present  11/11",
+    "\u2713 hooks.json has 21 formulas  found 21",
+    "\u2713 run yt-viral/swipe.py  output ok",
+    "\u2713 chapters.py imports deadair at runtime"
+   ],
+   "drop": 3,
+   "line": "You're probably installing AI skills you never actually run."
+  },
+  {
+   "id": "counters",
+   "label": "THE CLAIM",
+   "start": 10.74,
+   "dur": 11.26,
+   "kind": "counters",
+   "names": [
+    "yt-audit",
+    "yt-chapters",
+    "yt-comment",
+    "yt-edit",
+    "yt-package",
+    "yt-plan",
+    "yt-retention",
+    "yt-script",
+    "yt-seo",
+    "yt-shorts",
+    "yt-viral"
+   ],
+   "rows": [
+    "\u2713 install root exists",
+    "\u2713 all 11 skills present  11/11",
+    "\u2713 hooks.json has 21 formulas  found 21",
+    "\u2713 run yt-viral/swipe.py  output ok",
+    "\u2713 chapters.py imports deadair at runtime"
+   ]
+  },
+  {
+   "id": "twocol",
+   "label": "BEAT 1",
+   "start": 22.0,
+   "dur": 20.78,
+   "kind": "twocol",
+   "names": [
+    "yt-audit",
+    "yt-chapters",
+    "yt-comment",
+    "yt-edit",
+    "yt-package",
+    "yt-plan",
+    "yt-retention",
+    "yt-script",
+    "yt-seo",
+    "yt-shorts",
+    "yt-viral"
+   ],
+   "rows": [
+    "\u2713 install root exists",
+    "\u2713 all 11 skills present  11/11",
+    "\u2713 hooks.json has 21 formulas  found 21",
+    "\u2713 run yt-viral/swipe.py  output ok",
+    "\u2713 chapters.py imports deadair at runtime"
+   ]
+  },
+  {
+   "id": "imports",
+   "label": "BEAT 2",
+   "start": 42.78,
+   "dur": 21.98,
+   "kind": "imports",
+   "names": [
+    "yt-audit",
+    "yt-chapters",
+    "yt-comment",
+    "yt-edit",
+    "yt-package",
+    "yt-plan",
+    "yt-retention",
+    "yt-script",
+    "yt-seo",
+    "yt-shorts",
+    "yt-viral"
+   ],
+   "rows": [
+    "\u2713 install root exists",
+    "\u2713 all 11 skills present  11/11",
+    "\u2713 hooks.json has 21 formulas  found 21",
+    "\u2713 run yt-viral/swipe.py  output ok",
+    "\u2713 chapters.py imports deadair at runtime"
+   ]
+  },
+  {
+   "id": "checks",
+   "label": "BEAT 3",
+   "start": 64.76,
+   "dur": 25.62,
+   "kind": "checks",
+   "names": [
+    "yt-audit",
+    "yt-chapters",
+    "yt-comment",
+    "yt-edit",
+    "yt-package",
+    "yt-plan",
+    "yt-retention",
+    "yt-script",
+    "yt-seo",
+    "yt-shorts",
+    "yt-viral"
+   ],
+   "rows": [
+    "\u2713 install root exists",
+    "\u2713 all 11 skills present  11/11",
+    "\u2713 hooks.json has 21 formulas  found 21",
+    "\u2713 run yt-viral/swipe.py  output ok",
+    "\u2713 chapters.py imports deadair at runtime"
+   ]
+  },
+  {
+   "id": "verify",
+   "label": "THE PAYOFF",
+   "start": 90.38,
+   "dur": 26.54,
+   "kind": "verify",
+   "names": [
+    "yt-audit",
+    "yt-chapters",
+    "yt-comment",
+    "yt-edit",
+    "yt-package",
+    "yt-plan",
+    "yt-retention",
+    "yt-script",
+    "yt-seo",
+    "yt-shorts",
+    "yt-viral"
+   ],
+   "rows": [
+    "\u2713 install root exists",
+    "\u2713 all 11 skills present  11/11",
+    "\u2713 hooks.json has 21 formulas  found 21",
+    "\u2713 run yt-viral/swipe.py  output ok",
+    "\u2713 chapters.py imports deadair at runtime"
+   ]
+  },
+  {
+   "id": "bars",
+   "label": "BEAT 4",
+   "start": 116.92,
+   "dur": 24.74,
+   "kind": "bars",
+   "names": [
+    "yt-audit",
+    "yt-chapters",
+    "yt-comment",
+    "yt-edit",
+    "yt-package",
+    "yt-plan",
+    "yt-retention",
+    "yt-script",
+    "yt-seo",
+    "yt-shorts",
+    "yt-viral"
+   ],
+   "rows": [
+    "\u2713 install root exists",
+    "\u2713 all 11 skills present  11/11",
+    "\u2713 hooks.json has 21 formulas  found 21",
+    "\u2713 run yt-viral/swipe.py  output ok",
+    "\u2713 chapters.py imports deadair at runtime"
+   ]
+  },
+  {
+   "id": "close",
+   "label": "CLOSE",
+   "start": 141.66,
+   "dur": 7.78,
+   "kind": "close",
+   "names": [
+    "yt-audit",
+    "yt-chapters",
+    "yt-comment",
+    "yt-edit",
+    "yt-package",
+    "yt-plan",
+    "yt-retention",
+    "yt-script",
+    "yt-seo",
+    "yt-shorts",
+    "yt-viral"
+   ],
+   "rows": [
+    "\u2713 install root exists",
+    "\u2713 all 11 skills present  11/11",
+    "\u2713 hooks.json has 21 formulas  found 21",
+    "\u2713 run yt-viral/swipe.py  output ok",
+    "\u2713 chapters.py imports deadair at runtime"
+   ]
+  }
+ ]
+}
