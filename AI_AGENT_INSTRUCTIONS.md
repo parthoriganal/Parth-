@@ -4,7 +4,7 @@ This is project guidance, subordinate to the current user request and the agent'
 
 ## Start every session
 
-1. Read [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md), [CURRENT_STATUS.md](CURRENT_STATUS.md), and [README.md](README.md). Check the date and whether the records describe a working tree rather than a committed revision.
+1. Read [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md), [CURRENT_STATUS.md](CURRENT_STATUS.md), [docs/SKILL_SYSTEM.md](docs/SKILL_SYSTEM.md), and [README.md](README.md). Check the date and whether the records describe a working tree rather than a committed revision. For the reusable Arena startup prompt and the unverified automatic-loading limitation, see [docs/AGENT_MODE_START.md](docs/AGENT_MODE_START.md).
 2. Run `pwd`, `git branch --show-current`, `git status --short` and `git log -1 --oneline`. Inspect `git diff` and `git diff --cached` before editing. Do not overwrite, discard, stage or commit unrelated existing changes. Follow the active session's branch and GitHub rules; do not assume a branch named in an old report is still current.
 3. Confirm paths and dependencies actually exist. The skill router, QA tools and reports were committed after the original memory commit. If a checkout lacks them, investigate its revision and working tree; do not claim they exist or recreate prior work from assumptions.
 4. Inspect the relevant application code, tests and documentation for the specific task. Use [docs/SKILL_SYSTEM.md](docs/SKILL_SYSTEM.md), [docs/SKILL_EXECUTION_AUDIT.md](docs/SKILL_EXECUTION_AUDIT.md) and [docs/KDP_QUALITY_RETEST.md](docs/KDP_QUALITY_RETEST.md) if present. Distinguish historical test results from what you run now.

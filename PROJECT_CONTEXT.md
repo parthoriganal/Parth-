@@ -2,6 +2,8 @@
 
 Last reviewed: 2026-11-08. This is a navigation and continuity document, not a substitute for checking the current source, working tree, dependencies, or live services.
 
+For agent startup, see [AGENTS.md](AGENTS.md) and the reusable Arena prompt in [docs/AGENT_MODE_START.md](docs/AGENT_MODE_START.md). Automatic loading in Arena and behavior in a fresh chat have not been verified.
+
 > **Commit boundary:** The skill system and KDP remediation were committed locally after the original memory commit. Check `git status`, history and paths before relying on this snapshot; preserve existing changes. See [CURRENT_STATUS.md](CURRENT_STATUS.md).
 
 ## Purpose and components

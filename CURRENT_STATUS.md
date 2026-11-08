@@ -10,9 +10,15 @@ On branch `arena/a37a027e-parth`, the following local commits follow base `e1d33
 - `a5343df` — Add reusable skill catalog and execution workflow.
 - `43e7bed` — Harden KDP research and add document quality checks.
 - `0edbd286e22784aa41f37fcdf651a9789d21fe9d` — Update project memory after quality review.
-- The follow-up is recorded in the subsequent commit titled “Fix documentation links and complete pre-push review”; use `git log` for its hash (a commit cannot contain its own hash).
+- `babe0e49f8219b50ea6991968f45cd120e5907c0` — Fix documentation links and complete pre-push review.
 
-The previously staged Vite asset matched a fresh isolated build and is included in the KDP commit. The four earlier commits are preserved. No push was performed. Check current status and history rather than assuming this snapshot is still current.
+The previously staged Vite asset matched a fresh isolated build and is included in the KDP commit. The four earlier commits are preserved. On 2026-11-08, `babe0e49f8219b50ea6991968f45cd120e5907c0` was pushed to `origin` branch `arena/a37a027e-parth`, and the remote tip was verified. The startup additions below are recorded in the subsequent commit titled “Add project agent startup guidance”; use `git log` for its hash and check the remote for its push status. Check current status and history rather than assuming this snapshot is still current.
+
+## Agent session startup
+
+Added [AGENTS.md](AGENTS.md) as a portable project-instruction entry point and [docs/AGENT_MODE_START.md](docs/AGENT_MODE_START.md) with an explicit copy-and-paste prompt and manual fresh-chat verification procedure. The entry point requests the four project documents, task-relevant skill discovery and original skill instructions. The repository cannot itself force a host to load or follow it; automatic loading in Arena Agent Mode is undocumented in the reviewed Arena coding guide and unverified, and no independent fresh Agent Mode chat was available to test it. The CLI provides curated recommendations, not automatic intent classification or autonomous execution. These startup files must be made available in the revision selected by a future chat.
+
+On 2026-11-08, `python3 -m unittest discover -s tests -p test_agent_bootstrap.py -v` passed 2 tests, `npm run test:skills` passed 7 tests, and `npm run verify:yt-skill` passed 17 checks; 100 local links across the entry point, startup guide and memory documents resolved. The 15 quality tests (including the optional preview), simulator and physics suites, Contribution City smoke, Bloom model test, `npm run verify`, isolated production build, and build-output checks also passed. The build matched the existing production files. These tests check the files and CLI, not Arena's fresh-chat loading behavior.
 
 ## Final pre-push audit follow-up
 
@@ -22,7 +28,7 @@ On 2026-11-08, removed the nonexistent README screenshot reference and corrected
 
 Final review on 2026-11-08: the skill suite (7), quality suite including optional preview (15), YouTube checks (17), simulator and physics suites, Contribution City smoke, Bloom model checks and `npm run verify` passed. An isolated production build and `npm run test:build-output` passed; its HTML, CSS, JavaScript and emitted report matched the existing build. The original screenshot and YouTube links are fixed, and both production compatibility-report links resolve within the build.
 
-Pre-push assessment: **GO once this reviewed follow-up commit is present**, subject to the limitations above and the separate live-service and publication-readiness risks below. Do not push without authorization.
+The preceding audit assessed the reviewed `babe0e4` commit as **GO** to push, subject to the limitations above and the separate live-service and publication-readiness risks below. That assessment predates the startup changes and is not a review of them. Do not push new changes without authorization.
 
 ## Completed in the reviewed working tree
 
