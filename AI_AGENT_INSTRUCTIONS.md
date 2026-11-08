@@ -30,6 +30,7 @@ npm run test:quality
 npm run test:sim
 npm run test:physics
 npm run build
+npm run test:build-output
 ```
 
 `requirements-proof.txt` includes optional PyMuPDF with AGPL/commercial licensing; the preview test can skip if it is absent. A clean install may require more dependencies for other workflows. Do not install credentials or generated assets into Git. See [docs/KDP_QUALITY_RETEST.md](docs/KDP_QUALITY_RETEST.md) for test scope and current publication blockers if that file is present.

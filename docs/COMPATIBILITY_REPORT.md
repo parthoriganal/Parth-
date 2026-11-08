@@ -159,4 +159,3 @@
 - BSR → sales via power-law labeled ESTIMATED.
 - All numbers carry source tag + timestamp + status (ACTUAL / ESTIMATED / UNAVAILABLE / SIMULATED).
 - Failed source shows failure banner, not fake data.
-

@@ -9,9 +9,20 @@ On branch `arena/a37a027e-parth`, the following local commits follow base `e1d33
 - `cd7d86e2f3b366bbfe6a12b9fe7f4e4cfc95b74a` — Document project context and agent handoff.
 - `a5343df` — Add reusable skill catalog and execution workflow.
 - `43e7bed` — Harden KDP research and add document quality checks.
-- This status update is the subsequent commit, titled “Update project memory after quality review”; use `git log` for its hash (a commit cannot contain its own hash).
+- `0edbd286e22784aa41f37fcdf651a9789d21fe9d` — Update project memory after quality review.
+- The follow-up is recorded in the subsequent commit titled “Fix documentation links and complete pre-push review”; use `git log` for its hash (a commit cannot contain its own hash).
 
-The previously staged Vite asset matched a fresh isolated build and is included in the KDP commit. The inspected changes were related to these efforts; no unrelated tracked or untracked changes were identified. No push was performed. Check current status and history rather than assuming this snapshot is still current.
+The previously staged Vite asset matched a fresh isolated build and is included in the KDP commit. The four earlier commits are preserved. No push was performed. Check current status and history rather than assuming this snapshot is still current.
+
+## Final pre-push audit follow-up
+
+On 2026-11-08, removed the nonexistent README screenshot reference and corrected the YouTube hooks link. Vite now emits the compatibility report into production output; the generated report is explicitly unignored so it can be committed alongside the tracked build. `npm run test:build-output` verifies both built report links, byte equality with the source report, and the corrected documentation references. The production build passed both in an isolated temporary output directory and in `dist`.
+
+`detect-secrets` 1.5.0 was installed outside the repository and run without network verification against the base, three intermediate commit snapshots, the fourth commit's changed memory files, and the follow-up changes. The latest full snapshot reported 31 heuristic candidates: 30 already present in the base plus one synthetic test fixture. Each was individually inspected and classified as harmless example/data, with no confirmed secrets or unresolved candidates among those findings; see [docs/SECRET_SCAN_REVIEW.md](docs/SECRET_SCAN_REVIEW.md) for all locations and evidence. The previously ambiguous short example tokens are explicitly truncated placeholders. The last commit's changed files and the final follow-up files had no findings. Scanning is not proof that no secrets exist, and no credentials were validated against live services. Gitleaks was not run because its release-asset host was unreachable. External documentation links were not checked.
+
+Final review on 2026-11-08: the skill suite (7), quality suite including optional preview (15), YouTube checks (17), simulator and physics suites, Contribution City smoke, Bloom model checks and `npm run verify` passed. An isolated production build and `npm run test:build-output` passed; its HTML, CSS, JavaScript and emitted report matched the existing build. The original screenshot and YouTube links are fixed, and both production compatibility-report links resolve within the build.
+
+Pre-push assessment: **GO once this reviewed follow-up commit is present**, subject to the limitations above and the separate live-service and publication-readiness risks below. Do not push without authorization.
 
 ## Completed in the reviewed working tree
 

@@ -51,7 +51,7 @@ because you have to say the words out loud.
 
 | command | what it does |
 | --- | --- |
-| `/yt-script` | One idea into a script. Five hooks off [21 formulas](skills/yt-script/hooks.json), scored, then the spoken script with the retention beats marked. |
+| `/yt-script` | One idea into a script. Five hooks off [21 formulas](yt-script/hooks.json), scored, then the spoken script with the retention beats marked. |
 | `/yt-package` | Title and thumbnail as one pairing, linted for truncation, duplication and vagueness. |
 | `/yt-edit` | A transcript into an edit decision list: dead air, filler cues, retakes, with timecodes. |
 | `/yt-comment` | The comment section triaged into four piles, then replies in your voice. Says which one to pin. |

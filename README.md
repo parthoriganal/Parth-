@@ -4,8 +4,6 @@
 
 Built on [rxpelle/kdp-scout](https://github.com/rxpelle/kdp-scout) (MIT) as the primary research engine, with optional enrichment from [pangolinfoapi/amazon-niche-finder](https://github.com/pangolinfoapi/amazon-niche-finder) and templates from [nexscope-ai/amazon-skills](https://github.com/nexscope-ai/amazon-skills). See [`docs/COMPATIBILITY_REPORT.md`](./docs/COMPATIBILITY_REPORT.md) for the full repository audit.
 
-![Dark dashboard](docs/screenshot-placeholder.png)
-
 ---
 
 ## 🪐 Also in this repo: three visual toys

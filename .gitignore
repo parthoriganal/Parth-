@@ -15,3 +15,10 @@ gravity-lab/test/*.png
 
 # Singularity Bloom: generated scene, model and renders (regenerate with npm run bloom:render)
 singularity-bloom/out/
+
+# The tracked production build links to this generated copy of the report.
+!dist/
+dist/*
+!dist/docs/
+dist/docs/*
+!dist/docs/COMPATIBILITY_REPORT.md

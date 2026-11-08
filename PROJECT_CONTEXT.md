@@ -24,7 +24,7 @@ The example [practical test report](docs/kdp-practical-test/TEST_REPORT.md), [sa
 
 ## Dependencies and environment
 
-- Frontend: Node/npm, Vite, Chart.js and three.js; exact declarations in [package.json](package.json) and [package-lock.json](package-lock.json). `jsdom` is a dev dependency for the simulation smoke tests.
+- Frontend: Node/npm, Vite, Chart.js and three.js; exact declarations in [package.json](package.json) and [package-lock.json](package-lock.json). `jsdom` is a dev dependency for the simulation smoke tests. The Vite build emits `docs/COMPATIBILITY_REPORT.md` into its output; `npm run test:build-output` checks the bundled report and documentation links.
 - Backend: Python and the pinned Flask, Flask-Cors, requests, BeautifulSoup, dotenv, pandas and lxml requirements in [backend/requirements.txt](backend/requirements.txt).
 - Skill CLI: Python 3.9+ (3.11 tested); its eight allowlisted helpers use Python standard library and local skill assets. Other skill workflows have separate dependencies; consult the catalog and original instructions.
 - Optional document QA: [requirements-proof.txt](requirements-proof.txt) adds PyMuPDF, lxml and defusedxml. PyMuPDF is AGPL-3.0 or commercially licensed; review licensing. LibreOffice and Poppler are required by the original DOCX rendering guidance but were not available in the audited sandbox. The preview is reflowed and does not substitute for them.

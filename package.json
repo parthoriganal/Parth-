@@ -19,7 +19,8 @@
     "bloom": "vite --config singularity-bloom/viewer/vite.config.js",
     "bloom:build": "vite build --config singularity-bloom/viewer/vite.config.js",
     "bloom:render": "bash singularity-bloom/render.sh",
-    "test:quality": "python3 -m unittest discover -s tests -p 'test_*quality.py' -v"
+    "test:quality": "python3 -m unittest discover -s tests -p 'test_*quality.py' -v",
+    "test:build-output": "node tests/test_build_output.cjs"
   },
   "dependencies": {
     "chart.js": "^4.4.4",

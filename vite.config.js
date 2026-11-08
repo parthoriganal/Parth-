@@ -1,5 +1,21 @@
+import { readFileSync } from 'node:fs';
 import { defineConfig } from 'vite';
+
+// Keep the in-app documentation link available in a standalone production build.
+const compatibilityReport = {
+  name: 'include-compatibility-report',
+  apply: 'build',
+  generateBundle() {
+    this.emitFile({
+      type: 'asset',
+      fileName: 'docs/COMPATIBILITY_REPORT.md',
+      source: readFileSync(new URL('./docs/COMPATIBILITY_REPORT.md', import.meta.url)),
+    });
+  },
+};
+
 export default defineConfig({
+  plugins: [compatibilityReport],
   server: {
     host: '0.0.0.0',
     port: 5173,
