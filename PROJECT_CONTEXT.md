@@ -2,7 +2,7 @@
 
 Last reviewed: 2026-11-08. This is a navigation and continuity document, not a substitute for checking the current source, working tree, dependencies, or live services.
 
-> **Working-tree / commit boundary:** At this review, the skill execution system, KDP quality remediation, tests, proof tools, and several reports described below were **uncommitted prior work**. The three project-memory files are being committed separately. A fresh checkout of that documentation commit alone will not contain every linked working-tree path or behavior below. Check `git status` and whether paths exist before relying on them; preserve existing changes. See [CURRENT_STATUS.md](CURRENT_STATUS.md).
+> **Commit boundary:** The skill system and KDP remediation were committed locally after the original memory commit. Check `git status`, history and paths before relying on this snapshot; preserve existing changes. See [CURRENT_STATUS.md](CURRENT_STATUS.md).
 
 ## Purpose and components
 
@@ -12,19 +12,19 @@ Architecture in the reviewed working tree:
 
 - [index.html](index.html), [src/app.js](src/app.js) and [src/style.css](src/style.css): Vite/Chart.js dashboard. [vite.config.js](vite.config.js) proxies `/api` to Flask during development. Flask can serve `dist/` in production.
 - [backend/app.py](backend/app.py): Flask endpoints, including `/api/health`, `/api/autocomplete`, `/api/mine`, `/api/research`, `/api/trends`, `/api/profit`, and competitor/category endpoints. [backend/kdp_engine](backend/kdp_engine) contains the collectors, heuristic scorer and models. Network-backed results depend on permitted access and provider availability.
-- [.claude/skills](.claude/skills): original installed skills and attribution. [skillsystem/catalog.json](skillsystem/catalog.json) and [skillsystem/skill.py](skillsystem/skill.py) are the **uncommitted** catalog and manual router/allowlisted helper dispatcher; see [docs/SKILL_SYSTEM.md](docs/SKILL_SYSTEM.md). It is not an autonomous agent or automatic publishing pipeline.
-- [scripts/validate_docx_offline.py](scripts/validate_docx_offline.py) and [scripts/proof_docx.py](scripts/proof_docx.py): **uncommitted** DOCX schema-validation wrapper and optional reflow preview. [third_party/docx4j/README.md](third_party/docx4j/README.md) documents vendored schemas and licenses. The original skills are unchanged.
+- [.claude/skills](.claude/skills): original installed skills and attribution. [skillsystem/catalog.json](skillsystem/catalog.json) and [skillsystem/skill.py](skillsystem/skill.py) are the catalog and manual router/allowlisted helper dispatcher; see [docs/SKILL_SYSTEM.md](docs/SKILL_SYSTEM.md). It is not an autonomous agent or automatic publishing pipeline.
+- [scripts/validate_docx_offline.py](scripts/validate_docx_offline.py) and [scripts/proof_docx.py](scripts/proof_docx.py): DOCX schema-validation wrapper and optional reflow preview. [third_party/docx4j/README.md](third_party/docx4j/README.md) documents vendored schemas and licenses. The original skills are unchanged.
 - [gravity-lab](gravity-lab), [contribution-city](contribution-city), [singularity-bloom](singularity-bloom), and [video](video): separate projects/assets, not capabilities automatically supplied by the skill router.
 
 ## Data integrity and publishing boundaries
 
-In the reviewed **uncommitted** remediation, failed live market requests do not automatically substitute mock keywords, products, result counts or trend curves; failed research can return `UNAVAILABLE`, partial responses warn, and no score is generated when no suggestions are available. A reported `over N` result count is a lower bound. Autocomplete is **not** monthly search volume; BSR is **not** a sales count; heuristic opportunity scores do not prove demand. Profit figures use local, non-marketplace-specific assumptions labeled `ESTIMATED`; verify current official KDP terms before reliance. These are working-tree claims, not guarantees about the base commit or future live services. Never invent or present simulated market data as actual.
+In the reviewed remediation, failed live market requests do not automatically substitute mock keywords, products, result counts or trend curves; failed research can return `UNAVAILABLE`, partial responses warn, and no score is generated when no suggestions are available. A reported `over N` result count is a lower bound. Autocomplete is **not** monthly search volume; BSR is **not** a sales count; heuristic opportunity scores do not prove demand. Profit figures use local, non-marketplace-specific assumptions labeled `ESTIMATED`; verify current official KDP terms before reliance. These describe the reviewed implementation, not guarantees about future live services. Never invent or present simulated market data as actual.
 
-The example [practical test report](docs/kdp-practical-test/TEST_REPORT.md), [sample manuscript](docs/kdp-practical-test/manuscript-sample.md), [DOCX](docs/kdp-practical-test/manuscript-sample.docx), and [retest](docs/KDP_QUALITY_RETEST.md) are uncommitted artifacts. The project is a hypothetical brief with one chapter, not a finished or publication-ready book. Its [reflow preview](docs/kdp-practical-test/proof/proof-reflow.pdf) is **not** a faithful Word/LibreOffice/KDP print proof; in the observed preview list markers were missing and pagination needed review.
+The example [practical test report](docs/kdp-practical-test/TEST_REPORT.md), [sample manuscript](docs/kdp-practical-test/manuscript-sample.md), [DOCX](docs/kdp-practical-test/manuscript-sample.docx), and [retest](docs/KDP_QUALITY_RETEST.md) are committed artifacts. The project is a hypothetical brief with one chapter, not a finished or publication-ready book. Its [reflow preview](docs/kdp-practical-test/proof/proof-reflow.pdf) is **not** a faithful Word/LibreOffice/KDP print proof; in the observed preview list markers were missing and pagination needed review.
 
 ## Dependencies and environment
 
-- Frontend: Node/npm, Vite, Chart.js and three.js; exact declarations in [package.json](package.json) and [package-lock.json](package-lock.json). `jsdom` is an uncommitted dev-dependency change for the simulation smoke tests.
+- Frontend: Node/npm, Vite, Chart.js and three.js; exact declarations in [package.json](package.json) and [package-lock.json](package-lock.json). `jsdom` is a dev dependency for the simulation smoke tests.
 - Backend: Python and the pinned Flask, Flask-Cors, requests, BeautifulSoup, dotenv, pandas and lxml requirements in [backend/requirements.txt](backend/requirements.txt).
 - Skill CLI: Python 3.9+ (3.11 tested); its eight allowlisted helpers use Python standard library and local skill assets. Other skill workflows have separate dependencies; consult the catalog and original instructions.
 - Optional document QA: [requirements-proof.txt](requirements-proof.txt) adds PyMuPDF, lxml and defusedxml. PyMuPDF is AGPL-3.0 or commercially licensed; review licensing. LibreOffice and Poppler are required by the original DOCX rendering guidance but were not available in the audited sandbox. The preview is reflowed and does not substitute for them.
@@ -77,11 +77,11 @@ The following historical statuses are from the audit, **not live readiness**: `t
 
 ## Four curated workflows
 
-The uncommitted catalog defines `kdp-research` (use the separate KDP engine; preserve source labels), `book-writing` (brief, draft, human review, optional Word/cover), `document-production` (choose the requested format and validate), and `premium-motion` (visual direction and optional narration/editing helpers; rendering is separate). They are recommendations, not automatic chains. `python3 skillsystem/skill.py workflow <name>` shows the steps and original skill paths; [docs/SKILL_SYSTEM.md](docs/SKILL_SYSTEM.md) explains the gates.
+The catalog defines `kdp-research` (use the separate KDP engine; preserve source labels), `book-writing` (brief, draft, human review, optional Word/cover), `document-production` (choose the requested format and validate), and `premium-motion` (visual direction and optional narration/editing helpers; rendering is separate). They are recommendations, not automatic chains. `python3 skillsystem/skill.py workflow <name>` shows the steps and original skill paths; [docs/SKILL_SYSTEM.md](docs/SKILL_SYSTEM.md) explains the gates.
 
 ## Eight allowlisted helpers
 
-These are explicit commands of the uncommitted skill CLI; their output needs review. Fixture-level execution was verified, not full task completion:
+These are explicit commands of the skill CLI; their output needs review. Fixture-level execution was verified, not full task completion:
 
 | Helper | Skill | Narrow function |
 |---|---|---|
