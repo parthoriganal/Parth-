@@ -7,7 +7,7 @@
 <meta name="description" content="Advanced Amazon KDP keyword research, niche analysis, competition, BSR, profit & opportunity scoring." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <script type="module" crossorigin src="/assets/index-6mLCO2ON.js"></script>
+  <script type="module" crossorigin src="/assets/index-BnK0N9II.js"></script>
   <link rel="stylesheet" crossorigin href="/assets/index-BqCmD6fC.css">
 </head>
 <body>
@@ -146,13 +146,13 @@
       <div class="card">
         <h3>How scoring works — no black box</h3>
         <div class="score-explain-grid">
-          <div class="explain"><b>Demand 30</b> — Autocomplete position (1=highest visibility) + result count proxy. <em>ESTIMATED</em> unless DataForSEO volume key set. Never claimed as monthly searches.</div>
+          <div class="explain"><b>Demand 30</b> — Autocomplete position (1=highest visibility). <em>ESTIMATED heuristic</em>; not monthly searches or sales.</div>
           <div class="explain"><b>Competition 25</b> — Result count + avg BSR + avg reviews of your competitors. More competitors / lower BSR = lower score.</div>
           <div class="explain"><b>Differentiation 15</b> — Specificity (word count) + content-gap TF-IDF vs competitor titles.</div>
           <div class="explain"><b>Buyer Intent 15</b> — Commercial tokens (best/buy/workbook/journal/guide/for beginners) + top-3 autocomplete boost.</div>
-          <div class="explain"><b>Profitability 15</b> — KDP royalty window (70% $2.99-$9.99 else 35% eBook; 60% minus printing paperback/hardcover).</div>
+          <div class="explain"><b>Profitability 15</b> — Illustrative price heuristic; verify current KDP terms.</div>
         </div>
-        <div class="tiny" style="margin-top:8px">Formula: Demand30+Competition25+Differentiation15+Intent15+Profit15=100. Overall niche = mean of top-10 keywords. Every number carries source + timestamp + status tag (ACTUAL / ESTIMATED / SIMULATED / UNAVAILABLE).</div>
+        <div class="tiny" style="margin-top:8px">Formula: Demand30+Competition25+Differentiation15+Intent15+Profit15=100. Overall niche = mean of top-10 keywords. Results are heuristic and can be incomplete; inspect sources and warnings.</div>
       </div>
 
       <div class="card" id="dataAccuracyCard">
@@ -161,7 +161,7 @@
           <li><span class="tag tag-ok">ACTUAL</span> Amazon autocomplete suggestions — real shopper type-ahead, directly from <code>completion.{domain}/api/2017/suggestions</code>. Not search volume.</li>
           <li><span class="tag tag-est">ESTIMATED</span> Demand signal 0-100 — heuristic from position + word count. Clearly labeled.</li>
           <li><span class="tag tag-ok">ACTUAL</span> BSR, price, rating, reviews, categories — scraped from <code>/dp/{ASIN}</code> when not CAPTCHA-blocked.</li>
-          <li><span class="tag tag-warn">SIMULATED</span> Google Trends — deterministic seasonal model unless <code>pytrends</code> installed (then ACTUAL via Google).</li>
+          <li><span class="tag tag-na">UNAVAILABLE</span> Google Trends when live data cannot be retrieved; no synthetic trend curve is substituted.</li>
           <li><span class="tag tag-na">UNAVAILABLE</span> Reverse ASIN — requires DataForSEO API key (optional). UI shows disabled state, not fake data.</li>
         </ul>
       </div>
@@ -363,7 +363,7 @@
 
     <footer class="footer">
       <div>© KDP Scout Pro — Built on <a href="https://github.com/rxpelle/kdp-scout" target="_blank">rxpelle/kdp-scout (MIT)</a> • Pangolinfo MCP (optional) • Nexscope skills templates • <a href="./docs/COMPATIBILITY_REPORT.md" target="_blank">Compatibility Report</a></div>
-      <div class="tiny">This tool respects Amazon ToS: rate-limited requests, respects 429/503 backoff, never circumvents access controls. Autocomplete ≠ search volume. BSR→sales is estimated. All data labeled with source & timestamp. If a source fails, the UI shows the failure — no fake data is generated.</div>
+      <div class="tiny">This tool respects Amazon ToS: rate-limited requests, respects 429/503 backoff, never circumvents access controls. Autocomplete ≠ search volume. BSR is not a sales count; sales are unavailable. All data labeled with source & timestamp. If a source fails, the UI shows the failure — no fake data is generated.</div>
     </footer>
   </div>
 </div>

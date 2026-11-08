@@ -1,0 +1,3 @@
+# Offline Dublin Core schemas
+
+The `xsd/docProps/{dc,dcterms,dcmitype}.xsd` and `xsd/wml/xml.xsd` files are copied without modification from [plutext/docx4j](https://github.com/plutext/docx4j) commit `0eec2587ab38db5265ce66c12423849c1bea2c60`, under the paths shown here. The upstream project states it is Apache-2.0 licensed; its `legals/LICENSE` and `legals/NOTICE` are retained here. The files contain their own Dublin Core/W3C attribution. `scripts/validate_docx_offline.py` maps the installed skill's two HTTP imports to these local schemas without modifying the skill. This is not a claim of full Office interoperability or KDP print compliance.

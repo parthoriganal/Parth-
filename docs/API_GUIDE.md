@@ -5,12 +5,12 @@
 | # | Module | Status | Data source | Notes |
 |---|---|---|---|---|
 | 1 | Keyword Miner | ✅ Functional | Amazon autocomplete `completion.{domain}/api/2017/suggestions` (a-z expansion) | depth 1=27 queries, depth2=deep. Rate-limited. |
-| 2 | Search Volume Analyzer | ⚠️ Estimated (DataForSEO optional) | Autocomplete position heuristic 0-100 (ESTIMATED) unless `DATAFORSEO_*` set → DataForSEO `search_volume` ACTUAL | UI warns: autocomplete ≠ monthly searches |
+| 2 | Search Volume Analyzer | ⚠️ Estimated (DataForSEO optional) | Autocomplete position heuristic 0-100 (ESTIMATED); research pipeline does not retrieve search volume | UI warns: autocomplete ≠ monthly searches |
 | 3 | Competition Analyzer | ✅ Functional | Amazon search `/s?k=` result count + parsed organic results | CAPTCHA → status=blocked, not fake count |
 | 4 | Reverse ASIN | ⚠️ Requires DataForSEO | `dataforseo_labs/amazon/ranked_keywords/live` | Without key: UNAVAILABLE + workaround (use title as seeds) |
 | 5 | Competitor Analyzer | ✅ Functional | Scrapes `/dp/{ASIN}` for title, author, BSR, price, rating, reviews, pages, categories, image | Multi-selector fallback, CAPTCHA detection |
 | 6 | Category Analyzer | ✅ Functional | From competitor BSR categories + wayfinding breadcrumbs + static explorer | Suggested set always available |
-| 7 | Trend Analyzer | ✅ Functional (SIMULATED by default) | Google Trends via `pytrends` if installed → ACTUAL else deterministic seasonal model → SIMULATED | Both labeled; 12-month view |
+| 7 | Trend Analyzer | ⚠️ Live provider or unavailable | Google Trends via `pytrends` if reachable → ACTUAL, else UNAVAILABLE | No simulated fallback |
 | 8 | Content Gap | ✅ Functional | TF-IDF demand tokens vs competitor title/desc/categories | Gap score 0-100, High/Med/Low |
 | 9 | Profit Calculator | ✅ Functional | KDP tables: eBook 70%/35%, paperback/hardcover 60% minus printing | Includes ladder $0.99-$14.99 |
 | 10 | Opportunity Scorer | ✅ Functional | Composite 0-100: Demand30+Competition25+Differentiation15+Intent15+Profit15 | Every pillar explains its inputs; overall = mean top-10 |
@@ -43,7 +43,7 @@ Returns `{ input, meta, mined[], scored{overall,keywords[],formula}, competitors
 ```json
 { "keyword":"cozy mystery", "marketplace":"us" }
 ```
-If `pytrends` installed ⇒ `status=ACTUAL`, else `SIMULATED` with deterministic curve.
+If `pytrends` is installed and the provider responds with data, `status=ACTUAL`; otherwise `UNAVAILABLE` with no values.
 
 ### POST /api/reverse-asin
 ```json

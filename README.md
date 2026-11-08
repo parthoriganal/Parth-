@@ -30,18 +30,18 @@ npm run test:sim       # headless jsdom smoke test
 
 | Module | Source | Status |
 |---|---|---|
-| **Keyword Miner** | Amazon autocomplete `completion.{domain}/api/2017/suggestions` + a–z expansion | ✅ ACTUAL |
-| **Search Volume Analyzer** | Demand signal 0–100 (position heuristic, ESTIMATED) — DataForSEO `search_volume` when key set → ACTUAL | ✅ / ⚠️ optional |
-| **Competition Analyzer** | Amazon search result count `/s?k=` + parsed organics | ✅ ACTUAL |
+| **Keyword Miner** | Amazon autocomplete `completion.{domain}/api/2017/suggestions` + a–z expansion | ⚠️ ACTUAL when reachable |
+| **Search Volume Analyzer** | Autocomplete position heuristic (ESTIMATED); monthly search volume is not retrieved by the research pipeline | ⚠️ UNAVAILABLE |
+| **Competition Analyzer** | Amazon search result count `/s?k=` + parsed organics | ⚠️ ACTUAL when reachable; counts may be approximate |
 | **Reverse ASIN** | DataForSEO `ranked_keywords/live` (≈$0.01/ASIN) | ⚠️ UNAVAILABLE without key |
 | **Competitor Analyzer** | Scrapes `/dp/{ASIN}` for BSR, price, rating, reviews, pages, categories | ✅ ACTUAL |
 | **Category Analyzer** | BSR category trees + breadcrumbs + 25 KDP categories explorer | ✅ |
-| **Trend Analyzer** | Google Trends via `pytrends` → ACTUAL, else deterministic seasonal model → SIMULATED | ✅ |
+| **Trend Analyzer** | Google Trends via `pytrends` when reachable → ACTUAL, otherwise UNAVAILABLE | ⚠️ optional |
 | **Content Gap** | TF-IDF demand tokens vs competitor title/desc/categories | ✅ |
-| **Profit Calculator** | KDP tables: eBook 70%/35%, paperback/hardcover 60%-printing | ✅ |
+| **Profit Calculator** | Illustrative assumptions; verify current KDP terms and marketplace costs | ⚠️ ESTIMATED |
 | **Opportunity Scorer** | Transparent 0–100: Demand30 + Competition25 + Differentiation15 + Intent15 + Profit15 | ✅ |
 
-**Data accuracy contract:** every number shows `source`, `status` (`ACTUAL` / `ESTIMATED` / `SIMULATED` / `UNAVAILABLE` / `MOCK`), and `updated_at`. If Amazon blocks/throttles, the UI shows the failure banner — no fake BSR/prices/reviews are invented. Autocomplete ≠ search volume is warned everywhere.
+**Data limitations:** Live requests can fail, throttle, or return incomplete data. Research no longer substitutes mock keywords, products, result counts, or trend curves. Autocomplete is not search volume; scores are heuristics, not evidence of demand or sales. Profit figures use unverified local assumptions. See [quality notes](./docs/KDP_QUALITY_RETEST.md).
 
 ---
 
@@ -91,9 +91,9 @@ npm run build && PORT=5000 python backend/app.py
 
 | Key | Get it at | Env vars | Enables |
 |---|---|---|---|
-| DataForSEO | dataforseo.com | `DATAFORSEO_LOGIN`, `DATAFORSEO_API_KEY` | Actual monthly search volume + Reverse ASIN |
+| DataForSEO | dataforseo.com | `DATAFORSEO_LOGIN`, `DATAFORSEO_API_KEY` | Reverse ASIN when configured and reachable; no volume integration in the research pipeline |
 | Pangolinfo | tool.pangolinfo.com (200 free calls) | `PANGOLINFO_API_KEY` | Blue-ocean `filter_niches` feed |
-| Google Trends actual | `pip install pytrends` | — | Turns Trend Analyzer from SIMULATED → ACTUAL |
+| Google Trends actual | `pip install pytrends` | — | Attempts live Google Trends; otherwise UNAVAILABLE |
 
 Copy `backend/.env.example` → `backend/.env` and fill any you have.
 
@@ -102,7 +102,7 @@ Copy `backend/.env.example` → `backend/.env` and fill any you have.
 ## 🧮 How the score works — no black box
 
 ```
-Demand 30        = f(position 1..10, result_count) — 1 ⇒ strongest; boost if >10k results. Labeled ESTIMATED unless DataForSEO volume present.
+Demand 30        = heuristic from autocomplete position; it is not observed search volume or sales.
 Competition 25   = invert(result_count, avgBSR, avgReviews) — fewer/weaker ⇒ higher.
 Differentiation 15= word count specificity + TF-IDF content-gap vs competitors.
 Buyer Intent 15  = commercial tokens (workbook/journal/planner/guide/best/buy/for beginners) + top-3 autocomplete boost.
@@ -131,14 +131,14 @@ Browser (Vite + Chart.js, responsive dark UI)
    │  /api/* proxy (dev) or same origin (prod)
    ▼
 Flask (backend/app.py) ──► kdp_engine/
-   ├─ autocomplete.py  (ported kdp-scout, a–z + adaptive backoff + mock fallback)
+   ├─ autocomplete.py  (ported kdp-scout, a–z + adaptive backoff; failure returns unavailable)
    ├─ product_scraper.py (multi-selector /dp scrape + CAPTCHA detect)
-   ├─ bsr_model.py     (power-law k·bsr^-a, per marketplace)
+   ├─ bsr_model.py     (legacy estimate model; not used in product responses)
    ├─ scorer.py        (transparent 100-pt composite)
    ├─ profit.py        (KDP royalty + printing tables)
-   ├─ trends.py        (pytrends → ACTUAL else seasonal SIMULATED)
+   ├─ trends.py        (pytrends → ACTUAL else UNAVAILABLE)
    ├─ content_gap.py   (TF-IDF demand vs competitor coverage)
-   └─ mock_data.py     (labeled MOCK when Amazon egress blocked)
+   └─ mock_data.py     (legacy fixtures; not used in live research)
 
 LocalStorage: last research JSON persisted for offline revisit.
 ```
@@ -151,6 +151,9 @@ LocalStorage: last research JSON persisted for offline revisit.
 
 ## 📚 Docs
 
+- [KDP quality remediation and retest](./docs/KDP_QUALITY_RETEST.md)
+- [Skill system — workflows, invocation, and compatibility](./docs/SKILL_SYSTEM.md)
+- [Skill execution audit — evidence and limitations](./docs/SKILL_EXECUTION_AUDIT.md)
 - [Compatibility Report — repo audit + integration decisions](./docs/COMPATIBILITY_REPORT.md)
 - [Setup Guide](./docs/SETUP.md)
 - [API Guide & feature matrix](./docs/API_GUIDE.md)

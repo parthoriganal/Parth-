@@ -179,7 +179,7 @@ function renderHero(d){
   document.getElementById("overallLabel").textContent=label;
   document.getElementById("overallBar").style.width=overall+"%";
   document.getElementById("overallBar").style.background = overall>=60? "linear-gradient(90deg,#10b981,#38bdf8)": overall>=45? "linear-gradient(90deg,#eab308,#f97316)":"linear-gradient(90deg,#f97316,#ef4444)";
-  document.getElementById("overallFormula").textContent=d.scored.formula;
+  document.getElementById("overallFormula").textContent=d.scored.formula + ((d.warnings||[]).length ? " ⚠ " + d.warnings.join(" • ") : "");
 
   const s=d.input;
   document.getElementById("summaryKv").innerHTML=`
@@ -293,7 +293,7 @@ function renderKeywords(d){
         <td class="muted">${m.seed}</td>
         <td>${m.position}</td>
         <td><span class="tag tag-est">${m.demand_signal}</span></td>
-        <td>${m.result_count!=null? m.result_count.toLocaleString(): "—"}</td>
+        <td>${m.result_count!=null? (m.result_count_kind==="lower_bound"?"Over ":"Reported ")+m.result_count.toLocaleString(): "—"}</td>
         <td><span class="chip" style="border-color:${color};color:${color}">${total}</span></td>
         <td class="muted" style="font-size:.78rem">${m.intent_bucket}</td>
         <td><span class="tag ${m.competition_status==="ACTUAL"?"tag-ok": m.competition_status==="not_probed"?"tag-na":"tag-warn"}">${m.competition_status||"—"}</span></td>
@@ -351,7 +351,7 @@ function renderCompetitorBooks(d){
         <span class="pill">${b.pages||"?"} pages</span>
       </div>
       <div class="tiny">Categories: ${(b.categories||[]).join(" › ")|| (Object.keys(b.bsr_categories||{}).slice(0,2).join(" • ")||"—")}</div>
-      ${b.est_daily_sales!=null? `<div class="tiny">Est. sales: ${b.est_daily_sales}/day • ${b.est_monthly_revenue_usd? "$"+b.est_monthly_revenue_usd+"/mo":""} (power-law model)</div>`:""}
+      <div class="tiny">Sales and revenue: unavailable; BSR is not a sales count.</div>
     </div>`;
   }).join("");
 
@@ -441,7 +441,7 @@ function renderProfit(d){
     const tag = pr>=2.99&&pr<=9.99 ? '<span class="tag tag-ok">70%</span>' : '<span class="tag tag-warn">35%</span>';
     return `<tr><td><b>$${pr.toFixed(2)}</b></td><td>$${Math.max(0,ebookRoyalty(pr)).toFixed(2)} ${tag}</td><td>$${Math.max(0,pbRoyalty(pr,pages)).toFixed(2)}</td><td>$${Math.max(0,+(pr*0.60 -(4.50+pages*0.012)).toFixed(2)).toFixed(2)}</td></tr>`;
   }).join("");
-  note.textContent="eBook: 70% $2.99-$9.99 minus ~$0.15 delivery, else 35%. Paperback: 60% minus printing ($0.85 + $0.012/page B&W). Hardcover: 60% minus $4.50 + $0.012/page. Source: KDP royalty tables — CALCULATED.";
+  note.textContent="ESTIMATED: illustrative local assumptions, not verified current KDP rates or marketplace-specific costs. Check KDP terms before pricing.";
 
   // chart
   destroy("profit");
@@ -505,18 +505,19 @@ async function loadTrend(keyword){
   const badge=document.getElementById("trendStatusBadge");
   const note=document.getElementById("trendNote");
   badge.textContent="Loading…";
-  if(trendCache[keyword]){
-    renderTrendChart(trendCache[keyword]);
-    badge.textContent=trendCache[keyword].status;
-    badge.className="badge "+(trendCache[keyword].status==="ACTUAL"?"tag-ok":"tag-warn");
-    note.textContent=trendCache[keyword].note;
+  const cacheKey=`${getForm().marketplace}:${keyword}`;
+  if(trendCache[cacheKey]){
+    renderTrendChart(trendCache[cacheKey]);
+    badge.textContent=trendCache[cacheKey].status;
+    badge.className="badge "+(trendCache[cacheKey].status==="ACTUAL"?"tag-ok":"tag-warn");
+    note.textContent=trendCache[cacheKey].note;
     return;
   }
   try{
     const form=getForm();
     const r=await fetch(API+"/api/trends",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({keyword, marketplace: form.marketplace})});
     const j=await r.json();
-    trendCache[keyword]=j;
+    trendCache[cacheKey]=j;
     badge.textContent=j.status;
     badge.className="tag "+(j.status==="ACTUAL"?"tag-ok":"tag-warn");
     note.textContent=j.source+" • "+j.note+" • Updated "+j.last_updated.slice(0,19);
@@ -528,6 +529,7 @@ async function loadTrend(keyword){
 }
 function renderTrendChart(j){
   destroy("trends");
+  if(!Array.isArray(j.values) || !j.values.length) return;
   const ctx=document.getElementById("chartTrends");
   charts.trends=new Chart(ctx,{
     type:"line",
@@ -538,13 +540,19 @@ function renderTrendChart(j){
 async function fetchTrendThenRenderMini(kw){
   const el=document.querySelector(`canvas[data-trend="${CSS.escape(kw)}"]`);
   if(!el) return;
-  let j=trendCache[kw];
+  const cacheKey=`${getForm().marketplace}:${kw}`;
+  let j=trendCache[cacheKey];
   if(!j){
     const form=getForm();
     try{
       const r=await fetch(API+"/api/trends",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({keyword:kw, marketplace: form.marketplace})});
-      j=await r.json(); trendCache[kw]=j;
+      j=await r.json(); trendCache[cacheKey]=j;
     }catch{ return; }
+  }
+  if(!Array.isArray(j.values) || !j.values.length){
+    const pill=el.closest(".pill");
+    if(pill) pill.querySelector(".tiny").textContent = `${j.status} • ${j.note}`;
+    return;
   }
   // small chart — we keep main trend chart intact, so create inline mini chart per canvas
   new Chart(el,{
@@ -607,9 +615,9 @@ document.getElementById("btnExportCSV").onclick=()=>{
   const scoreMap=new Map(d.scored.keywords.map(k=>[k.keyword,k]));
   const rows=d.mined.map(m=>{
     const s=scoreMap.get(m.keyword);
-    return { keyword:m.keyword, seed:m.seed, position:m.position, word_count:m.word_count, demand_signal:m.demand_signal, intent_bucket:m.intent_bucket, result_count:m.result_count ?? "", opportunity:s? s.total:"", label:s? s.label:"", demand_pillars: s? JSON.stringify(s.pillars).slice(0,200):"" , status:m.competition_status, data_source: d.sources.keywords, updated_at: d.meta.updated_at };
+    return { keyword:m.keyword, seed:m.seed, position:m.position, word_count:m.word_count, demand_signal:m.demand_signal, intent_bucket:m.intent_bucket, result_count:m.result_count ?? "", opportunity:s? s.total:"", label:s? s.label:"", demand_pillars: s? JSON.stringify(s.pillars).slice(0,200):"" , status:m.competition_status, result_count_kind:m.result_count_kind || "unavailable", data_source: d.sources.keywords, updated_at: d.meta.updated_at };
   });
-  const headers=["keyword","seed","position","word_count","demand_signal","intent_bucket","result_count","opportunity","label","demand_pillars","status","data_source","updated_at"];
+  const headers=["keyword","seed","position","word_count","demand_signal","intent_bucket","result_count","opportunity","label","demand_pillars","status","result_count_kind","data_source","updated_at"];
   download(`kdp-research-${d.meta.marketplace_meta.code}-${new Date().toISOString().slice(0,10)}.csv`, new Blob([toCSV(rows,headers)],{type:"text/csv"}));
   toast("CSV downloaded");
 };

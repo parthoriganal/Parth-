@@ -1,5 +1,5 @@
-"""Trend analyzer — Google Trends via pytrends if available, else heuristic seasonal model labeled SIMULATED.
-We attempt real pytrends; graceful fallback ensures app works without extra deps/keys.
+"""Trend analyzer — Google Trends via pytrends when available, otherwise UNAVAILABLE.
+The legacy seasonal helper is retained but is not used as a fallback.
 """
 import logging
 import random
@@ -95,28 +95,9 @@ def get_trends(keyword, marketplace="us"):
             "note": "Data from Google Trends via pytrends (weekly interest, aggregated to monthly). 0-100 normalized.",
         }
 
-    # fallback simulated
-    values, peak_idx, trough_idx = seasonal_baseline(keyword, marketplace)
-    avg = sum(values) / len(values)
-    # trend direction from slope
-    if values[-1] > values[0] + 12:
-        trend_dir = "Rising (simulated)"
-    elif values[-1] < values[0] - 12:
-        trend_dir = "Declining (simulated)"
-    else:
-        trend_dir = "Stable (simulated)"
     return {
-        "keyword": keyword,
-        "values": values,
-        "labels": MONTHS,
-        "status": "SIMULATED",
-        "source": "Simulated seasonal model (deterministic heuristic — clear label, not Google data)",
-        "avg": round(avg, 1),
-        "peak": max(values),
-        "trough": min(values),
-        "peak_month": MONTHS[peak_idx],
-        "trough_month": MONTHS[trough_idx],
-        "trend_direction": trend_dir,
+        "keyword": keyword, "values": [], "labels": [], "status": "UNAVAILABLE",
+        "source": "Google Trends unavailable", "trend_direction": None,
         "last_updated": datetime.datetime.utcnow().isoformat() + "Z",
-        "note": "⚠️ SIMULATED — install `pytrends` and set no extra key for ACTUAL Google Trends, or connect a DataForSEO key. This model is deterministic per keyword to demo seasonality UI.",
+        "note": "No trend observations available; no simulated values were substituted.",
     }

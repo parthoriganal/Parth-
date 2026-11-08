@@ -17,26 +17,19 @@ PILLAR_WEIGHTS = {
 def _score_demand(position, result_count, has_dataforseo_volume=False):
     """
     Demand 0-30.
-    Inputs: autocomplete position (1 best), result_count (proxy for supply, high count = high demand+supply), optional DataForSEO volume.
-    Position is primary signal — Amazon shows it high because shoppers type it.
+    Autocomplete position is an ordering heuristic, not a measurement of searches or purchases.
+    Result counts are supply-side observations, not a demand input.
     """
     if position is None:
         return 0, "No autocomplete position — demand unknown"
     pos_score = max(0, (11 - position) / 10)  # 1.0 at pos1
-    # result_count boosts demand belief: >10k = active marketplace
-    demand_boost = 0
+    # Result counts are supply-side observations and do not measure demand.
     explain = f"Autocomplete position {position} (1=highest visibility). "
     if result_count is not None:
-        if result_count >= 10000:
-            demand_boost = 0.15
-            explain += f"Amazon shows {result_count:,} results → strong marketplace demand. "
-        elif result_count >= 1000:
-            demand_boost = 0.05
-            explain += f"{result_count:,} results → moderate demand. "
-        else:
-            explain += f"{result_count:,} results → niche demand. "
+        explain += "Search result count is not a demand or sales measurement. "
     else:
         explain += "Result count unavailable — using position only. "
+    demand_boost = 0
     if has_dataforseo_volume:
         explain += "DataForSEO volume available (actual). "
     else:
@@ -62,7 +55,7 @@ def _score_competition(result_count, avg_bsr=None, avg_reviews=None, competitor_
         # normalize: 0-5k=high opportunity, 50k+=low
         norm = 1.0 / (1.0 + result_count / 15000)  # 0-1, high when count low
         comp_score = norm
-        explain_parts.append(f"{result_count:,} competing titles")
+        explain_parts.append(f"reported result count {result_count:,} (may be approximate; not a verified number of competing titles)")
     if avg_bsr is not None:
         # higher avg BSR = competitors sell less = less competitive
         bsr_norm = max(0, 1 - math.log10(max(1, avg_bsr)) / 6)
@@ -255,4 +248,4 @@ def score_all(keywords, price=None, marketplace="us", competitor_stats=None):
         overall_label = "Challenging"
     else:
         overall_label = "High Risk"
-    return {"keywords": results, "overall": overall, "overall_label": overall_label, "formula": "Demand 30 + Competition 25 + Differentiation 15 + Buyer Intent 15 + Profitability 15 = 100. Each pillar is 0-max; sum = total 0-100. Demand from autocomplete position+results; Competition from result count/BSR/reviews (more = lower); Differentiation from specificity+content gap; Intent from commercial tokens; Profitability from KDP royalty window."}
+    return {"keywords": results, "overall": overall, "overall_label": overall_label, "formula": "Demand 30 + Competition 25 + Differentiation 15 + Buyer Intent 15 + Profitability 15 = 100. Each pillar is 0-max; sum = total 0-100. Demand heuristic from autocomplete position (not volume); Competition from result count/BSR/reviews (more = lower); Differentiation from specificity+content gap; Intent from commercial tokens; Profitability from KDP royalty window."}

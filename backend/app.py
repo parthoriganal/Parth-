@@ -51,14 +51,14 @@ def health():
         "pangolinfo_configured": bool(os.environ.get("PANGOLINFO_API_KEY")),
         "features": {
             "keyword_miner": "actual — Amazon autocomplete",
-            "search_volume": "estimated heuristic unless DataForSEO key set",
+            "search_volume": "unavailable in research pipeline; autocomplete is not search volume",
             "competition": "actual — Amazon search result count + BSR scrape",
             "reverse_asin": "via DataForSEO if configured, else unavailable",
             "competitor_analyzer": "actual scrape with fallback",
             "category_analyzer": "from product scrape",
-            "trend_analyzer": "Google Trends via pytrends if installed else simulated (labeled)",
+            "trend_analyzer": "Google Trends via pytrends if available; otherwise unavailable",
             "content_gap": "TF-IDF heuristic on mined keywords vs competitor text",
-            "profit_calculator": "KDP royalty tables (actual formulas)",
+            "profit_calculator": "illustrative local assumptions, not verified KDP terms",
             "opportunity_scorer": "transparent 100-pt composite",
         }
     })
@@ -90,11 +90,15 @@ def autocomplete_proxy():
             return jsonify({"error": f"Amazon throttled ({resp.status_code}) — try again in a minute", "status": "throttled", "source": url, "updated_at": datetime.datetime.utcnow().isoformat()+"Z"}), 429
         resp.raise_for_status()
         data = resp.json()
-        suggestions = [{"value": s.get("value",""), "type": s.get("type","")} for s in data.get("suggestions",[])]
+        if not isinstance(data, dict) or not isinstance(data.get("suggestions"), list) or not all(isinstance(s, dict) for s in data["suggestions"]):
+            raise ValueError("Unrecognized autocomplete response")
+        suggestions = [{"value": s.get("value",""), "type": s.get("type","")} for s in data["suggestions"]]
         return jsonify({"prefix": prefix, "marketplace": marketplace, "alias": alias, "suggestions": suggestions, "source": f"Amazon autocomplete {domain}", "status": "ACTUAL", "updated_at": datetime.datetime.utcnow().isoformat()+"Z"})
     except Exception as e:
-        logger.exception(f"autocomplete proxy failed: {e}")
-        return jsonify({"error": str(e), "status": "failed"}), 500
+        logger.warning("Amazon autocomplete request failed: %s", type(e).__name__)
+        return jsonify({"error": "Amazon autocomplete unavailable. Check network access and retry later.",
+                        "status": "UNAVAILABLE", "source": url,
+                        "updated_at": datetime.datetime.utcnow().isoformat()+"Z"}), 502
 
 # ── Keyword Miner ──
 @app.route("/api/mine", methods=["POST"])
@@ -117,9 +121,12 @@ def mine():
         return jsonify({"error": str(e)}), 400
 
     started = time.time()
-    result = mine_multiple(seeds, department=department, depth=depth, marketplace=marketplace, allow_mock=True)
+    result = mine_multiple(seeds, department=department, depth=depth, marketplace=marketplace, allow_mock=False)
     elapsed = round(time.time() - started, 1)
-    mock_used = result.get("mock_used", False)
+    mock_used = False
+    if not result["keywords"] and result.get("errors"):
+        return jsonify({"error": "Amazon autocomplete unavailable; no keywords were substituted.",
+                        "status": "UNAVAILABLE", "errors": result["errors"], "mock": False}), 503
 
     # enrich with heuristics
     enriched = []
@@ -148,11 +155,11 @@ def mine():
         "total": len(enriched),
         "errors": result["errors"],
         "timing_s": elapsed,
-        "source": f"Amazon autocomplete ({get_marketplace(marketplace)['completion_domain']})" + (" — MOCK/DEMO (Amazon unreachable in sandbox; showing curated sample data)" if mock_used else ""),
-        "status": "MOCK" if mock_used else ("ACTUAL" if not result["errors"] else "PARTIAL"),
+        "source": f"Amazon autocomplete ({get_marketplace(marketplace)['completion_domain']})",
+        "status": "ACTUAL" if not result["errors"] else "PARTIAL",
         "mock": mock_used,
         "updated_at": timestamp,
-        "data_warning": ("⚠️ MOCK MODE — Amazon outbound is blocked in this sandbox (only github.com/pypi allowed). Showing curated demo keywords labeled MOCK so you can test the full pipeline. Deploy to any VPS (or allow Amazon domains) for ACTUAL autocomplete." if mock_used else "Search volume shown as ESTIMATED demand signal (0-100) derived from autocomplete position + keyword specificity. It is NOT monthly search volume. For actual volumes, configure DataForSEO (see Setup Guide)."),
+        "data_warning": "Autocomplete position is an estimated heuristic, not monthly search volume.",
     })
 
 # ── Competitor Analyzer ──
@@ -209,7 +216,7 @@ def competition():
     res["updated_at"] = datetime.datetime.utcnow().isoformat()+"Z"
     if res.get("status") == "ok":
         res["source"] = f"Amazon search ({get_marketplace(marketplace)['domain']}/s?k={keyword})"
-        res["status_label"] = "ACTUAL"
+        res["status_label"] = "ACTUAL" if res.get("result_count") is not None else "PARTIAL"
     return jsonify(res)
 
 # ── Bulk competition for keyword list (for scatter plot) ──
@@ -263,8 +270,9 @@ def profit():
         "color": color,
         "breakdown": breakdown,
         "ladder": table,
-        "source": "KDP royalty tables (70% $2.99-$9.99 else 35% ebook; 60% minus printing for paperback/hardcover)",
-        "status": "CALCULATED",
+        "source": "Illustrative local royalty assumptions; not verified current KDP terms",
+        "status": "ESTIMATED",
+        "warning": "Local model is not marketplace-specific. Verify current rates, eligibility, printing and delivery costs with KDP.",
         "updated_at": datetime.datetime.utcnow().isoformat()+"Z",
     })
 
@@ -486,14 +494,21 @@ def research():
 
     # 1) Mine keywords
     try:
-        mined = mine_multiple(seeds, department=department, depth=depth, marketplace=marketplace, allow_mock=True)
+        mined = mine_multiple(seeds, department=department, depth=depth, marketplace=marketplace, allow_mock=False)
     except Exception as e:
         logger.exception(f"mine failed: {e}")
         return jsonify({"error": f"Keyword mining failed: {e}"}), 500
 
-    mock_used = mined.get("mock_used", False)
-    if mock_used:
-        warnings.append("⚠️ MOCK keyword data — Amazon autocomplete blocked in sandbox (egress allowlist). Showing curated demo keywords so full pipeline is testable. Deploy to VPS / allow amazon.com for ACTUAL.")
+    mock_used = False
+    if not mined["keywords"] and mined.get("errors"):
+        return jsonify({"error": "Amazon autocomplete unavailable; no research score was generated.",
+                        "status": "UNAVAILABLE", "errors": mined["errors"],
+                        "source": "Amazon autocomplete", "mock": False}), 503
+    if not mined["keywords"]:
+        return jsonify({"error": "No autocomplete suggestions returned; no research score was generated.",
+                        "status": "NO_RESULTS", "source": "Amazon autocomplete", "mock": False}), 422
+    if mined.get("errors"):
+        warnings.append("Some seed requests failed; keyword coverage is incomplete.")
 
     enriched = []
     for kw in mined["keywords"]:
@@ -512,22 +527,15 @@ def research():
     for kw in enriched[:12]:
         try:
             comp = scrape_search_results(kw["keyword"], marketplace=marketplace, department=department, top_n=8)
-            if comp.get("status") == "ok":
+            if comp.get("status") == "ok" and comp.get("result_count") is not None:
                 kw["result_count"] = comp.get("result_count")
                 kw["result_count_text"] = comp.get("result_count_text")
+                kw["result_count_kind"] = comp.get("result_count_kind", "reported")
                 kw["competition_status"] = "ACTUAL"
             else:
-                kw["competition_status"] = comp.get("status", "failed")
-                kw["competition_error"] = comp.get("error")
-                # mock competition numbers when search blocked, so charts have data
-                if comp.get("status") in ("blocked","failed"):
-                    import hashlib
-                    h=int(hashlib.md5(kw["keyword"].encode()).hexdigest()[:6],16)
-                    kw["result_count"] = 5000 + (h % 25000)
-                    kw["competition_status"] = "MOCK"
-                    kw["competition_note"] = "Amazon search blocked in sandbox — showing synthetic result count (labeled MOCK)"
-            if comp.get("status") in ("blocked","failed") and kw.get("competition_status")=="MOCK":
-                pass  # already mocked
+                kw["competition_status"] = comp.get("status", "failed") if comp.get("status") != "ok" else "unavailable"
+                kw["competition_error"] = comp.get("error") or "Result count not found in response"
+                warnings.append(f"Competition data unavailable for {kw['keyword']}; no result count was substituted.")
         except Exception as e:
             kw["competition_status"] = "failed"
             kw["competition_error"] = str(e)
@@ -536,7 +544,7 @@ def research():
     for kw in enriched:
         if "result_count" not in kw:
             kw["result_count"] = None
-            kw["competition_status"] = "not_probed"
+            kw.setdefault("competition_status", "not_probed")
 
     # 2) Competitor books if ASINs provided
     competitor_books = []
@@ -545,24 +553,6 @@ def research():
     if asins:
         try:
             competitor_books = scrape_multiple(asins, marketplace=marketplace, delay=0.7)
-            if competitor_books and all(b.get("status") in ("failed","blocked") for b in competitor_books):
-                from kdp_engine.mock_data import get_mock_product
-                from kdp_engine.bsr_model import estimate_daily_sales, estimate_monthly_revenue
-                mocks=[]
-                for b in competitor_books:
-                    mp = get_mock_product(b["asin"])
-                    if mp:
-                        m = dict(mp); m["asin"]=b["asin"]; m["marketplace"]=marketplace; m["url"]=f"https://{get_marketplace(marketplace)['domain']}/dp/{b['asin']}"
-                        m["est_daily_sales"]=estimate_daily_sales(m["bsr"], get_marketplace(marketplace).get("bsr_model","us_kindle"))
-                        m["est_monthly_revenue_usd"]=estimate_monthly_revenue(m["bsr"], m["price"], get_marketplace(marketplace).get("bsr_model","us_kindle"))
-                        mocks.append(m)
-                    else:
-                        # generic synthetic product so UI not empty
-                        mocks.append({"asin": b["asin"], "title": f"Sample Book for {b['asin']}", "author": "Demo Author", "bsr": 80000, "price": 4.99, "rating": 4.2, "review_count": 180, "pages": 220, "categories": ["Books > Mystery"], "bsr_categories": {"Kindle > Mystery > Cozy": 1500}, "status": "ok", "marketplace": marketplace, "url": f"https://{get_marketplace(marketplace)['domain']}/dp/{b['asin']}", "est_daily_sales": 1.2, "est_monthly_revenue_usd": 45.0})
-                if mocks:
-                    competitor_books = mocks
-                    competitor_mock = True
-                    warnings.append("⚠️ MOCK competitor data — Amazon product pages blocked in sandbox (egress allowlist). Showing curated sample books (labeled MOCK).")
         except Exception as e:
             errors.append(f"competitor scrape: {e}")
         # stats
@@ -582,6 +572,11 @@ def research():
                 }
             else:
                 warnings.append("All competitor ASIN scrapes failed or blocked — competition pillar will use result_count only.")
+
+    if any(k.get("result_count_kind") == "lower_bound" for k in enriched):
+        warnings.append("Some result counts are reported lower bounds, not exact competition counts.")
+    if any(k.get("competition_status") != "ACTUAL" for k in enriched):
+        warnings.append("Competition is incomplete; heuristic scores use neutral assumptions and do not establish market opportunity.")
 
     # 3) Score keywords
     scored = score_all(enriched, price=price, marketplace=marketplace, competitor_stats=competitor_stats)
@@ -624,7 +619,7 @@ def research():
         errors.append(f"content_gap: {e}")
 
     # 7) Low-competition
-    low_comp = [k for k in scored["keywords"] if k["total"] >= 55 and (next((e["result_count"] for e in enriched if e["keyword"]==k["keyword"] and e.get("result_count") is not None), 999999) < 20000)]
+    low_comp = [k for k in scored["keywords"] if k["total"] >= 55 and (next((e["result_count"] for e in enriched if e["keyword"]==k["keyword"] and e.get("result_count") is not None and e.get("result_count_kind") != "lower_bound"), 999999) < 20000)]
     low_comp = low_comp[:12]
 
     # 8) Top 20
@@ -635,13 +630,7 @@ def research():
             if sr.get("status") == "ok":
                 top20 = sr.get("results", [])
             else:
-                # mock top20 when blocked so table not empty
-                import hashlib
-                top20 = []
-                for i in range(12):
-                    h=int(hashlib.md5(f"{enriched[0]['keyword']}{i}".encode()).hexdigest()[:6],16)
-                    top20.append({"asin": f"B0MOCK{i:06d}", "title": f"{enriched[0]['keyword'].title()} - Book {i+1}", "price": round(2.99 + (h%600)/100,2), "rating": round(3.8 + (h%70)/100,1), "review_count": 50 + h%2000, "sponsored": i==2})
-                warnings.append("⚠️ MOCK top-20 — Amazon search blocked in sandbox (labeled MOCK).")
+                warnings.append("Top search results unavailable; no sample products were substituted.")
         except Exception as e:
             errors.append(f"top20: {e}")
 
@@ -663,12 +652,12 @@ def research():
         "warnings": warnings,
         "errors": errors + mined.get("errors", []),
         "sources": {
-            "keywords": f"Amazon autocomplete ({get_marketplace(marketplace)['completion_domain']})" + (" — MOCK (sandbox blocked, demo data)" if mock_used else " — ACTUAL"),
-            "competition": "Amazon search result count + BSR scrape" + (" — MOCK (sandbox blocked)" if any(k.get("competition_status")=="MOCK" for k in enriched[:3]) else " — ACTUAL (when not blocked)"),
-            "profit": "KDP royalty tables — CALCULATED",
+            "keywords": f"Amazon autocomplete ({get_marketplace(marketplace)['completion_domain']}) — " + ("PARTIAL" if mined.get("errors") else "ACTUAL"),
+            "competition": "Amazon search result count: see per-keyword status; unavailable data is not substituted",
+            "profit": "Illustrative local assumptions — CALCULATED; verify current KDP terms",
             "score": "Heuristic composite 0-100 (Demand30+Competition25+Differentiation15+Intent15+Profit15) — CALCULATED",
-            "trends": "Google Trends via pytrends if installed else simulated (labeled)",
-            "volume_note": "Monthly search volume is ESTIMATED heuristic unless DataForSEO configured. Autocomplete ≠ volume.",
+            "trends": "Google Trends via pytrends if available; otherwise unavailable",
+            "volume_note": "Autocomplete position is not monthly search volume. This pipeline does not retrieve search volume.",
         }
     })
 

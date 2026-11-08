@@ -33,7 +33,7 @@ def _query_one(prefix, alias, mp, session):
     now = time.monotonic()
     if now < _backoff_until:
         wait = _backoff_until - now
-        time.sleep(min(wait, 2))
+        time.sleep(wait)
 
     domain = mp["completion_domain"]
     mid = mp["mid"]
@@ -53,14 +53,16 @@ def _query_one(prefix, alias, mp, session):
         raise RuntimeError(f"Amazon throttled ({resp.status_code})")
     if resp.status_code != 200:
         logger.warning(f"autocomplete {resp.status_code} for '{prefix}'")
-        return []
+        raise RuntimeError(f"Amazon autocomplete returned HTTP {resp.status_code}")
 
     _backoff_delay = 0
     try:
         data = resp.json()
-    except Exception:
-        return []
-    suggestions = data.get("suggestions", [])
+    except (ValueError, TypeError) as e:
+        raise RuntimeError("Amazon autocomplete returned invalid JSON") from e
+    if not isinstance(data, dict) or not isinstance(data.get("suggestions"), list) or not all(isinstance(s, dict) for s in data["suggestions"]):
+        raise RuntimeError("Amazon autocomplete returned an unrecognized response")
+    suggestions = data["suggestions"]
     out = []
     for i, s in enumerate(suggestions):
         kw = (s.get("value") or "").strip().lower()
@@ -121,10 +123,10 @@ def mine_autocomplete(seed, department="kindle", depth=1, marketplace="us", prog
     logger.info(f"autocomplete '{seed}' depth={depth} marketplace={marketplace} -> {len(results)} keywords")
     return results
 
-def mine_multiple(seeds, department="kindle", depth=1, marketplace="us", allow_mock=True):
-    """Mine 1-10 seeds, dedupe across seeds, return aggregated results.
-    If Amazon outbound is blocked (sandbox), falls back to labeled MOCK data so UI remains demoable.
-    """
+def mine_multiple(seeds, department="kindle", depth=1, marketplace="us", allow_mock=False):
+    """Mine seeds without substituting synthetic results on failure."""
+    if allow_mock:
+        raise ValueError("Synthetic keyword fallback is not supported")
     aggregated = {}
     per_seed = {}
     errors = []
@@ -140,22 +142,8 @@ def mine_multiple(seeds, department="kindle", depth=1, marketplace="us", allow_m
                 if kw not in aggregated or pos < aggregated[kw]["pos"]:
                     aggregated[kw] = {"kw": kw, "pos": pos, "seed": s_clean}
         except (ConnectionError, RuntimeError) as e:
-            # Network/throttle failure — fallback to mock if allowed
-            if allow_mock:
-                from kdp_engine.mock_data import get_mock_keywords_for_seed
-                mock_kws = get_mock_keywords_for_seed(s_clean)
-                # assign positions 1..n
-                kws = [(kw, idx+1) for idx, kw in enumerate(mock_kws)]
-                per_seed[s_clean] = kws
-                for kw, pos in kws:
-                    if kw not in aggregated or pos < aggregated[kw]["pos"]:
-                        aggregated[kw] = {"kw": kw, "pos": pos, "seed": s_clean}
-                mock_used = True
-                errors.append({"seed": s_clean, "error": f"MOCK fallback — {e}", "mock": True})
-                logger.warning(f"Mock fallback for seed '{s_clean}' due to: {e}")
-            else:
-                errors.append({"seed": s_clean, "error": str(e)})
-                per_seed[s_clean] = []
+            errors.append({"seed": s_clean, "error": str(e)})
+            per_seed[s_clean] = []
         except Exception as e:
             logger.exception(f"mine_multiple failed seed {s_clean}: {e}")
             errors.append({"seed": s_clean, "error": str(e)})

@@ -224,15 +224,10 @@ def scrape_product(asin, marketplace="us", timeout=15):
     desc_el = soup.select_one("#bookDescription_feature_div") or soup.select_one("#feature-bullets")
     data["description_snippet"] = desc_el.get_text(" ", strip=True)[:600] if desc_el else None
 
-    # sales estimates
-    from kdp_engine.bsr_model import estimate_daily_sales, estimate_monthly_revenue
-    mp_bsr_model = mp.get("bsr_model", "us_kindle")
-    if bsr:
-        data["est_daily_sales"] = estimate_daily_sales(bsr, mp_bsr_model)
-        data["est_monthly_revenue_usd"] = estimate_monthly_revenue(bsr, price or 4.99, mp_bsr_model) if price else None
-    else:
-        data["est_daily_sales"] = None
-        data["est_monthly_revenue_usd"] = None
+    # BSR is not a sales count. No sales or revenue estimates are supplied.
+    data["est_daily_sales"] = None
+    data["est_monthly_revenue_usd"] = None
+    data["sales_status"] = "UNAVAILABLE"
 
     return data
 
@@ -282,29 +277,22 @@ def scrape_search_results(keyword, marketplace="us", department="kindle", top_n=
     count_text = None
     for sel in ["span[data-component-type='s-result-info-bar']", ".s-result-info-bar", "#search span.a-color-state"]:
         el = soup.select_one(sel)
-        if el and "result" in el.get_text(lower=True):
+        if el and "result" in el.get_text(" ", strip=True).lower():
             count_text = el.get_text(" ", strip=True)
             break
     if not count_text:
         # scan text
-        m = re.search(r"([\d,]+)\s+results? for", html, re.I)
+        m = re.search(r"(?<![\d,\-])(?:over\s+)?([\d,]+)\s+results? for", html, re.I)
         if m:
             count_text = m.group(0)
     if count_text:
-        m = re.search(r"over\s+([\d,]+)", count_text, re.I)
-        if m:
-            try: count = int(m.group(1).replace(",", "")); 
-            except: pass
-        else:
-            m2 = re.search(r"([\d,]+)\s+results", count_text, re.I)
-            if m2:
-                try: count = int(m2.group(1).replace(",", ""))
-                except: pass
-        if not count:
-            m3 = re.search(r"([\d,]+)", count_text)
-            if m3:
-                try: count = int(m3.group(1).replace(",", "")); 
-                except: pass
+        # Only parse an explicit total, never the end of a displayed page range.
+        total = re.search(r"(?:\bof\s+(?:over\s+)?|^\s*(?:over\s+)?)([\d,]+)\s+results?\b", count_text, re.I)
+        if total:
+            try:
+                count = int(total.group(1).replace(",", ""))
+            except ValueError:
+                pass
 
     # parse organic results (skip sponsored if possible)
     results = []
@@ -351,11 +339,12 @@ def scrape_search_results(keyword, marketplace="us", department="kindle", top_n=
         })
 
     return {
-        "status": "ok",
+        "status": "ok" if count is not None or results else "unavailable",
         "keyword": keyword,
         "marketplace": marketplace,
         "result_count": count,
         "result_count_text": count_text,
+        "result_count_kind": ("lower_bound" if count_text and re.search(r"\bover\b", count_text, re.I) else "reported") if count is not None else "unavailable",
         "results": results,
         "total_parsed": len(results),
         "source": f"https://{mp['domain']}/s?k={keyword}",

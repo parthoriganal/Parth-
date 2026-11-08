@@ -1,0 +1,4 @@
+# Optional document QA; PyMuPDF is AGPL-3.0 or commercially licensed.
+PyMuPDF==1.26.7
+lxml==5.2.2
+defusedxml==0.7.1

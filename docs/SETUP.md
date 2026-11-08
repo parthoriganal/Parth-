@@ -16,9 +16,9 @@ python app.py  # -> http://localhost:5000  (health at /api/health)
 ```
 
 **Optional integrations:**
-- **DataForSEO** (search volume + reverse ASIN): set `DATAFORSEO_LOGIN` (email) and `DATAFORSEO_API_KEY` at dataforseo.com. Without it, demand is ESTIMATED heuristic and reverse ASIN shows UNAVAILABLE (no fake numbers).
+- **DataForSEO** (reverse ASIN): set `DATAFORSEO_LOGIN` (email) and `DATAFORSEO_API_KEY` at dataforseo.com. The research pipeline does not fetch search volume; reverse ASIN shows UNAVAILABLE without credentials.
 - **Pangolinfo** (blue-ocean niches): set `PANGOLINFO_API_KEY` from tool.pangolinfo.com (200 free calls).
-- **Google Trends actual**: `pip install pytrends` then trends endpoint returns ACTUAL instead of SIMULATED seasonal model.
+- **Google Trends actual**: `pip install pytrends` then the trends endpoint attempts a live request; it returns UNAVAILABLE if no data is reachable.
 
 ## 2) Frontend (Vite + Chart.js)
 
@@ -52,5 +52,5 @@ The build ports core logic from `rxpelle/kdp-scout` (MIT, 35 commits, June 2026)
 - `POST /api/mine` — {seeds, marketplace, department, depth}
 - `POST /api/competition`, `POST /api/competition/bulk`, `POST /api/competitors`, `POST /api/categories`, `POST /api/reverse-asin`, `POST /api/profit`, `POST /api/trends`, `POST /api/content-gap`, `POST /api/score`, `POST /api/research` (orchestrated one-shot)
 
-All responses include `source`, `status` (ACTUAL/ESTIMATED/SIMULATED/UNAVAILABLE/FAILED), `updated_at`, and never invent data for failing sources.
+Availability and source labels vary by endpoint; check each response. No research fallback substitutes mock product, keyword, competition, or trend data.
 
