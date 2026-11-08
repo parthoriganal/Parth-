@@ -11,19 +11,22 @@
     "backend": "python backend/app.py",
     "verify": "node scripts/verify.mjs",
     "verify:yt-skill": "node scripts/verify-youtube-skill.mjs",
+    "test:skills": "python3 -m unittest discover -s tests -p test_skill_system.py -v",
     "sim": "python3 -m http.server 8080 --bind 0.0.0.0 --directory gravity-lab",
     "test:physics": "node gravity-lab/test/physics.cjs",
     "test:sim": "node gravity-lab/test/smoke.cjs",
     "shot:sim": "node gravity-lab/test/render-shot.cjs",
     "bloom": "vite --config singularity-bloom/viewer/vite.config.js",
     "bloom:build": "vite build --config singularity-bloom/viewer/vite.config.js",
-    "bloom:render": "bash singularity-bloom/render.sh"
+    "bloom:render": "bash singularity-bloom/render.sh",
+    "test:quality": "python3 -m unittest discover -s tests -p 'test_*quality.py' -v"
   },
   "dependencies": {
     "chart.js": "^4.4.4",
     "three": "^0.187.0"
   },
   "devDependencies": {
+    "jsdom": "^26.1.0",
     "vite": "8.3.5"
   }
 }

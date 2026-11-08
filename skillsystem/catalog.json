@@ -1,0 +1,684 @@
+{
+  "version": 1,
+  "skills": [
+    {
+      "id": "academy-guide",
+      "publisher": "anthropic",
+      "path": ".claude/skills/anthropic/academy-guide/SKILL.md",
+      "purpose": "Claude Academy course selection",
+      "categories": [
+        "learning"
+      ],
+      "audit_status": "instruction-only",
+      "dependencies": [
+        "live Academy catalog"
+      ],
+      "limitations": "Catalog is external and not verified in restricted egress."
+    },
+    {
+      "id": "algorithmic-art",
+      "publisher": "anthropic",
+      "path": ".claude/skills/anthropic/algorithmic-art/SKILL.md",
+      "purpose": "Seeded generative visual art",
+      "categories": [
+        "motion",
+        "visual"
+      ],
+      "audit_status": "not-tested",
+      "dependencies": [
+        "p5.js",
+        "browser"
+      ],
+      "limitations": "Template present; interactive rendering not audited."
+    },
+    {
+      "id": "brand-guidelines",
+      "publisher": "anthropic",
+      "path": ".claude/skills/anthropic/brand-guidelines/SKILL.md",
+      "purpose": "Anthropic brand styling",
+      "categories": [
+        "branding",
+        "visual"
+      ],
+      "audit_status": "instruction-only",
+      "dependencies": [
+        "optional Poppins and Lora fonts"
+      ],
+      "limitations": "Specific to Anthropic; do not impose on other brands."
+    },
+    {
+      "id": "canvas-design",
+      "publisher": "anthropic",
+      "path": ".claude/skills/anthropic/canvas-design/SKILL.md",
+      "purpose": "Static art, covers and posters",
+      "categories": [
+        "visual",
+        "book"
+      ],
+      "audit_status": "not-tested",
+      "dependencies": [
+        "rendering tools",
+        "bundled fonts"
+      ],
+      "limitations": "No rendering verification in audit."
+    },
+    {
+      "id": "claude-api",
+      "publisher": "anthropic",
+      "path": ".claude/skills/anthropic/claude-api/SKILL.md",
+      "purpose": "Anthropic API and SDK references",
+      "categories": [
+        "integration"
+      ],
+      "audit_status": "not-tested",
+      "dependencies": [
+        "provider SDK",
+        "credentials",
+        "network"
+      ],
+      "limitations": "Live API not tested; validator rejects long description."
+    },
+    {
+      "id": "discernment-nudge",
+      "publisher": "anthropic",
+      "path": ".claude/skills/anthropic/discernment-nudge/SKILL.md",
+      "purpose": "Review consequential recommendations",
+      "categories": [
+        "writing"
+      ],
+      "audit_status": "instruction-only",
+      "dependencies": [],
+      "limitations": "Guidance only; exercise judgment."
+    },
+    {
+      "id": "doc-coauthoring",
+      "publisher": "anthropic",
+      "path": ".claude/skills/anthropic/doc-coauthoring/SKILL.md",
+      "purpose": "Collaborative structured documents",
+      "categories": [
+        "writing",
+        "book",
+        "document"
+      ],
+      "audit_status": "instruction-only",
+      "dependencies": [],
+      "limitations": "Requires user input and reader review."
+    },
+    {
+      "id": "docx",
+      "publisher": "anthropic",
+      "path": ".claude/skills/anthropic/docx/SKILL.md",
+      "purpose": "Word document editing and validation",
+      "categories": [
+        "document",
+        "book"
+      ],
+      "audit_status": "tested-helper",
+      "dependencies": [
+        "python-docx for fixture",
+        "optional docx npm",
+        "LibreOffice for rendering"
+      ],
+      "limitations": "Only merge-runs helper tested; rendering and validators not established."
+    },
+    {
+      "id": "frontend-design",
+      "publisher": "anthropic",
+      "path": ".claude/skills/anthropic/frontend-design/SKILL.md",
+      "purpose": "Visual direction for interfaces",
+      "categories": [
+        "visual",
+        "web"
+      ],
+      "audit_status": "instruction-only",
+      "dependencies": [],
+      "limitations": "Design guidance, not a renderer."
+    },
+    {
+      "id": "internal-comms",
+      "publisher": "anthropic",
+      "path": ".claude/skills/anthropic/internal-comms/SKILL.md",
+      "purpose": "Internal updates and communication",
+      "categories": [
+        "writing",
+        "document"
+      ],
+      "audit_status": "instruction-only",
+      "dependencies": [],
+      "limitations": "Requires organizational context."
+    },
+    {
+      "id": "mcp-builder",
+      "publisher": "anthropic",
+      "path": ".claude/skills/anthropic/mcp-builder/SKILL.md",
+      "purpose": "MCP integration design",
+      "categories": [
+        "integration"
+      ],
+      "audit_status": "not-tested",
+      "dependencies": [
+        "mcp Python SDK",
+        "anthropic SDK",
+        "network and credentials for evaluations"
+      ],
+      "limitations": "No server or evaluation tested."
+    },
+    {
+      "id": "pdf",
+      "publisher": "anthropic",
+      "path": ".claude/skills/anthropic/pdf/SKILL.md",
+      "purpose": "PDF inspection and forms",
+      "categories": [
+        "document",
+        "book"
+      ],
+      "audit_status": "tested-helper",
+      "dependencies": [
+        "pypdf",
+        "optional Poppler and OCR tools"
+      ],
+      "limitations": "Only field detection tested; no OCR or rendering guarantee."
+    },
+    {
+      "id": "pptx",
+      "publisher": "anthropic",
+      "path": ".claude/skills/anthropic/pptx/SKILL.md",
+      "purpose": "PowerPoint creation and editing",
+      "categories": [
+        "document",
+        "visual"
+      ],
+      "audit_status": "partial",
+      "dependencies": [
+        "pptxgenjs or python-pptx",
+        "LibreOffice",
+        "Poppler"
+      ],
+      "limitations": "PPTX schema validation encountered an unreachable external import."
+    },
+    {
+      "id": "skill-creator",
+      "publisher": "anthropic",
+      "path": ".claude/skills/anthropic/skill-creator/SKILL.md",
+      "purpose": "Author and validate skills",
+      "categories": [
+        "meta"
+      ],
+      "audit_status": "tested-helper",
+      "dependencies": [
+        "PyYAML"
+      ],
+      "limitations": "Only frontmatter validation tested."
+    },
+    {
+      "id": "slack-gif-creator",
+      "publisher": "anthropic",
+      "path": ".claude/skills/anthropic/slack-gif-creator/SKILL.md",
+      "purpose": "Small animated GIF production",
+      "categories": [
+        "motion",
+        "visual"
+      ],
+      "audit_status": "tested-helper",
+      "dependencies": [
+        "Pillow",
+        "imageio",
+        "numpy"
+      ],
+      "limitations": "Synthetic GIF tested; no Slack upload or quality guarantee."
+    },
+    {
+      "id": "theme-factory",
+      "publisher": "anthropic",
+      "path": ".claude/skills/anthropic/theme-factory/SKILL.md",
+      "purpose": "Visual themes and palettes",
+      "categories": [
+        "visual",
+        "branding"
+      ],
+      "audit_status": "instruction-only",
+      "dependencies": [],
+      "limitations": "Theme selection does not render artifacts."
+    },
+    {
+      "id": "web-artifacts-builder",
+      "publisher": "anthropic",
+      "path": ".claude/skills/anthropic/web-artifacts-builder/SKILL.md",
+      "purpose": "React artifact scaffolding and bundling",
+      "categories": [
+        "web",
+        "visual"
+      ],
+      "audit_status": "not-tested",
+      "dependencies": [
+        "Node",
+        "pnpm",
+        "npm registry"
+      ],
+      "limitations": "Initializer may install pnpm globally; run only in isolation."
+    },
+    {
+      "id": "webapp-testing",
+      "publisher": "anthropic",
+      "path": ".claude/skills/anthropic/webapp-testing/SKILL.md",
+      "purpose": "Web UI test guidance and server helper",
+      "categories": [
+        "web",
+        "testing"
+      ],
+      "audit_status": "tested-helper",
+      "dependencies": [
+        "Python",
+        "Playwright and browser for UI tests"
+      ],
+      "limitations": "Only server lifecycle and HTTP response tested, not browser automation."
+    },
+    {
+      "id": "xlsx",
+      "publisher": "anthropic",
+      "path": ".claude/skills/anthropic/xlsx/SKILL.md",
+      "purpose": "Spreadsheet production and recalculation",
+      "categories": [
+        "document",
+        "research"
+      ],
+      "audit_status": "partial",
+      "dependencies": [
+        "openpyxl",
+        "LibreOffice for recalculation"
+      ],
+      "limitations": "Recalculation failed without LibreOffice."
+    },
+    {
+      "id": "banner-design",
+      "publisher": "nextlevelbuilder",
+      "path": ".claude/skills/nextlevelbuilder/banner-design/SKILL.md",
+      "purpose": "Banner composition guidance",
+      "categories": [
+        "visual",
+        "branding"
+      ],
+      "audit_status": "instruction-only",
+      "dependencies": [
+        "optional screenshot tooling"
+      ],
+      "limitations": "No rendering test; metadata validator differs on argument-hint."
+    },
+    {
+      "id": "brand",
+      "publisher": "nextlevelbuilder",
+      "path": ".claude/skills/nextlevelbuilder/brand/SKILL.md",
+      "purpose": "Brand identity and token sync",
+      "categories": [
+        "branding",
+        "visual"
+      ],
+      "audit_status": "tested-helper",
+      "dependencies": [
+        "Node"
+      ],
+      "limitations": "Sync tests passed; not all helpers tested; validator differs on argument-hint."
+    },
+    {
+      "id": "design",
+      "publisher": "nextlevelbuilder",
+      "path": ".claude/skills/nextlevelbuilder/design/SKILL.md",
+      "purpose": "Logo, icons and identity systems",
+      "categories": [
+        "visual",
+        "branding"
+      ],
+      "audit_status": "tested-helper",
+      "dependencies": [
+        "Python",
+        "optional image providers and credentials"
+      ],
+      "limitations": "Local search and test suite passed; provider generation untested."
+    },
+    {
+      "id": "design-system",
+      "publisher": "nextlevelbuilder",
+      "path": ".claude/skills/nextlevelbuilder/design-system/SKILL.md",
+      "purpose": "Design tokens and HTML slides",
+      "categories": [
+        "visual",
+        "web"
+      ],
+      "audit_status": "tested-helper",
+      "dependencies": [
+        "Python",
+        "Node"
+      ],
+      "limitations": "Search and token-validator tests passed; full output not verified."
+    },
+    {
+      "id": "slides",
+      "publisher": "nextlevelbuilder",
+      "path": ".claude/skills/nextlevelbuilder/slides/SKILL.md",
+      "purpose": "Strategic HTML presentations",
+      "categories": [
+        "document",
+        "visual"
+      ],
+      "audit_status": "instruction-only",
+      "dependencies": [
+        "sibling design-system helpers"
+      ],
+      "limitations": "No slide deck rendered; validator differs on argument-hint."
+    },
+    {
+      "id": "ui-styling",
+      "publisher": "nextlevelbuilder",
+      "path": ".claude/skills/nextlevelbuilder/ui-styling/SKILL.md",
+      "purpose": "Tailwind and shadcn UI styling",
+      "categories": [
+        "visual",
+        "web"
+      ],
+      "audit_status": "tested-helper",
+      "dependencies": [
+        "Python",
+        "Node for target UI project"
+      ],
+      "limitations": "Helper tests passed, not real browser accessibility."
+    },
+    {
+      "id": "ui-ux-pro-max",
+      "publisher": "nextlevelbuilder",
+      "path": ".claude/skills/nextlevelbuilder/ui-ux-pro-max/SKILL.md",
+      "purpose": "Searchable UX, styling and chart guidance",
+      "categories": [
+        "visual",
+        "web",
+        "research"
+      ],
+      "audit_status": "tested-helper",
+      "dependencies": [
+        "Python"
+      ],
+      "limitations": "Local search tested; four upstream-only test files fail collection; documented path mismatch."
+    },
+    {
+      "id": "yt-audit",
+      "publisher": "youtube-agent-skill",
+      "path": ".claude/skills/youtube-agent-skill/yt-audit/SKILL.md",
+      "purpose": "Channel audit",
+      "categories": [
+        "video",
+        "research"
+      ],
+      "audit_status": "instruction-only",
+      "dependencies": [
+        "channel evidence"
+      ],
+      "limitations": "No real channel tested."
+    },
+    {
+      "id": "yt-chapters",
+      "publisher": "youtube-agent-skill",
+      "path": ".claude/skills/youtube-agent-skill/yt-chapters/SKILL.md",
+      "purpose": "Transcript chapter boundary suggestions",
+      "categories": [
+        "video"
+      ],
+      "audit_status": "tested-helper",
+      "dependencies": [
+        "Python",
+        "yt-edit/deadair.py"
+      ],
+      "limitations": "Chapter labels are drafts; inspect timestamps."
+    },
+    {
+      "id": "yt-comment",
+      "publisher": "youtube-agent-skill",
+      "path": ".claude/skills/youtube-agent-skill/yt-comment/SKILL.md",
+      "purpose": "YouTube comment replies",
+      "categories": [
+        "video",
+        "writing"
+      ],
+      "audit_status": "instruction-only",
+      "dependencies": [
+        "comment and voice examples"
+      ],
+      "limitations": "No publishing or voice matching tested."
+    },
+    {
+      "id": "yt-edit",
+      "publisher": "youtube-agent-skill",
+      "path": ".claude/skills/youtube-agent-skill/yt-edit/SKILL.md",
+      "purpose": "Transcript edit decision list",
+      "categories": [
+        "video",
+        "motion"
+      ],
+      "audit_status": "tested-helper",
+      "dependencies": [
+        "Python"
+      ],
+      "limitations": "Produces cut suggestions, does not edit media."
+    },
+    {
+      "id": "yt-package",
+      "publisher": "youtube-agent-skill",
+      "path": ".claude/skills/youtube-agent-skill/yt-package/SKILL.md",
+      "purpose": "Title and thumbnail text linting",
+      "categories": [
+        "video",
+        "branding"
+      ],
+      "audit_status": "tested-helper",
+      "dependencies": [
+        "Python"
+      ],
+      "limitations": "Heuristic score, not a CTR prediction."
+    },
+    {
+      "id": "yt-plan",
+      "publisher": "youtube-agent-skill",
+      "path": ".claude/skills/youtube-agent-skill/yt-plan/SKILL.md",
+      "purpose": "Creator production schedule",
+      "categories": [
+        "video",
+        "writing"
+      ],
+      "audit_status": "instruction-only",
+      "dependencies": [
+        "creator capacity and goals"
+      ],
+      "limitations": "No scheduling integration."
+    },
+    {
+      "id": "yt-retention",
+      "publisher": "youtube-agent-skill",
+      "path": ".claude/skills/youtube-agent-skill/yt-retention/SKILL.md",
+      "purpose": "Retention curve diagnostics",
+      "categories": [
+        "video",
+        "research"
+      ],
+      "audit_status": "tested-helper",
+      "dependencies": [
+        "Python",
+        "yt-edit/deadair.py for transcript"
+      ],
+      "limitations": "Requires supplied retention data; no causal proof."
+    },
+    {
+      "id": "yt-script",
+      "publisher": "youtube-agent-skill",
+      "path": ".claude/skills/youtube-agent-skill/yt-script/SKILL.md",
+      "purpose": "Video hooks and script guidance",
+      "categories": [
+        "video",
+        "writing"
+      ],
+      "audit_status": "tested-helper",
+      "dependencies": [
+        "Python",
+        "yt-script/hooks.json"
+      ],
+      "limitations": "Hook scorer is heuristic; full script unverified."
+    },
+    {
+      "id": "yt-seo",
+      "publisher": "youtube-agent-skill",
+      "path": ".claude/skills/youtube-agent-skill/yt-seo/SKILL.md",
+      "purpose": "YouTube description and search guidance",
+      "categories": [
+        "video",
+        "writing"
+      ],
+      "audit_status": "instruction-only",
+      "dependencies": [
+        "video and query context"
+      ],
+      "limitations": "No live search verification."
+    },
+    {
+      "id": "yt-shorts",
+      "publisher": "youtube-agent-skill",
+      "path": ".claude/skills/youtube-agent-skill/yt-shorts/SKILL.md",
+      "purpose": "Short-form repurposing guidance",
+      "categories": [
+        "video",
+        "writing"
+      ],
+      "audit_status": "instruction-only",
+      "dependencies": [
+        "transcript"
+      ],
+      "limitations": "No clipping or publishing."
+    },
+    {
+      "id": "yt-viral",
+      "publisher": "youtube-agent-skill",
+      "path": ".claude/skills/youtube-agent-skill/yt-viral/SKILL.md",
+      "purpose": "Outlier ranking for supplied video data",
+      "categories": [
+        "video",
+        "research"
+      ],
+      "audit_status": "tested-helper",
+      "dependencies": [
+        "Python",
+        "yt-script/hooks.json"
+      ],
+      "limitations": "Does not collect data or connect to YouTube."
+    }
+  ],
+  "workflows": {
+    "kdp-research": {
+      "description": "Evidence-led niche research and opportunity analysis; external signals are subject to network and provider access.",
+      "steps": [
+        {
+          "skill": "ui-ux-pro-max",
+          "reason": "Optional dashboard/chart accessibility guidance; not a research data source."
+        },
+        {
+          "skill": "xlsx",
+          "reason": "Organize supplied research data; LibreOffice is needed for formula recalculation."
+        },
+        {
+          "skill": "discernment-nudge",
+          "reason": "Review interpretation and uncertainties before decisions."
+        }
+      ],
+      "notes": [
+        "Use the existing Flask KDP engine separately; skills do not mine Amazon themselves.",
+        "Preserve ACTUAL/ESTIMATED/SIMULATED/MOCK/UNAVAILABLE source labels; never treat autocomplete as volume."
+      ]
+    },
+    "book-writing": {
+      "description": "Plan, draft, review, and package a professional book with human editorial control.",
+      "steps": [
+        {
+          "skill": "doc-coauthoring",
+          "reason": "Gather audience, goal, outline, and review criteria."
+        },
+        {
+          "skill": "discernment-nudge",
+          "reason": "Review claims, assumptions and risks."
+        },
+        {
+          "skill": "docx",
+          "reason": "When a Word deliverable is requested, use documented editing workflow."
+        },
+        {
+          "skill": "canvas-design",
+          "reason": "Optional cover concept; render and review separately."
+        }
+      ],
+      "notes": [
+        "Fact-check cited claims and ensure permissions; skills do not provide publishing or professional editorial certification.",
+        "Formatting and visual QA require appropriate document/rendering dependencies."
+      ]
+    },
+    "document-production": {
+      "description": "Select the format-specific skill, then validate and visually inspect outputs.",
+      "steps": [
+        {
+          "skill": "doc-coauthoring",
+          "reason": "Develop structure and gather requirements."
+        },
+        {
+          "skill": "docx",
+          "reason": "Use only for Word deliverables."
+        },
+        {
+          "skill": "pdf",
+          "reason": "Use for PDF inspection and form workflows."
+        },
+        {
+          "skill": "xlsx",
+          "reason": "Use for spreadsheet deliverables."
+        },
+        {
+          "skill": "pptx",
+          "reason": "Use for PowerPoint deliverables."
+        },
+        {
+          "skill": "theme-factory",
+          "reason": "Optional presentation styling."
+        }
+      ],
+      "notes": [
+        "These are alternatives by requested format, not instructions to run every skill.",
+        "Office renderers and reliable offline schema validation are not available in the audited environment."
+      ]
+    },
+    "premium-motion": {
+      "description": "Develop motion direction, scripted visuals and delivery with explicit rendering and quality gates.",
+      "steps": [
+        {
+          "skill": "brand",
+          "reason": "Establish visual identity when a brand brief exists."
+        },
+        {
+          "skill": "algorithmic-art",
+          "reason": "Explore generative visual direction; p5 and browser rendering are untested."
+        },
+        {
+          "skill": "design-system",
+          "reason": "Consult local visual/slide search and token guidance."
+        },
+        {
+          "skill": "yt-script",
+          "reason": "Optional narration and hook guidance; scoring is heuristic."
+        },
+        {
+          "skill": "yt-edit",
+          "reason": "Optional transcript-based edit decision list; does not edit video."
+        },
+        {
+          "skill": "slack-gif-creator",
+          "reason": "For small Slack GIFs only, not a premium video renderer."
+        }
+      ],
+      "notes": [
+        "The skills are guidance and small helpers, not a video-generation or rendering engine.",
+        "Use repository video/Blender tooling separately when compatible; FFmpeg, Blender, browser and visual QA must be checked before promising output."
+      ]
+    }
+  }
+}
