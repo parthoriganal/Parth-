@@ -347,3 +347,145 @@ Contains the **Secure Asset & Document Locator** (12 rows, D1–D12) and a **3-s
 ### J.7 Spend
 **$0.** Free PyPI packages (reportlab 5.1.0, pypdf, pypdfium2, Pillow) in a throwaway venv.
 No accounts, no trials. No prior report modified.
+
+---
+
+## §K — ROUND 9: FULL INTERIOR BUILD (append-only; nothing above this line was altered)
+
+### K.1 Scope
+The master prompt for this round explicitly lifted the earlier "do not write the complete book"
+limit and asked for the finished print-ready interior, not a plan. The book was therefore built:
+`The Family Records Organizer`, 8.5 × 11 in, black ink, **116 pp**, KDP paperback.
+Prior reports (ROUND2–ROUND8, FINAL_*) were read and left untouched.
+
+### K.2 Sources re-verified this round (URLs live at the time of reading)
+- KDP cover specification page (`kdp.amazon.com`, help id G201953020), chunk 4: cover width =
+  bleed + back + spine + front + bleed; height = 11.25 in; **B&W white-paper spine = pp × 0.002252 in**
+  (cream × 0.0025); spine text permitted only above 79 pp and must stay ≥ 0.0625 in from the folds;
+  all cover text ≥ 0.125 in inside trim and ≥ 7 pt; no crop marks or colour bars; 300 dpi.
+- SSA Publication 05-10008 (July 2026 edition), ssa.gov/pubs/EN-05-10008.pdf: funeral director
+  normally reports the death; $255 lump-sum death payment to an eligible surviving spouse; monthly
+  survivors benefits; **benefits paid for the month of death must be returned**; 1-800-772-1213,
+  TTY 1-800-325-0778.
+- usa.gov/report-a-death: agencies to notify (SSA, which notifies Medicare; IRS; State Department
+  for passport cancellation; state social services; VA; DFAS; OPM; financial institutions).
+- usa.gov/death-certificate: only certain family members may obtain a copy; state release rules
+  differ; deaths abroad → Consular Report of Death Abroad, up to 20 free certified copies.
+- cdc.gov/nchs/w2w/index.htm: birth/death/marriage/divorce records come from the state or
+  territory where the event occurred; the federal government does not issue them.
+- CFPB *Help for Surviving Spouses*: request 10–12 certified death certificates; notify SSA, VA,
+  employer, bank, three credit bureaus; SSA does not pay for the month of death.
+- CFPB debt-collector guidance: written dispute within 30 days stops contact until validation; a
+  personal representative is not personally liable for the deceased's debts.
+- Dead ends this round (404, do not retry): `consumerfinance.gov/consumer-tools/losing-a-loved-one/`,
+  `usa.gov/after-death`.
+
+### K.3 Build system (new files, all in `research/tools/`)
+| file | role |
+|---|---|
+| `fro_layout.py` | paper geometry, greyscale palette, embedded fonts, primitives, `Engine`, QA `TRACE` |
+| `fro_blocks.py` | reusable components: part opener, section head, callout, tables, bands, checklists |
+| `fro_content.py` | front matter + Parts 1–3 |
+| `fro_content2.py` | Parts 4–8 + back matter |
+| `fro_content3.py` | second layer of pages (inventories' second sheets, new subjects) |
+| `fro_content4.py` | third layer of pages (subjects the first pass left out) |
+| `build_book.py` | three-pass assembly with page-reference resolution |
+| `qa_book.py` | automated PDF QA (10 checks) |
+| `content_audit.py` | compliance sweep over the finished PDF's text |
+| `audit_fill.py` | raster measure of unused space at the foot of every page |
+
+### K.4 Defects found by the harness and fixed at source (not by hand)
+1. **Non-embedded `/Helvetica` on every page.** reportlab writes `BT /F1 12 Tf` in each page
+   preamble from `canvas._fontname`. `setFont()` mid-page is not enough — the preamble is only
+   rebuilt by `setPageSize()`, and `save()` rebuilds it *again*. Fixed with
+   `Canvas(..., initialFontName="Lora")`. Verified: page 1 resources now contain only the five
+   embedded subset fonts.
+2. **Table row counts ignored.** `prefill` tables passed `rows=0`, so every locator sheet printed a
+   header and no rows (shelf-ready, useless). Row count now derives from `len(prefill)`.
+3. **Tables drew past the text block.** The finance table asked for 8 rows and drew 4 in the margin.
+   `table()` now clamps to the space available and records the clamp; the build prints it. Final
+   build: 0 clamps.
+4. **Dead space at the foot of 56 pages.** Fixed structurally: tables stretch their rows into the
+   free space, and `page()` adds a ruled *Notes* tail when a page stops more than ~1 in short.
+   Now 12 pages carry >1.6 in of foot space and every one is intentional (display title page,
+   contents continuation, part openers, letters and notes pages, colophon).
+5. **Column labels overflowing into the next column** (7 labels). Labels now shrink to fit down to
+   6.4 pt and the build prints any that still do not.
+6. **Text collisions** (13 real). Found by comparing per-line boxes from the trace. Fixed by
+   correcting five column geometries and three label widths.
+7. **Contents ran off the page** after the book grew, and again on its second page. `p_contents()`
+   now paginates itself.
+8. **Contents and part dividers listed pages out of order** once new pages were inserted mid-part.
+   Both now sort by resolved page number, and dividers read the manifest rather than a hand copy.
+
+### K.5 Cost
+**$0.** Free PyPI packages in a throwaway `/tmp/venv` (reportlab 5.1.0, pypdf, pypdfium2, Pillow).
+No accounts, no trials, no paid APIs, no author copies.
+
+---
+
+## §L — Cover: measurement, defect, and the fix (10 November 2026)
+
+Appended. §A–§K above are unchanged; nothing was deleted or rewritten.
+
+### L.1 The dimensions are arithmetic, so they were done as arithmetic
+Spine width is not a design decision, it is `pages × per-page`. With the interior verified at 116 pp
+and the stock fixed at white paper, KDP's 0.002252 in/page gives a spine of 0.261232 in. Cover width
+is bleed + back + spine + front + bleed = 0.125 + 8.5 + 0.261232 + 8.5 + 0.125 = **17.511232 in**;
+height 11.25 in. The rendered page measures 17.511236 × 11.25 in — a 0.000004 in discrepancy that is
+PDF unit rounding, not layout error. Cream paper would move the spine to 0.290 in; the constant is
+exposed in `build_cover.py` for that reason.
+
+### L.2 Three defects, all found by looking at a render
+The automated checks passed a cover that was wrong. Rendering it and reading it found what the
+checks could not:
+
+1. **The eyebrow sat on top of the title.** "A RECORDS ORGANIZER" was placed at 0.20 in above a rule
+   whose y was computed *before* the title was drawn downward, so it landed inside the cap height of
+   "The Family". The vertical chain was rebuilt top-down in inches from the trim edge.
+2. **A dashed barcode placeholder box was drawn on the artwork.** It would have printed. KDP places
+   its own barcode after upload; the area must be *empty*, not *marked*. The box, its label and the
+   related comment were removed, and the coordinates moved into the brief instead.
+3. **The disclaimer panel overlapped "Who it is for".** The panel's height was a guessed constant
+   (1.42 in) and the block below it was placed at a guessed y. The panel height is now measured from
+   the wrapped paragraph (`Paragraph(...).wrap()`), and the block below is placed relative to the
+   measured bottom (`box_bottom − 0.42 in`), so it cannot recur when the copy changes.
+
+A fourth, smaller one: the spine initially read bottom-to-top (the UK convention). It now reads
+top-to-bottom, which is the US convention KDP's market expects.
+
+### L.3 The QA gap that allowed it, and how it was closed
+The existing checks measured size, margins, type floor, fonts, glyphs and colours — all properties of
+*the file*. None measured *the relationship between blocks*, which is where all three defects lived.
+`qa_cover.py` now takes a geometry ledger emitted by the builder (`cover_geometry.json`, 53 boxes)
+and tests every pair for overlap, treating a panel as containing its own text rather than colliding
+with it.
+
+The check was then **fault-injected**: the block was deliberately moved back inside the panel and the
+suite failed with `['para: What this book is not…', 'WHO IT IS FOR', 0.721 in, 0.055 in]` and a
+second overlap at 0.47 in. The fault was reverted and the cover rebuilt. A check that has never been
+seen to fail is not evidence.
+
+### L.4 A measurement worth distrusting
+The first font-size check inferred size from character bounding boxes and flagged a 7.2 pt tracked
+caps label as "4.89 pt". That is the label's **cap height**, which is correctly ~0.68 × the nominal
+size. The check was replaced with one that reads the `Tf` operators directly: minimum type on the
+cover is **7.2 pt**, and the full size set is `7.2 7.6 7.8 8.2 9.5 9.6 9.8 10.4 10.8 11.2 13 21.5 46`.
+Inferring type size from glyph extents is the same class of error as inferring checkbox option widths
+from `len(s) × 0.048"` (§I) — use the metric, not a proxy.
+
+### L.5 Spine clearance, measured rather than assumed
+Sampled the rendered spine at 2× and found ink rows spanning 4.215–7.000 in from the top, centred
+5.608 in against a page centre of 5.625 in — 0.017 in high, i.e. optically centred. Horizontal
+clearance to the folds measured **12.0 pt left, 14.6 pt right**, against a 4.5 pt (0.0625 in)
+requirement.
+
+### L.6 What the cover does not claim
+No KDP preview, no print proof, no press calibration (standing $0 constraint — a proof copy has a
+cost and was not ordered), and no trademark clearance. The cover asserts nothing about lay-flat
+binding and explicitly states in its own disclaimer panel that the book is not a will, POA,
+directive or estate plan.
+
+### L.7 Cost
+**$0.** Same throwaway `/tmp/venv` (reportlab, pypdf, pypdfium2, Pillow). No new dependency, no
+account, no paid tool.
