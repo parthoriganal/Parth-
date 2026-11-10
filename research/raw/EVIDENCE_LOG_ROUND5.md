@@ -279,3 +279,71 @@ Last Words. Plus: "not a legal document and does not replace a valid will."
 
 ### I.6 Spend
 **$0.** No account, trial, subscription or paid tool. No prior report modified.
+
+---
+
+## J. ROUND 8 APPEND (2026-11-10) — R1 binding, R3 title, layout test
+*Append-only; 0 deletions. Full write-up: `research/ROUND8_R1_R3_AND_LAYOUT_TEST.md`.*
+
+### J.1 KDP PLATFORM FACTS (VERIFIED, kdp.amazon.com help pages this round)
+- **Paperback is perfect-bound only.** No spiral / wire-o / lay-flat / comb binding exists on KDP.
+  → R1 cannot be solved with a KDP format. The format that solves it (hardcover-spiral, as used by
+  Peter Pauper) is not a KDP product and needs a different printer + money.
+- **Hardcover is case-laminate only** (art printed on board, no dust jacket). Available in
+  **8.25 x 11**, NOT 8.5 x 11. Minimum **75 pp**. Not wire-o, so **not lay-flat** (INFERRED from format).
+- **Trim 8.5" x 11" counts as a LARGE trim** (wider than 6.12" / taller than 9").
+- **Margins, 24–150 pp:** inside/gutter min **0.375 in**; outside min **0.25 in** (no bleed) /
+  **0.375 in** (bleed). 151–300 pp: inside 0.5 in.
+- **Paperback printing, LARGE trim, black ink:** fixed **$1.00 + $0.017/page**;
+  **24–110 pp = flat $2.84**. (Regular trim is $1.00 + $0.012.) Royalty = 60% list − printing.
+- **Hardcover printing, LARGE trim, black ink:** **75–108 pp = flat $7.49**;
+  110–550 pp = **$5.65 + $0.017/page**. Hardcover royalty **60% at list >= $9.99**, else 50%.
+
+### J.2 CORRECTION TO ROUND 7 — the royalty figure was wrong
+Round 7 reported **$4.81** at $11.99 / 128 pp, computed from `backend/kdp_engine/profit.py`
+(`fixed_bw 0.85 + 0.012/page`). That model uses the REGULAR-trim rate; 8.5 x 11 is LARGE trim.
+Correct figures at 128 pp, 8.5 x 11: print **$3.176** →
+**$9.99 → $2.82 · $10.99 → $3.42 · $11.99 → $4.02 · $12.99 → $4.62 · $13.99 → $5.22**.
+`config.py` has NOT been edited (application code, out of scope) — flagged for a large-trim branch.
+
+### J.3 HARDCOVER IS NOT A FIX FOR R1 (computed from the verified constants)
+| Format | Trim | pp | Price | Print | Royalty |
+|---|---|---|---|---|---|
+| Paperback | 8.5x11 | 128 | $11.99 | $3.18 | $4.02 |
+| Paperback | 8.5x11 | 128 | $12.99 | $3.18 | $4.62 |
+| Paperback | 8.5x11 | 88 | $11.99 | $2.84 | $4.35 |
+| Hardcover | 8.25x11 | 128 | $18.99 | $7.83 | $3.57 |
+| Hardcover | 8.25x11 | 88 | $18.99 | $7.49 | $3.90 |
+→ Hardcover doubles the buyer's price and pays LESS than paperback, AND still does not lie flat.
+Rejected as a solution to R1.
+
+### J.4 R3 TITLE CHECK (VERIFIED, searched this round)
+`https://www.amazon.com/s?k="family+records+organizer"&i=stripbooks` → **"1-16 of 356 results"**.
+No book titled *The Family Records Organizer* in the organic results; #1-#4 organic slots occupied
+by SPONSORED Emfogo vinyl-record stands (Amazon found no strong book match for the exact phrase).
+→ **No exact Amazon Books title collision.** Collision is CONCEPTUAL with 1441317996
+*I'm Dead, Now What? — Important Information about My Belongings, Business Affairs, and Wishes*.
+**Trademark not searched. No clearance claimed.**
+
+### J.5 LAYOUT-TEST DEFECTS FOUND (all fixed; renderer self-test now passes)
+1. **Real overflow of 1.2 in past the trim edge** — reportlab text objects leave `charSpace` set
+   on the canvas, so every string after a tracked heading rendered wider than measured. Fixed with
+   `drawString(charSpace=…)`. Caught ONLY by rasterising and finding the rightmost ink pixel.
+2. **Kicker rule and sub-line on the same baseline** — `gap` subtracted in points instead of inches.
+3. **Warning panel too short** — height was hard-coded; paragraph spilled out and collided.
+   Now computed from the wrapped line count.
+4. **Locator column headers collided** — widths chosen before measuring header text.
+5. **Footer descenders at 0.31 in**, near KDP's 0.25 in min — baseline raised to 0.52 in.
+**Lesson recorded: the first self-test PASSED while pages were visibly broken**, because it
+measured intent rather than output. The test now cross-checks trace against 2x raster.
+
+### J.6 EXEMPLAR DELIVERED
+`research/tools/render_digital_assets_exemplar.py` → `digital_assets_exemplar.pdf`, 5 pp.
+Measured: rightmost ink 7.993 / 7.611 / 7.986 / 7.618 / 7.986 in vs safe edge 8.000, trim 8.500.
+No write-on line anywhere for a credential; the only answer mechanism is 4 checkboxes
+(password manager / sealed envelope / with my attorney / other, not in this book).
+Contains the **Secure Asset & Document Locator** (12 rows, D1–D12) and a **3-slot dated review block**.
+
+### J.7 Spend
+**$0.** Free PyPI packages (reportlab 5.1.0, pypdf, pypdfium2, Pillow) in a throwaway venv.
+No accounts, no trials. No prior report modified.
