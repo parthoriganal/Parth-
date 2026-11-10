@@ -1,0 +1,41 @@
+id,candidate_niche,cluster,probe_depth,amazon_serp_count_phrase,measured_top_competitor_reviews,measured_top_competitor_price,autocomplete_head_term_present,evergreen_basis,competition_read,evidence_status
+1,Blood pressure log book,Vitals logging,SERP+BSR+autocomplete,"over 50,000",1499,8.99,yes,Chronic condition management; lifelong; US hypertension prevalence stable,Saturated; ad-buying incumbents; Amazon's Choice present,MEASURED
+2,Blood sugar / diabetes log book,Vitals logging,SERP+BSR,"over 50,000",900,5.79,yes,Diabetes is lifelong managed condition,Saturated; price floor very low ($5.79),MEASURED
+3,Medication log book,Vitals logging,SERP,"over 30,000",90,9.99,yes,Polypharmacy among seniors is structural,Fragmented; moderate difficulty,MEASURED
+4,Medication + vital signs combined log,Vitals logging,SERP+BSR,"over 10,000 (BP+medication variant) phrase)",84,9.99,partial,Routine care need; recurring,Bundle angle already used by incumbents,MEASURED
+5,Caregiver daily log book,Caregiver,SERP+BSR,"over 20,000",147,8.98,partial,Demographic; aging population; non-seasonal,Fragmented; low review counts at top,MEASURED
+6,Caregiver handoff binder / aging-parent organizer,Caregiver,SERP+BSR+autocomplete,"181 (handoff binder); over 1,000 (caregiver binder)",2,16.99,yes,Structural; caregiver coordination need; non-seasonal,Thin; zero-to-two review entries rank #1,MEASURED
+7,Vital signs log book,Vitals logging,BSR,not probed separately,25,7.99,no,Routine monitoring,Few strong entries; small field,MEASURED(partial)
+8,Personal health record keeper,Health admin,SERP,not probed,1600,11.70,no,Lifelong; family record keeping,Dominated by 2015 trade item with 1.6K reviews,MEASURED
+9,Dementia activity book,Senior activity,autocomplete only,not probed,unknown,unknown,yes,Chronic progressive condition; carer-led,Not assessed (autocomplete presence only),INFERRED-only
+10,Food journal / meal tracker,Vitals logging,autocomplete only,not probed,unknown,unknown,yes,Recurring behavioural need,Not assessed,INFERRED-only
+11,Weight loss journal,Vitals logging,autocomplete only,not probed,unknown,unknown,yes,Recurring; somewhat seasonal (January),Not assessed,INFERRED-only
+12,Habit tracker,Self-improvement,autocomplete only,not probed,unknown,unknown,yes,Behavioural; non-seasonal,Not assessed,INFERRED-only
+13,Gratitude journal,Self-improvement,autocomplete only,not probed,unknown,unknown,yes,Non-seasonal; gifting,Gift-driven; heavy competition likely,INFERRED-only
+14,Prayer journal,Faith,autocomplete only,not probed,unknown,unknown,yes,Non-seasonal; segment-split (women/men/kids),Segment saturation likely,INFERRED-only
+15,Reading journal / reading log,Reading,autocomplete only,not probed,unknown,unknown,yes,Persistent hobby,Autocomplete erratic ('reading light' drift),INFERRED-only
+16,Garden journal,Gardening,autocomplete only,not probed,unknown,unknown,yes,Annual hobby cycle; mild seasonality,Not assessed,INFERRED-only
+17,Fishing log book,Fishing,autocomplete only,not probed,unknown,unknown,yes,Lifetime hobby; mild seasonality,Not assessed,INFERRED-only
+18,Hunting log journal,Hunting,autocomplete only,not probed,unknown,unknown,yes,Lifetime hobby; seasonal peaks,Not assessed,INFERRED-only
+19,Mileage log book,Vehicle admin,SERP,"over 50,000",unknown,unknown,yes,Annual tax/record need; statutory,Very saturated; ad spend present,MEASURED
+20,Car maintenance log,Vehicle admin,autocomplete only,not probed,unknown,unknown,yes,Ownership lifecycle,Not assessed,INFERRED-only
+21,Vehicle expense tracker,Vehicle admin,not probed,not probed,unknown,unknown,no,Ownership lifecycle,Not assessed,INFERRED-only
+22,Wedding planner,Life event,autocomplete only,not probed,unknown,unknown,yes,Perennial but per-customer one-off,Not assessed,INFERRED-only
+23,ADHD planner,Neurodivergence,autocomplete only,not probed,unknown,unknown,yes,Lifelong diagnosis; adult diagnosis growth,Not assessed,INFERRED-only
+24,Budget planner,Personal finance,autocomplete only,not probed,unknown,unknown,yes,Recurring; January peak,Not assessed,INFERRED-only
+25,DBT workbook,Mental health,autocomplete only,not probed,unknown,unknown,yes,Chronic treatment modality,Clinical authority advantage to trade publishers,INFERRED-only
+26,Seizure / epilepsy log,Chronic condition,autocomplete only,not probed,unknown,unknown,weak,Chronic condition,Autocomplete surfaced product not book,INFERRED-only
+27,Homeschool record / planner,Education,not probed,not probed,unknown,unknown,no,Recurring; state-law driven,Mild seasonality (Aug/Sep),INFERRED-only
+28,Blood pressure + blood sugar combo log,Vitals logging,SERP+BSR,"over 50,000 (blood sugar phrase)",900,5.79,yes,Two chronic conditions co-occur,Combination already exploited by incumbents,MEASURED
+29,Baby / pregnancy journal,Life event,not probed,not probed,unknown,unknown,no,Perennial; one-off per customer,Not assessed,INFERRED-only
+30,Sourdough baking journal / cookbook,Cooking,autocomplete only,not probed,unknown,unknown,yes,Persistent hobby; post-2020 baseline retained,Strong cookbook competition,INFERRED-only
+31,Dog training book,Pets,autocomplete only,not probed,unknown,unknown,yes,Lifetime pet ownership,Professional-trainer authority advantage,INFERRED-only
+32,Guitar chord / method book,Music,autocomplete only,not probed,unknown,unknown,weak (rest is hardware),Lifetime hobby,Method books owned by established pedagogy brands,INFERRED-only
+33,Toddler activity book,Children activity,autocomplete only,not probed,unknown,unknown,yes,Perennial; each cohort renews,Art/print-quality differentiator,INFERRED-only
+34,Chair yoga / balance exercises for seniors,Senior health guide,BSR (adjacent),not probed,686,14.99,no,Ageing population; non-seasonal,Strong: 686-review and 23-review titles both rank,MEASURED(partial)
+35,Trivia for seniors,Senior gift/activity,BSR,not probed,382,14.14,no,Perennial gifting,Gift-driven; price-tolerant,MEASURED(partial)
+36,Large print word search for seniors,Senior activity,BSR,not probed,16,14.99,no,Perennial; low-tech,Gift/activity; large existing field,MEASURED(partial)
+37,Retirement devotional,Faith/life stage,BSR,not probed,519,14.81,no,Perennial; life-stage,Highest-review item in Aging Parents,MEASURED(partial)
+38,Dementia reminiscence picture book,Senior activity,BSR,not probed,128,10.99,no,Chronic condition; carer-led,Moderate; picture-book production cost,MEASURED(partial)
+39,CNA study guide,Professional exam,New Releases,not probed,26,0.99,no,Perennial workforce pipeline,Exam-cycle; Kindle price war at $0.99,MEASURED(partial)
+40,Activity director planner,Professional,New Releases,not probed,2,19.99,no,Perennial professional role,Very thin; calendar-dated (annual refresh),MEASURED(partial)
