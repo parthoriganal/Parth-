@@ -1,0 +1,38 @@
+rank,niche,organic,evergreen,demand,competition,differentiation,confidence,weighted_total,tier,book_index_gate
+1,Spelling workbook (grade 3),4.0,5.0,2.0,3.0,2.0,4.0,3.35,C-range,PASS
+2,Spelling workbook (grade 2),4.0,5.0,2.0,3.0,2.0,4.0,3.35,C-range,PASS
+3,Medical terminology workbook,4.0,5.0,3.0,2.0,1.0,4.0,3.35,C-range,PASS
+4,Notary journal,4.0,5.0,2.0,2.0,2.0,4.0,3.2,C-range,PASS
+5,Home maintenance log book,3.0,5.0,3.0,1.0,2.0,4.0,3.1,C-range,PASS
+6,Cursive handwriting workbook,4.0,5.0,2.0,1.0,2.0,4.0,3.05,C-range,PASS
+7,Password book (large print / seniors),4.0,5.0,2.0,1.0,2.0,4.0,3.05,C-range,PASS
+8,Inventory log book,2.0,4.0,2.0,1.0,1.0,4.0,2.35,D-range,PASS
+9,Anatomy coloring book,3.0,5.0,1.0,0.0,2.0,2.0,2.25,D-range,PASS
+10,Genealogy research organizer,3.0,5.0,1.0,0.0,2.0,2.0,2.25,D-range,PASS
+11,Estate planning workbook,3.0,5.0,1.0,0.0,2.0,2.0,2.25,D-range,PASS
+12,Study guide / certification prep (generic),2.0,5.0,1.0,0.0,1.0,2.0,1.95,D-range,PASS
+13,Address book,2.0,4.0,1.0,0.0,1.0,2.0,1.75,D-range,PASS
+14,Travel journal,2.0,3.0,1.0,0.0,2.0,2.0,1.65,D-range,PASS
+15,End-of-life / final wishes planner,0.0,5.0,4.0,2.0,3.0,4.0,3.0,C-range,FAIL(_fb_)
+16,Caregiver medical binder,0.0,5.0,3.0,0.0,3.0,3.0,2.35,D-range,FAIL(_fb_)
+17,IEP binder / special-ed advocate organizer,0.0,5.0,2.0,0.0,3.0,2.0,2.0,D-range,FAIL(_fb_)
+18,In-case-of-death financial organizer,0.0,5.0,2.0,0.0,2.0,2.0,1.9,D-range,FAIL(_fb_)
+19,Estate planning organizer kit,0.0,5.0,1.0,0.0,2.0,2.0,1.65,D-range,FAIL(_fb_)
+20,Bible study journal,0.0,5.0,1.0,0.0,2.0,2.0,1.65,D-range,FAIL(_fb_)
+21,Sermon notes notebook,0.0,5.0,1.0,0.0,1.0,2.0,1.55,D-range,FAIL(_fb_)
+22,Pet medical record book,0.0,4.0,1.0,0.0,2.0,2.0,1.45,D-range,FAIL(_fb_)
+23,Rental property ledger,0.0,4.0,1.0,0.0,2.0,2.0,1.45,D-range,FAIL(_fb_)
+24,Bird watching journal,0.0,4.0,1.0,0.0,2.0,2.0,1.45,D-range,FAIL(_fb_)
+25,Scuba diving log book,0.0,4.0,1.0,0.0,2.0,2.0,1.45,D-range,FAIL(_fb_)
+26,Chess scorebook,0.0,4.0,1.0,0.0,2.0,2.0,1.45,D-range,FAIL(_fb_)
+27,Music practice log,0.0,4.0,1.0,0.0,2.0,2.0,1.45,D-range,FAIL(_fb_)
+28,Chicken record keeping book,0.0,4.0,1.0,0.0,2.0,2.0,1.45,D-range,FAIL(_fb_)
+29,Wine tasting journal,0.0,4.0,1.0,0.0,1.0,2.0,1.35,D-range,FAIL(_fb_)
+30,Coin collecting log,0.0,4.0,1.0,0.0,1.0,2.0,1.35,D-range,FAIL(_fb_)
+31,Checkbook register,0.0,4.0,1.0,0.0,1.0,2.0,1.35,D-range,FAIL(_fb_)
+32,Recipe book to write in,0.0,4.0,1.0,0.0,1.0,2.0,1.35,D-range,FAIL(_fb_)
+33,Birthday reminder book,0.0,4.0,1.0,0.0,1.0,2.0,1.35,D-range,FAIL(_fb_)
+34,Dog record book,0.0,4.0,1.0,0.0,1.0,2.0,1.35,D-range,FAIL(_fb_)
+35,Triathlon training log,0.0,3.0,1.0,0.0,2.0,2.0,1.25,D-range,FAIL(_fb_)
+36,Student planner 2026-2027,0.0,3.0,1.0,0.0,1.0,2.0,1.15,D-range,FAIL(_fb_)
+37,Golf log book,0.0,4.0,0.0,0.0,1.0,2.0,1.1,D-range,FAIL(_fb_)

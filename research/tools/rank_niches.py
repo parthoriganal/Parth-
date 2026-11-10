@@ -89,8 +89,16 @@ def num(v):
 
 
 def main():
+    import argparse
+    ap = argparse.ArgumentParser(description="Rank niches from an evidence CSV.")
+    ap.add_argument("--input", default=None,
+                    help="evidence CSV (default: data/round3_evidence.csv)")
+    ap.add_argument("--output", default=None, help="ranking CSV output path")
+    args = ap.parse_args()
+
     here = os.path.dirname(os.path.abspath(__file__))
-    path = os.path.join(os.path.dirname(here), "data", "round3_evidence.csv")
+    data_dir = os.path.dirname(here)
+    path = args.input or os.path.join(data_dir, "data", "round3_evidence.csv")
     rows = load(path)
     out = []
     for r in rows:
@@ -141,7 +149,7 @@ def main():
         print(f"\nTop eligible: {top['niche']}  ({top['total']:.2f}, {top['tier']})")
     print(f"\nEligible (book-index confirmed): {len(elig)}/{len(out)}")
 
-    outp = os.path.join(os.path.dirname(here), "data", "round3_ranking.csv")
+    outp = args.output or os.path.join(data_dir, "data", "round3_ranking.csv")
     with open(outp, "w", newline="", encoding="utf-8") as fh:
         w = csv.writer(fh)
         w.writerow(["rank", "niche", "organic", "evergreen", "demand", "competition",
