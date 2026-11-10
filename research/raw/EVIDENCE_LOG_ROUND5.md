@@ -212,3 +212,70 @@ An $8.99–9.99 KDP paperback is not a substitute at $48 price expectations.
 ### H.5 Still UNAVAILABLE (unchanged)
 Amazon search volume · BSR · review text · Google Trends · Product Opportunity Explorer (paid seller
 account; not created). **No spend this round. No account, trial or subscription.**
+
+---
+
+## I. ROUND 7 APPEND (2026-11-10) — competitor audit
+*Append-only; 0 deletions. Full write-up: `research/ROUND7_COMPETITOR_AUDIT_AND_BLUEPRINT.md`.*
+
+### I.1 CORRECTION TO ROUND 6 — two large competitors missed
+Both surfaced as sponsored placements + frequently-bought-together on B0BJ4YJF2S. Both are
+**Peter Pauper Press**, and both are filed in **Office Products → Planners**, NOT in Books —
+which is exactly why a books-index scan missed them.
+
+| ASIN/ISBN | Title | Reviews | Rating | Price | Format | Pub |
+|---|---|---|---|---|---|---|
+| 1441317996 / 978-1441317995 | **I'm Dead, Now What? Planner** | **15,120** | 4.6 | **$9.95** (-45% off $17.99 list) | Hardcover-spiral, concealed wire-o, lies flat | — |
+| 1441317295 / 978-1441317292 | **Peace of Mind Planner** | **9,743** | 4.6 | $11.33 (list $17.99) | Hardcover-spiral, 8.9×11.4, 96 pp, **17 tabbed sections**, acid-free archival | **2014-11-03** |
+
+**Combined 24,863 reviews vs 3,422 for the four briefed competitors.** The Round-6 headline
+"≈3,400" was therefore ~12% of the real cluster.
+
+### I.2 Peace of Mind Planner — full published section list (VERIFIED)
+Personal Information · Medical Information · Key Contact Information · **At the Time of My Passing** ·
+Dependents · Important Documents · Financial Information · Commercial/Business Information ·
+**What Beneficiaries Can Expect** · Personal Property · Insurance · Pets ·
+**What to Pay, Close, and Cancel** · Email and Social Media · Miscellaneous · Personal Wishes ·
+Last Words. Plus: "not a legal document and does not replace a valid will."
+→ The 2020–2022 indie wave is **imitating a 2014 product**, not improving on it.
+
+### I.3 Verified product data — four briefed competitors
+- **B0BJ4YJF2S** (Wairimu): 65 pp, 8.5×11, 2022-10-13, $9.99, 930/4.3,
+  **BSR #40,791 in Books**; #2 Right to Die Family & Health Law; Independently published.
+  Contents: personal info, next of kin, funeral plan, important documents (will/executors),
+  other documents, power of attorney, funeral wishes, financial details, useful contacts,
+  digital accounts ("login information"), children, pets, last thoughts. **No medical section,
+  no insurance section, no business section, no document LOCATIONS.**
+- **B084DGFVXQ**: **100 pp**, 8.5×11, **2020-02-01**, $10.99, 1,100/4.5. Contents include
+  "People to be Notified", medical, investments, commercial/business, "What to Pay, Close, and
+  Cancel", **"Email and Social Media Passwords"** (explicit password field), personal wishes,
+  last words. Has a written legal disclaimer.
+- **1645583406** (New Seasons / Publications International): **32 pp, spiral**, $7.98, 1,229/4.5,
+  **4 physical document pockets**. Detailed medical (history, medications, providers), detailed
+  insurance (life/LTC/home/auto), credit-debit cards, money owed to you, **"jot down your
+  passwords"** (explicit).
+- **B0GC43FSQL** (Thboxes): spiral 7.4×10.1, $9.99, 163/4.6, **Amazon's Choice**, "50+ bought in
+  past month", FSC-certified, sold by third party (LiranAM). Filed **Office Products**.
+
+### I.4 Also verified in passing
+- **1797877232** (Ava Brinley, indie, 2019-02-23): 52 pp, 8×10, **2,964 reviews / 4.3**, $14.95.
+  Explicitly markets shortness: *"At 52 pages, this planner is just the right length to not be
+  overwhelming."* → length is a live positioning axis in this category, in BOTH directions.
+- **B0DP68QXBL**: "Large Print for Seniors", 7.5×10.4, $9.75, 417/4.6 → large-print is a real
+  segment signal (INFERRED, not proof of causation).
+- **B0H5JW22R6**: 120 GSM paper, inner pockets, 16 tabs, $13.99, 171/4.8, Amazon's Choice →
+  build quality is being used as a differentiator at the top of the price range.
+- **B0F7HM7R2Q** (Sarah Crawford): "Funny End of Life Planner", $10.99, 332/4.3, **#1 Best Seller
+  in Elder Family Law** → the novelty/humour tone is an occupied, separate segment.
+- `1441317996` breadcrumb confirms **Office Products → ... → Planners**; price shown "-45%".
+
+### I.5 Still UNAVAILABLE — and it matters
+- **Review TEXT: sign-in wall on BOTH `/product-reviews/` and `/gp/aw/reviews/`.** Zero reviews
+  read. All "customer complaints" in the Round-7 report are **INFERRED**, and are labelled so.
+  Not circumvented, per standing instruction.
+- Amazon's "Customers say" AI review summary: absent from every fetched page.
+- Interior pages / look-inside: not obtainable.
+- Amazon search volume, BSR movement, Google Trends: unchanged — UNAVAILABLE.
+
+### I.6 Spend
+**$0.** No account, trial, subscription or paid tool. No prior report modified.
