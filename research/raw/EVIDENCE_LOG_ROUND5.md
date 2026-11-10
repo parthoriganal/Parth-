@@ -164,3 +164,51 @@ output (verified before commit).
 - **Google Books API: UNAVAILABLE** — 429, `quota_limit_value: 0`.
 - **Bash egress to Amazon: BLOCKED** — `curl` → 000, TLS EOF.
 - **No spend. No subscription. No trial. No account created.**
+
+---
+
+## H. ROUND 6 APPEND (2026-11-10) — final selection evidence
+*Appended rather than creating a new log, per the no-duplicate-files instruction.*
+
+### H.1 THE DECISIVE FINDING — estate/final-wishes review depth
+From `https://www.amazon.com/s?k=my+final+wishes+planner&i=stripbooks` → **over 6,000 results**,
+organic #1 and #2, plus the product page for B0BJ4YJF2S:
+
+| ASIN | Title | Author/publisher | Reviews | Rating | Price | Format |
+|---|---|---|---|---|---|---|
+| B0BJ4YJF2S | My Final Wishes Planner: Everything You Need to Know When I'm Gone | **Brian Wairimu** | **930** | 4.3 | **$9.99** | Paperback, **65 pp**, 8.5×11, pub **Oct 13 2022**, also Hardcover |
+| B0BQ9JB2LM | My Wishes: Final Wishes Planner | LifeGoals Studio | 17 | 4.1 | **$4.00** | Paperback |
+| B084DGFVXQ | Everything You Need to Know When I'm Gone: After Death Planner | "After Death Planner" | **1,100** | 4.5 | **$10.99** | Paperback (also viewed; ASIN prefix B084 → 2020) |
+| 1645583406 | Information My Family Needs to Know Organizer | **New Seasons** (trade) | **1,229** | 4.5 | **$7.98** | Spiral-bound |
+| B0GC43FSQL | Thboxes My Final Wishes Planner | Thboxes | **163** | 4.6 | **$9.99** | Spiral, 7.4×10.1, **Amazon's Choice** |
+
+**Aggregate ≈3,400 reviews across four titles at $7.98–$10.99.**
+Compare caregiver cluster best: 123 reviews (B0D4TX3TRR, #3 Nursing Long-Term Care).
+
+### H.2 Secondary confirmations
+- `estate planning organizer` SERP: **over 9,000 results**. Sponsored #1 = **Skyygemm "Estate
+  planning binders"** — 4-pack PU-leather **3-ring binders**, a *physical* product, not a book.
+  → advertisers here sell binders; the review leaders are paperbacks.
+- `final wishes planner` SERP: over 9,000; sponsored **Planners with Purpose** (B5 workbook brand).
+
+### H.3 Autocomplete (book alias), measured this round
+| Prefix | alias | Result |
+|---|---|---|
+| `when i die` | **stripbooks** | **`when i die clever fox`** ← a BRAND is the top book-index suggestion |
+| `life binder` | aps (`_fb_`) | `end of life binder` |
+| `estate planning workbook` | aps (`_fb_`) | `estate planning workbook guide` |
+| `important documents` | aps (`_fb_`) | `important documents box` (product) |
+| `estate planning organizer` | aps (`_fb_`) | `estate planning organizer kit` (product) |
+
+**Per user correction, `_fb_` fallback is recorded as a signal only — NOT a disqualification.**
+
+### H.4 Notary journal — why rejected
+Product page **B09JY118PJ** (NNA Basic Blue Notary Journal): **$48.00**, 122 numbered pages,
+488 entry fields, privacy guard, sold by National Notary Assoc. Frequently-bought-together:
+thumbprint ink pad $5.99, NNA numbered receipt book $24.00.
+→ Buyers purchase an **official, state-compliant, numbered** journal as a professional instrument.
+An $8.99–9.99 KDP paperback is not a substitute at $48 price expectations.
+
+### H.5 Still UNAVAILABLE (unchanged)
+Amazon search volume · BSR · review text · Google Trends · Product Opportunity Explorer (paid seller
+account; not created). **No spend this round. No account, trial or subscription.**
