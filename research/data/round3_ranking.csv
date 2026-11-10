@@ -1,0 +1,30 @@
+rank,niche,organic,evergreen,demand,competition,differentiation,confidence,weighted_total,tier,book_index_gate
+1,Dementia activity book,4.0,5.0,4.0,2.0,2.0,5.0,3.8,B-range,PASS
+2,Caregiver daily log / aging-parent organizer,3.0,5.0,5.0,2.0,1.0,5.0,3.75,B-range,PASS
+3,Sourdough discard baking,5.0,4.0,2.0,5.0,2.0,4.0,3.65,B-range,PASS
+4,DBT skills workbook,3.0,4.0,2.0,4.0,2.0,4.0,3.1,C-range,PASS
+5,Pressure canning for beginners,3.0,4.0,2.0,4.0,2.0,4.0,3.1,C-range,PASS
+6,Blood pressure log book,3.0,5.0,3.0,1.0,1.0,5.0,3.1,C-range,PASS
+7,Medication log book,2.0,5.0,3.0,1.0,1.0,5.0,2.9,C-range,PASS
+8,Grief journal,2.0,5.0,2.0,1.0,2.0,4.0,2.65,C-range,PASS
+9,Homeschool planner,2.0,5.0,2.0,1.0,2.0,4.0,2.65,C-range,PASS
+10,Grief journal (companion),2.0,5.0,2.0,1.0,2.0,4.0,2.65,C-range,PASS
+11,Sourdough starter / beginner baking,3.0,4.0,2.0,0.0,2.0,4.0,2.5,C-range,PASS
+12,Mileage log book,2.0,4.0,2.0,1.0,1.0,4.0,2.35,D-range,PASS
+13,Baby memory book,2.0,4.0,2.0,0.0,2.0,2.0,2.1,D-range,PASS
+14,Wedding guest book,2.0,3.0,2.0,0.0,2.0,2.0,1.9,D-range,PASS
+15,Beekeeping log book,2.0,4.0,2.0,0.0,2.0,2.0,2.1,D-range,FAIL(_fb_)
+16,Funeral guest book,0.0,5.0,1.0,0.0,1.0,2.0,1.55,D-range,FAIL(_fb_)
+17,Spanish-language puzzle/activity books,0.0,4.0,1.0,0.0,1.0,3.0,1.45,D-range,FAIL(_fb_)
+18,Migraine / headache journal,0.0,4.0,1.0,0.0,1.0,2.0,1.35,D-range,FAIL(_fb_)
+19,Food allergy tracker,0.0,4.0,1.0,0.0,1.0,2.0,1.35,D-range,FAIL(_fb_)
+20,Herbal remedies,0.0,4.0,1.0,0.0,1.0,2.0,1.35,D-range,FAIL(_fb_)
+21,Mushroom foraging,0.0,4.0,1.0,0.0,1.0,2.0,1.35,D-range,FAIL(_fb_)
+22,Seizure / epilepsy log,0.0,4.0,1.0,0.0,1.0,2.0,1.35,D-range,FAIL(_fb_)
+23,Activity director planner,0.0,4.0,1.0,0.0,1.0,2.0,1.35,D-range,FAIL(_fb_)
+24,Nurse brain / shift report sheet,0.0,4.0,1.0,0.0,1.0,2.0,1.35,D-range,FAIL(_fb_)
+25,Hunting log journal,0.0,4.0,1.0,0.0,1.0,2.0,1.35,D-range,FAIL(_fb_)
+26,Seed starting,0.0,4.0,1.0,0.0,1.0,1.0,1.25,D-range,FAIL(_fb_)
+27,Homeschool record keeping,0.0,4.0,1.0,0.0,1.0,1.0,1.25,D-range,FAIL(_fb_)
+28,Truck driver log / DOT hours,0.0,3.0,1.0,0.0,1.0,2.0,1.15,D-range,FAIL(_fb_)
+29,Teacher lesson planner,0.0,3.0,1.0,0.0,1.0,2.0,1.15,D-range,FAIL(_fb_)
