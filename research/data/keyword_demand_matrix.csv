@@ -1,0 +1,19 @@
+keyword,autocomplete_confirmed,serp_count,serp_count_type,commercial_intent,describes_purchasable_product,demand_evidence,evidence_status
+aging parents caregiver log book,no_direct_suggestion,3000,over,yes,yes,#1 organic held by 0-review Sep-2026 self-pub title,MEASURED(serp)+INFERRED(intent)
+caregiver handoff binder,partial(via caregiver handoff workbook),181,exact,yes,yes,too thin to carry a title alone,MEASURED
+caregiver communication log,no(drifted to translation aid),1000,over,yes,partly,#1 is 1-review Aug-2025 book,MEASURED
+family caregiver organizer,no(via caregiver organizer for elderly parents),not_measured,-,yes,yes,autocomplete confirms phrase,MEASURED(autocomplete)
+family caregiver planner,yes_exact,7000,over,yes,yes,1000+ results with confirmed autocomplete,MEASURED
+elderly care planner,NO_EMPTY,7000,over,weak,partly,7000 results but zero autocomplete = seller language not buyer language,MEASURED+INFERRED
+senior care coordination,NO_EMPTY,not_measured,-,weak,no,marketing language; nobody types this,MEASURED
+caregiver daily log book,yes,20000,over,yes,yes,#1 bestseller position; 2 mature titles at 4-5 reviews/mo,MEASURED
+aging parent care journal,NO_EMPTY,not_measured,-,weak,no,not a buyer phrase,MEASURED
+aging parent caregiver workbook,yes,1000,over,yes,yes,supporting long tail,MEASURED
+caregiver planner organizer book,yes,not_measured,-,yes,yes,supporting long tail,MEASURED(autocomplete)
+caregiver organizer for elderly parents,yes,not_measured,-,yes,yes,supporting long tail,MEASURED(autocomplete)
+caregiver handoff workbook,yes,not_measured,-,yes,yes,supporting long tail,MEASURED(autocomplete)
+aging parents caregiver handoff,yes,not_measured,-,yes,yes,supporting long tail,MEASURED(autocomplete)
+caregiver daily log book in spanish,yes,815,exact,yes,yes,thin supply; incumbents only 1-2 reviews in 5 years,MEASURED
+caregiver log book spanish,no(via caregiver daily log book in spanish),815,exact,yes,yes,bilingual entry landed Oct-2026,MEASURED
+caregiver log book,yes,20000,over,yes,yes,core head term,MEASURED
+medication log book,yes,30000,over,yes,yes,adjacent; contested by incumbents,MEASURED

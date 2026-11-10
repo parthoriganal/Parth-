@@ -1,0 +1,61 @@
+{
+  "pdf": "/home/user/Parth-/research/deliverables/cover/The-Family-Records-Organizer_cover_116pp_BW.pdf",
+  "bytes": 35382,
+  "failures": [],
+  "warnings": [],
+  "info": {
+    "size_in": [
+      17.511236,
+      11.25
+    ],
+    "spine_in": 0.261232,
+    "fragments": 44,
+    "text_outside_safe": [],
+    "spine_fragments": 1,
+    "small_fragments_by_box": [
+      [
+        "8.5 \u00d7 11 IN \u00b7 116 PAGES \u00b7 PRINT EDITION",
+        4.89
+      ]
+    ],
+    "geometry_items": 53,
+    "collisions": [],
+    "font_sizes": [
+      7.2,
+      7.6,
+      7.8,
+      8.2,
+      9.5,
+      9.6,
+      9.8,
+      10.4,
+      10.8,
+      11.2,
+      13.0,
+      21.5,
+      46.0
+    ],
+    "bleed_strip_ink": {
+      "left": 0.0,
+      "right": 0.0,
+      "top": 0.07218,
+      "bottom": 0.0
+    },
+    "fonts": [
+      "AAAAAA+Lora-Bold",
+      "AAAAAA+Lora-Regular",
+      "AAAAAA+WorkSans-Bold"
+    ],
+    "greys": [
+      0.09,
+      0.16,
+      0.35,
+      0.55,
+      0.62,
+      0.78,
+      0.95
+    ],
+    "colour_operators": 60
+  },
+  "verdict": "PASS"
+}
