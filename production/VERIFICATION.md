@@ -8,6 +8,22 @@
 
 The hosted checks ran against the actual export. The GitHub artifact CDN was not reachable from the Arena sandbox, so the full master was not downloaded or visually reviewed there. The local visuals below were inspected separately.
 
+### Full open-source master
+
+[Run 44248744686](https://github.com/parthoriganal/Parth-/actions/runs/44248744686) restored the original checked Cycles and Cairo plates on `ubuntu-24.04`. It built the complete Pillow/FFmpeg edit without Node, Chromium, Remotion, or a paid plug-in. The job verified all 180 input plates, the **216-frame** 1080p video, stereo cues at all five edit points, and five embedded captions. It checked all three `.blend` files against the original manifest, tested the source ZIP, and confirmed that the published MP4 matches the SHA-256 of the QA-checked file.
+
+[Public MP4](https://github.com/parthoriganal/Parth-/releases/download/meridian-m01-open-v1/meridian.mp4) · [Public source kit](https://github.com/parthoriganal/Parth-/releases/download/meridian-m01-open-v1/meridian-editable.zip) · [Decoded contact sheet](https://github.com/parthoriganal/Parth-/releases/download/meridian-m01-open-v1/contact-sheet.jpg). This was a full recomposition, not a second Cycles master render.
+
+### Fresh full draft on the active branch
+
+[Run 44248626544](https://github.com/parthoriganal/Parth-/actions/runs/44248626544) built a new `draft` bundle at `195d272` and rendered its 66 Cycles and 24 Manim plates on standard CPU runners. It composited and decoded the complete nine-second edit at **768×432, 12 fps (108 frames)**, including five timing-checked audio cues and five round-tripped captions. The Node and Remotion steps were skipped. [Draft artifact](https://github.com/parthoriganal/Parth-/actions/runs/44248626544/artifacts/14402583470).
+
+### JSON-configured templates on real plates
+
+The [Copper Field project](examples/copper-field.json) was authored using `build --project` with no edits to the geometry code. After reopening the `.blend` files, the scene audit found 40 knurls across two bands, two vault bays, and 520 terrain vertices across ten rings (nine layers). All **66 Cycles frames** rendered, and both Pillow/FFmpeg and Remotion/Chromium produced a 5.5-second video that decoded with its three audio cues and captions. [Copper Field contact sheet](copper-field.jpg) shows decoded frames from the Pillow/FFmpeg edit. A separately rendered four-bay pavilion verified the extended plinth.
+
+On a copy of the Copper Field checkpoint, truncating frame 21 again caused just that frame to be rebuilt. The other four PNGs kept their timestamps and hashes. A real exported signature shot from the four-shot rehearsal also confirmed the new Pillow push-in; an image-only crop had a 9.63 mean luma delta after the entrance transition.
+
 ## Additional render checks
 
 | Feature | Evidence |
@@ -19,6 +35,6 @@ The hosted checks ran against the actual export. The GitHub artifact CDN was not
 | Cairo motion graphics | The [hosted Manim job](https://github.com/parthoriganal/Parth-/actions/runs/44245101395/job/134602562383) rendered the optical study and decoded **48 frames at 1920×1080**; it passed a motion check before uploading `meridian-optics`. Cairo ran in its own Python environment with real Pango, not the Blender/X shim. |
 | Editorial animation | Decoded and inspected wipes, dips, title reveal, time rail, and signature in a separate **4-second four-shot** local edit. Both Remotion/Chromium and Pillow/FFmpeg encoded and verified all 48 frames at 768×432/12 fps. The local edit excludes optics; it is not the full `draft` render. |
 | Audio and captions | Both local encodes decoded as stereo AAC at 48 kHz, with chimes detected at all four edit points after AAC priming/padding. All four English closed captions round-tripped from `mov_text` with their original text and timestamps. These are authored descriptive music captions, not speech recognition. |
-| Regression | Five Lantern Tide fixtures and three Meridian fixtures passed. Reassembled Lantern Tide from its verified 12 plates and matched the original MP4 byte-for-byte. The upgrade did not modify its source or workflow. |
+| Regression | Five Lantern Tide fixtures and five Meridian fixtures passed. Reassembled Lantern Tide from its verified 12 plates and matched the original MP4 byte-for-byte. The upgrade did not modify its source or workflow. |
 
 The local rehearsal, decoded motion proof, and master `.blend` kit are in `production/demo-assets/` in the Arena workspace. The kit contains frozen scene hashes and the master still QA; the hosted film runs from its own matching source bundle. Source code, the master jacket image, and the rendered variant sheet are tracked; generated movies, ZIPs, and frame caches are not.
