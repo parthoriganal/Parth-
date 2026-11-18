@@ -1,0 +1,165 @@
+name: Verify and publish the open-source Meridian master
+
+# One-time promotion of a previously rendered 1080p plate set, not a new Cycles run.
+on:
+  push:
+    branches: ['arena/1a7a4253-parth']
+    paths: ['.github/workflows/verify-meridian-open-master.yml']
+
+permissions: {}
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  WORK: out/meridian
+  SOURCE_RUN: '44245101395'
+  SOURCE_SHA: bc2d4bd7c5f12f84ceac7bbd7796e43d2876d3c2
+
+jobs:
+  compose:
+    if: github.repository == 'parthoriganal/Parth-'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+      - name: Validate the original successful master run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$SOURCE_RUN" | jq -e \
+            --arg sha "$SOURCE_SHA" --arg branch "$GITHUB_REF_NAME" --arg repo "$GITHUB_REPOSITORY" '
+            .status == "completed" and .conclusion == "success" and .head_sha == $sha and
+            .head_branch == $branch and .head_repository.full_name == $repo and
+            .path == ".github/workflows/render-meridian.yml"'
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: '3.11.18'
+      - name: Install and check the pinned media stack; no Node or Remotion
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install --only-binary=:all: --require-hashes -r blender_pipeline/requirements-media.lock
+          .venv/bin/python -m pip check
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: meridian-source
+          path: out/meridian/bundle
+          github-token: ${{ github.token }}
+          run-id: ${{ env.SOURCE_RUN }}
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: meridian-optics
+          path: out/meridian/diagrams
+          github-token: ${{ github.token }}
+          run-id: ${{ env.SOURCE_RUN }}
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          pattern: meridian-frames-*
+          path: out/meridian/shards
+          github-token: ${{ github.token }}
+          run-id: ${{ env.SOURCE_RUN }}
+      - name: Assemble actual 3D and optical plates with the open compositor
+        run: |
+          mkdir -p "$WORK/frames"
+          for src in "$WORK"/shards/meridian-frames-*; do
+            batch=${src##*/meridian-frames-}
+            mv "$src" "$WORK/frames/$batch"
+          done
+          .venv/bin/python -u -m production stage
+          .venv/bin/python -u -m production compose
+          .venv/bin/python -u -m production export
+          cat "$WORK/delivery/delivery-qa.json"
+      - name: Verify the exact MP4 and bundle the original editable scenes
+        run: |
+          .venv/bin/python - <<'PY'
+          from hashlib import file_digest
+          import json
+          import os
+          from pathlib import Path
+          from zipfile import ZipFile, ZIP_DEFLATED
+          delivery = Path(os.environ['WORK']) / 'delivery'
+          qa = json.loads((delivery / 'delivery-qa.json').read_text())
+          with (delivery / 'meridian.mp4').open('rb') as f:
+              assert file_digest(f, 'sha256').hexdigest() == qa['video_sha256']
+          assert qa['status'] == 'pass' and qa['preset'] == 'master'
+          assert qa['video'] == [1920,1080,24] and qa['seconds'] == 9 and qa['decoded_frames'] == 216
+          assert qa['visual_engine'] == 'Pillow / FFmpeg CPU' and qa['subtitles'] == 5
+          assert len(qa['audio']['cue_alignment']) == 5
+          assert qa['verified_inputs'] == dict(object=48, shelter=42, terrain=42, optics=48)
+          scene_names = ['object.blend', 'shelter.blend', 'terrain.blend']
+          manifest = json.loads((delivery / 'project.json').read_text())
+          for name in scene_names:
+              with (delivery / 'blender' / name).open('rb') as f:
+                  assert file_digest(f, 'sha256').hexdigest() == manifest['scene_sha256'][Path(name).stem]
+          files = [f'blender/{name}' for name in scene_names] + [
+              'project.json', 'scene-qa.json', 'delivery-qa.json', 'meridian-score.wav', 'meridian.srt',
+              'optics-manim.mp4', 'optics-qa.json', 'poster.png', 'contact-sheet.jpg',
+              'licenses/InstrumentSerif-OFL.txt', 'licenses/JetBrainsMono-OFL.txt', 'licenses/Outfit-OFL.txt',
+          ]
+          with ZipFile(delivery / 'meridian-editable.zip', 'w', ZIP_DEFLATED) as archive:
+              for name in files:
+                  archive.write(delivery / name, name)
+              archive.writestr('README.txt', 'Meridian M/01 — open-source composition master.\n'
+                  'Open a .blend from the blender/ folder in Blender 5.0.1.\n'
+                  'The editable sets and optical plate come from verified render run 44245101395.\n'
+                  'The included report refers to the matching Pillow/FFmpeg MP4.\n')
+          with ZipFile(delivery / 'meridian-editable.zip') as archive:
+              assert archive.testzip() is None
+          PY
+      - if: failure()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: meridian-open-diagnostics
+          path: |
+            out/meridian/open-compose.log
+            out/meridian/delivery/*.log
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: meridian-open-master
+          path: |
+            out/meridian/delivery/meridian.mp4
+            out/meridian/delivery/meridian-editable.zip
+            out/meridian/delivery/delivery-qa.json
+            out/meridian/delivery/contact-sheet.jpg
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+
+  publish:
+    needs: compose
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: meridian-open-master
+          path: release-input
+      - name: Publish and verify the public video and editable source kit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: meridian-m01-open-v1
+        run: |
+          sha=$(jq -er '.video_sha256 | select(test("^[0-9a-f]{64}$"))' release-input/delivery-qa.json)
+          printf '%s  release-input/meridian.mp4\n' "$sha" | sha256sum -c
+          zip_sha=$(sha256sum release-input/meridian-editable.zip | cut -d' ' -f1)
+          cat > "$RUNNER_TEMP/meridian-notes.md" <<EOF
+          The nine-second Meridian M/01 film recomposited with **Pillow and FFmpeg**, without Node, Chromium, Remotion, or a paid plug-in. 1920×1080 at 24 fps with stereo audio and optional English closed captions. The Cycles source plates are 1152×648.
+
+          **meridian.mp4** is the direct download. **meridian-editable.zip** contains three Blender 5.0.1 scenes, captions, score, the Manim plate, and render QA.
+
+          [Verified original Cycles and Manim plates](https://github.com/$GITHUB_REPOSITORY/actions/runs/$SOURCE_RUN) · [Recomposition and checks](https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID).
+          EOF
+          gh release create "$RELEASE_TAG" release-input/meridian.mp4 release-input/meridian-editable.zip release-input/contact-sheet.jpg \
+            --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --latest=false \
+            --title 'Meridian M/01 — open-source 1080p edition' --notes-file "$RUNNER_TEMP/meridian-notes.md"
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/$RELEASE_TAG" | jq -e --arg v "sha256:$sha" --arg z "sha256:$zip_sha" '
+            .draft == false and (.assets | any(.name == "meridian.mp4" and .state == "uploaded" and .digest == $v)) and
+            (.assets | any(.name == "meridian-editable.zip" and .state == "uploaded" and .digest == $z))'
