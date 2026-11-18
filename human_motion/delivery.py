@@ -60,7 +60,8 @@ def entries(root,bundle,out,plan,qa,paths):
     with ZipFile(temp,'w',compression=ZIP_DEFLATED,compresslevel=5) as arc:
         for name in (BLEND,PLAN,SCENE_QA):
             arc.write(bundle/name,'blender/'+name)
-        for path in [*source_paths(),ROOT/'human_motion/README.md']:
+        extra=['production/models.py','human_motion/README.md','singularity-bloom/setup_bpy_headless.sh']
+        for path in [*source_paths(),*(ROOT/p for p in extra)]:
             item=path.relative_to(ROOT).as_posix()
             check(path.is_file(),f'Missing rebuild asset: {item}')
             if item in plan['sources_sha256']:

@@ -177,6 +177,7 @@ jobs:
           python -u -m human_motion deliver
           python -m zipfile -e "$WORK/delivery/a-passing-hello-source.zip" "$WORK/extracted"
           pushd "$WORK/extracted/rebuild"
+          python -c "from production.edl import FONT_ROOT; assert (FONT_ROOT / 'JetBrainsMono-Bold.ttf').is_file()"
           python -m human_motion --root /tmp/a-passing-hello-portability --help
           python -m unittest discover -s human_motion/tests -v
           popd
