@@ -197,6 +197,12 @@ jobs:
           python -u -m meridian_m02 compose
           python -u -m meridian_m02 export
           cat "$WORK/delivery/delivery-qa.json"
+      - name: Smoke-test the self-contained source archive
+        run: |
+          python -m zipfile -e "$WORK/delivery/weather-atlas-editable.zip" "$WORK/extracted"
+          cd "$WORK/extracted/rebuild"
+          python -m meridian_m02 plan --preset draft > /tmp/m02-portable-plan.json
+          jq -e '.series == "M/02" and .frames == 96' /tmp/m02-portable-plan.json
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: failure()
         with:

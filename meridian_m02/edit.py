@@ -219,10 +219,11 @@ def export(root, doc):
     files += [out/'contact-sheet.jpg']
     repo=HERE.parent
     shared_runtime=repo/'blender_pipeline'
+    font_files=(*delivery.FONTS, 'JetBrainsMono-Bold.ttf', *delivery.FONT_LICENSES)
     sources=[*HERE.glob('*.py'),*HERE.glob('*.lock'),*HERE.glob('*.md'),*HERE.glob('*.json'),
              *HERE.glob('examples/*.json'),*HERE.glob('tests/*.py'),*SHARED.glob('*.py'),
              *shared_runtime.glob('*.py'),*shared_runtime.glob('*.lock'),
-             *(FONT_ROOT/p for p in (*delivery.FONTS,*delivery.FONT_LICENSES))]
+             *(FONT_ROOT/p for p in font_files)]
     zip_path=out/f'{stem}-editable.zip'
     tmp=out/'.editable.partial.zip'
     try:
@@ -233,6 +234,9 @@ def export(root, doc):
                 zipf.write(p,arcname='rebuild/'+p.relative_to(repo).as_posix())
         with ZipFile(tmp) as zipf:
             require(zipf.testzip() is None,'Editable ZIP CRC verification failed')
+            for path in font_files:
+                target='rebuild/'+(FONT_ROOT/path).relative_to(repo).as_posix()
+                require(target in zipf.namelist(),f'Missing rebuild font/notice: {path}')
             for name, sha in doc['scene_sha256'].items():
                 member=f'blender/{name}.blend'
                 require(hashlib.sha256(zipf.read(member)).hexdigest()==sha,f'Editable ZIP scene hash mismatch: {name}')
