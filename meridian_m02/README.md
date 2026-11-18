@@ -6,7 +6,7 @@ M/02 adds set generation, clipped-module architecture, layered shading, target-b
 
 ![Three Weather Atlas midpoint samples rendered on CPU](evidence/weather-atlas.jpg)
 
-**[Download the 1080p film, editable Blender ZIP and QA](https://github.com/parthoriganal/Parth-/actions/runs/44255533345/artifacts/14405802634)** (GitHub sign-in; available until December 18, 2026). The film is 8 seconds, 24 fps, with three English closed captions. The master was rendered on standard CPU runners at 1152×648 native plates, then edited at 1920×1080.
+**[Download the 1080p MP4](https://github.com/parthoriganal/Parth-/releases/download/meridian-m02-v1/weather-atlas.mp4)** · [Editable Blender ZIP](https://github.com/parthoriganal/Parth-/releases/download/meridian-m02-v1/weather-atlas-editable.zip) · [Release and QA files](https://github.com/parthoriganal/Parth-/releases/tag/meridian-m02-v1). No sign-in required. The film is 8 seconds, 24 fps, with three English closed captions. The master was rendered on standard CPU runners at 1152×648 native plates, then edited at 1920×1080.
 
 See [Verification](VERIFICATION.md) for the run receipts, actual rendered comparisons, verified features and open limits.
 
