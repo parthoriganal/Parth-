@@ -1,0 +1,89 @@
+{
+  "audio": {
+    "channels": 2,
+    "decoded_samples": 720896,
+    "dialogue": false,
+    "sample_rate": 48000,
+    "shoe_cues_s": [
+      3.46,
+      3.98,
+      4.5,
+      5.01,
+      5.51,
+      5.98
+    ],
+    "source_peak_dbfs": -9.75,
+    "source_samples": 720000
+  },
+  "checked_pngs": 360,
+  "decode_motion": {
+    "adjacent_delta_mean_luma_0_255": {
+      "max": 10.9924,
+      "median": 2.0409,
+      "min": 0.2412
+    },
+    "adjacent_identical_downsampled_frames": 0
+  },
+  "decoded_frames": 360,
+  "delivery_resolution": [
+    1920,
+    1080
+  ],
+  "duration_s": 15.0,
+  "encode_decode_package_s": 29.23,
+  "ffmpeg": "ffmpeg version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2024 the FFmpeg developers",
+  "fps": 24,
+  "frame_sequence": {
+    "bytes": 282613290,
+    "count": 360,
+    "sha256": "22f9c848e3348cab1afbbd6a0a8fa42cfb15e45ebe376b9a8cc7fb42de48831d"
+  },
+  "maximum_plate_luma_mean": 144.03,
+  "minimum_plate_luma_mean": 109.79,
+  "minimum_plate_luma_sd": 38.46,
+  "mp4_bytes": 14007835,
+  "mp4_sha256": "e1f3e4c2959c913ce2ada2c3da074e99222a70afa9a9e9487459080273206b84",
+  "native_resolution": [
+    1152,
+    648
+  ],
+  "project_id": "f2f1d4e47abfdceda69665f1d37aa4e36c3eb1912dc33f83f527210ce8cac15a",
+  "render_engine": "Blender 5.0.1 / Cycles CPU + OIDN",
+  "render_timing": {
+    "frames_with_recorded_time": 360,
+    "max_frame_seconds": 33.5,
+    "max_worker_rss_mib": 1825.1,
+    "median_frame_seconds": 21.5,
+    "min_frame_seconds": 17.26,
+    "render_wall_clock_span_s": 580.0,
+    "sum_completed_frame_seconds": 8185.63,
+    "wall_span_first_started_to_last_finished_utc": [
+      "2026-11-18T08:16:56+00:00",
+      "2026-11-18T08:26:36+00:00"
+    ],
+    "wall_span_precision": "UTC event timestamps, 1 second; includes overlaps and any waits within span",
+    "worker_thread_counts": [
+      4
+    ]
+  },
+  "review_frames": [
+    1,
+    84,
+    103,
+    140,
+    167,
+    190,
+    238,
+    270,
+    349
+  ],
+  "samples_per_pixel_max": 12,
+  "scene_sha256": "89a7c3ffa0a6dbbb811efb840b0b18d219f63f09c3eeb5cba218d3d28c051ac0",
+  "source_package": {
+    "bytes": 9887598,
+    "sha256": "5e5b30adc6a4e753a64420d377ed0cc9ea89302f863d3f6568c262e083584ad3"
+  },
+  "status": "pass",
+  "title": "A Passing Hello",
+  "upscale": "Lanczos; no interpolated video frames"
+}

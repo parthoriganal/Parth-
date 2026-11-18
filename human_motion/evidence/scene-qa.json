@@ -1,0 +1,203 @@
+{
+  "apex_sole_clearance_mm": [
+    93.9371,
+    121.4225,
+    121.7726,
+    121.8852,
+    122.177,
+    122.1785
+  ],
+  "bone_collections": 5,
+  "bones": 155,
+  "brow_strands": 416,
+  "build_seconds": 3.409,
+  "camera_path_m": 3.7006,
+  "evaluated_mesh_sample_frames": [
+    1,
+    27,
+    79,
+    103,
+    122,
+    139,
+    166,
+    190,
+    194,
+    220,
+    238,
+    248,
+    259,
+    271,
+    297,
+    332,
+    360
+  ],
+  "evaluated_pose_frames": 360,
+  "face_shapes": [
+    "Blink.L",
+    "Blink.R",
+    "Smile",
+    "Brow.L",
+    "Brow.R"
+  ],
+  "finger_bones": 30,
+  "flat_shoe_max_xy_drift_mm": {
+    "L": 0.0027,
+    "R": 0.0045
+  },
+  "fps": 24,
+  "frames": 360,
+  "garment_vertices": [
+    1396,
+    1022
+  ],
+  "gaze_turn_deg": 42.091,
+  "groom_strands": 3300,
+  "grounded_sole_clearance_mm": [
+    2.1703,
+    2.2004
+  ],
+  "head_max_frame_rotation_deg": 2.9359,
+  "joint_limits": {
+    "L": {
+      "ankle_control_error_mm": [
+        0.0004,
+        0.0449
+      ],
+      "elbow_flexion_deg": [
+        10.0267,
+        16.7875
+      ],
+      "knee_flexion_deg": [
+        11.1907,
+        70.3097
+      ],
+      "wrist_z_m": [
+        0.8368,
+        0.8899
+      ]
+    },
+    "R": {
+      "ankle_control_error_mm": [
+        0.0003,
+        0.0411
+      ],
+      "elbow_flexion_deg": [
+        10.0267,
+        109.5478
+      ],
+      "knee_flexion_deg": [
+        11.6416,
+        70.529
+      ],
+      "wrist_z_m": [
+        0.8209,
+        1.4606
+      ]
+    }
+  },
+  "min_head_screen_inset_pct": 5.889,
+  "min_sole_clearance_any_frame_mm": 2.1703,
+  "native_resolution": [
+    1152,
+    648
+  ],
+  "near_closed_frames": {
+    "L": [
+      21,
+      54,
+      55,
+      78,
+      79,
+      112,
+      140,
+      165,
+      166,
+      194,
+      219,
+      220,
+      253,
+      283,
+      315,
+      316,
+      344
+    ],
+    "R": [
+      21,
+      22,
+      54,
+      55,
+      79,
+      112,
+      113,
+      140,
+      165,
+      166,
+      194,
+      195,
+      219,
+      220,
+      253,
+      254,
+      283,
+      315,
+      316,
+      344
+    ]
+  },
+  "objects": 601,
+  "opening_foot_screen_inset_pct": 5.115,
+  "packed_images": 8,
+  "project_id": "f2f1d4e47abfdceda69665f1d37aa4e36c3eb1912dc33f83f527210ce8cac15a",
+  "render_engine": "Cycles CPU",
+  "reopened_scene": true,
+  "rolling_support_max_xy_drift_mm": {
+    "L": 0.1854,
+    "R": 0.0818
+  },
+  "skin_vertices": 7954,
+  "status": "pass",
+  "toolchain": {
+    "Blender": "5.0.1",
+    "Blender build": "a3db93c5b259",
+    "NumPy": "1.26.4",
+    "OS": "Linux",
+    "Pillow": "13.0.0",
+    "Python": "3.11.18",
+    "architecture": "x86_64",
+    "trimesh": "5.2.1"
+  },
+  "travel_m": 2.465,
+  "unpacked_asset_paths": 0,
+  "weighted_mesh_checks": {
+    "Arun \u2022 face, neck and anatomical hands": {
+      "base_vertices": 7954,
+      "eyelid_edge_max_ratio": 5.0998,
+      "eyelid_max_length_above_3p65x_mm": 8.3925,
+      "max_edge_ratio_p99": 1.2643,
+      "max_non_lid_edge_ratio": 2.1533,
+      "max_non_lid_ratio_frame": 297,
+      "min_edge_ratio_p01": 0.7874,
+      "weighted_fraction": 1.0
+    },
+    "Straight leg canvas trousers": {
+      "base_vertices": 1022,
+      "eyelid_edge_max_ratio": 0.0,
+      "eyelid_max_length_above_3p65x_mm": 0.0,
+      "max_edge_ratio_p99": 1.7212,
+      "max_non_lid_edge_ratio": 2.8123,
+      "max_non_lid_ratio_frame": 79,
+      "min_edge_ratio_p01": 0.5375,
+      "weighted_fraction": 1.0
+    },
+    "Tailored chore overshirt": {
+      "base_vertices": 1396,
+      "eyelid_edge_max_ratio": 0.0,
+      "eyelid_max_length_above_3p65x_mm": 0.0,
+      "max_edge_ratio_p99": 1.4764,
+      "max_non_lid_edge_ratio": 2.5473,
+      "max_non_lid_ratio_frame": 259,
+      "min_edge_ratio_p01": 0.749,
+      "weighted_fraction": 1.0
+    }
+  }
+}

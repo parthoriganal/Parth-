@@ -10,6 +10,8 @@ Arun walks across a quiet sandstone courtyard, notices someone and offers a smal
 | 9–12 s | 217–288 | Reframe for the right palm, two small wrist accents and a slight smile |
 | 12–15 s | 289–360 | Lower the arm, release the expression, breathe and settle |
 
+**Verified downloads:** [MP4 + editable Blender + Python + contact sheet + QA](https://github.com/parthoriganal/Parth-/actions/runs/44266306549/artifacts/14411440460) · [All 360 native PNGs](https://github.com/parthoriganal/Parth-/actions/runs/44266306549/artifacts/14410832132) · [Verification and measured render time](VERIFICATION.md). GitHub Actions keeps these archives through December 18, 2026.
+
 ## Open and edit
 
 Open `a-passing-hello.blend` in Blender **5.0.1**, and read **START HERE** in the Text Editor. The scene is self-contained, with the eye/skin image inputs and the wayfinding font packed. It requires no add-ons, plug-ins, external geometry libraries, or automatic scripts to play the timeline. The named timeline markers use times starting at frame 1 = 0.000 s.

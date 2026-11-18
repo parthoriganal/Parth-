@@ -1,0 +1,13 @@
+{
+  "ambient_rms": 0.00824,
+  "reopened_scene": true,
+  "shoe_window_rms": [
+    0.023211,
+    0.031611,
+    0.036153,
+    0.030622,
+    0.03627,
+    0.02563
+  ],
+  "source_digest": "89a7c3ffa0a6dbbb811efb840b0b18d219f63f09c3eeb5cba218d3d28c051ac0"
+}

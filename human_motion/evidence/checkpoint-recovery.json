@@ -1,0 +1,27 @@
+{
+  "damaged_frame": 195,
+  "fresh_repair_sha256": "80eb24edad37efc89c9be55bf291a3d892abf2ed444dfadd745f74874b462155",
+  "native_test_resolution": [
+    640,
+    360
+  ],
+  "original_frame_195_sha256": "36a10cfe14a493c1919efb3b4097f078033aecd496751c9b0145cad67d302c54",
+  "recovery_worker_s": 11.32,
+  "repair_byte_identical_to_original": false,
+  "rerendered_frames_in_second_run": 1,
+  "reused_frame": 194,
+  "status": "pass",
+  "test_only": true,
+  "truncated_bytes": 85,
+  "unchanged_cached_sha256": "81133a9f7f631b3e7c3d8d47a750f85df03dcb5eb6e6238a57375c8b5a167541",
+  "validated_rgb_stats": {
+    "194": {
+      "luma_mean": 119.35,
+      "luma_stddev": 40.8
+    },
+    "195": {
+      "luma_mean": 119.49,
+      "luma_stddev": 40.71
+    }
+  }
+}
