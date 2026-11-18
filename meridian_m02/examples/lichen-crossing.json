@@ -1,0 +1,17 @@
+{
+  "schema": 2,
+  "title": "Meridian M/02 — Lichen Crossing",
+  "edition": "LICHEN CROSSING",
+  "clock": 24,
+  "sets": {
+    "reed-house": {"kind":"glasshouse", "seed":8128, "modules":5, "accent":"E1A264"}
+  },
+  "shots": [
+    {"id":"west-entry", "set":"reed-house", "ticks":40, "marker":"01 / CULTIVATION", "title":"West entry", "label":"FIVE BAYS   /   SEED 8128", "audio":"[A warm chime and quiet pulses]", "note":155.56, "light":"amber", "exposure":-0.77,
+     "camera":{"aperture":0, "keys":[
+       [0,[-5.7,-14.1,6.18],[0,0.10,0.93],31.4], [0.49,[-6.6,-14,6.26],[0,0.09,0.93],32.2], [1,[-7.48,-13.9,6.36],[0,0.12,0.92],33.1]]}},
+    {"id":"east-exit", "set":"reed-house", "ticks":44, "marker":"02 / REFRACTION", "title":"East exit", "label":"SAME SET   /   BLUE HOUR", "audio":"[A higher chime over a fading drone]", "note":207.65, "light":"polar", "exposure":-0.99,
+     "camera":{"aperture":10, "keys":[
+       [0,[7.2,-14.2,6.45],[0,0.18,0.89],32.6], [0.55,[5.82,-14.55,6.16],[0,0.18,0.87],33.4], [1,[4.95,-14.65,5.91],[0,0.24,0.81],34.3]]}}
+  ]
+}

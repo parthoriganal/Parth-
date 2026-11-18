@@ -1,0 +1,22 @@
+{
+  "schema": 2,
+  "title": "Meridian M/02 — Weather Atlas",
+  "edition": "WEATHER ATLAS",
+  "clock": 24,
+  "sets": {
+    "tidal-station": {"kind":"tidal", "seed":803, "modules":5, "accent":"D98043"},
+    "glasshouse": {"kind":"glasshouse", "seed":451, "modules":4, "accent":"9CBF77"},
+    "alpine-dome": {"kind":"alpine", "seed":937, "modules":12, "accent":"78BBCE"}
+  },
+  "shots": [
+    {"id":"tide", "set":"tidal-station", "ticks":60, "marker":"01 / SHORE", "title":"Tide archive", "label":"TIDAL EXCHANGE   /   LOW WATER", "audio":"[A low, resonant synth tone]", "note":130.81, "light":"amber", "exposure":-1.08,
+     "camera":{"aperture":0, "keys":[
+       [0,[8.8,-13.6,6.3],[0,-0.25,0.47],33], [0.52,[7.1,-13.9,6.0],[0,-0.31,0.47],34], [1,[5.6,-14.1,5.8],[0,-0.32,0.47],35]]}},
+    {"id":"canopy", "set":"glasshouse", "ticks":72, "marker":"02 / CANOPY", "title":"Glasshouse", "label":"CULTIVATION   /   WARM FRONT", "audio":"[A rising tone and soft, repeating pulses]", "note":174.61, "light":"verdant", "exposure":-0.93,
+     "camera":{"aperture":8.0, "keys":[
+       [0,[4.8,-14.35,5.85],[0.04,0.22,0.81],32], [0.55,[6.15,-14.3,6.1],[0,0.24,0.85],33], [1,[7.4,-14,6.35],[0,0.15,0.88],33.6]]}},
+    {"id":"summit", "set":"alpine-dome", "ticks":60, "marker":"03 / ALTITUDE", "title":"Snow observatory", "label":"UPPER AIR   /   CLEARING SKY", "audio":"[A bright chime over a fading drone]", "note":196.0, "light":"polar", "exposure":-0.93,
+     "camera":{"aperture":0, "keys":[
+       [0,[8.8,-13.1,6.64],[0.0,-0.13,0.56],32], [0.5,[7.5,-13.7,6.26],[0.05,-0.14,0.57],33], [1,[6.3,-13.98,5.84],[0.13,-0.16,0.62],34]]}}
+  ]
+}

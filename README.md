@@ -17,6 +17,7 @@ Built on [rxpelle/kdp-scout](https://github.com/rxpelle/kdp-scout) (MIT) as the 
 | **[Singularity Bloom](./singularity-bloom/)** | A real 3D sculpture generated entirely by Python running inside **Blender 5.0** (headless, no display server), path-traced with Cycles, exported to glTF and spun in a three.js viewer. 25 crystal petals, two torus knots, 380 dust motes, an obsidian shell around a glowing heart. [`README`](./singularity-bloom/README.md) |
 | **[Lantern Tide](./lantern-tide/)** | A procedural lighthouse island and looping camera orbit. The [Blender CPU pipeline](./blender_pipeline/) builds the editable `.blend`, renders frames in parallel on GitHub Actions, and validates the assembled MP4. [Compatibility audit](./docs/BLENDER_COMPATIBILITY.md). |
 | **[Meridian M/01](./production/)** | A reusable CPU film pipeline: editable Blender sets and FK rigging, Manim optics, editorial graphics, a synchronized soundtrack, subtitles and verified FFmpeg delivery. |
+| **[Meridian M/02 — Weather Atlas](./meridian_m02/)** | A three-climate atlas built from a JSON storyboard: procedural stations, editable planted-foot IK, layered Cycles shading and rendered defect inspection/repair. |
 
 ```bash
 npm run sim            # serve Gravity Lab at :8080

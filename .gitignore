@@ -18,3 +18,6 @@ singularity-bloom/out/
 
 # Reproducible Meridian media kept in the workspace and Actions, not Git
 /production/demo-assets/
+
+# Meridian M/02 portable media is delivered outside Git; small evidence boards are tracked.
+/meridian_m02/demo-assets/
