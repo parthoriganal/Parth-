@@ -10,7 +10,7 @@ Arun walks across a quiet sandstone courtyard, notices someone and offers a smal
 | 9–12 s | 217–288 | Reframe for the right palm, two small wrist accents and a slight smile |
 | 12–15 s | 289–360 | Lower the arm, release the expression, breathe and settle |
 
-**Verified downloads:** [MP4 + editable Blender + Python + contact sheet + QA](https://github.com/parthoriganal/Parth-/actions/runs/44266306549/artifacts/14411440460) · [All 360 native PNGs](https://github.com/parthoriganal/Parth-/actions/runs/44266306549/artifacts/14410832132) · [Verification and measured render time](VERIFICATION.md). GitHub Actions keeps these archives through December 18, 2026.
+**Public release:** [1080p MP4](https://github.com/parthoriganal/Parth-/releases/download/a-passing-hello-v1/a-passing-hello.mp4) · [Editable Blender scene and Python source ZIP](https://github.com/parthoriganal/Parth-/releases/download/a-passing-hello-v1/a-passing-hello-source.zip) · [All 360 native PNGs](https://github.com/parthoriganal/Parth-/releases/download/a-passing-hello-v1/a-passing-hello-frames.zip) · [Release page](https://github.com/parthoriganal/Parth-/releases/tag/a-passing-hello-v1) · [Verification and measured render time](VERIFICATION.md). No GitHub sign-in is needed for release downloads.
 
 ## Open and edit
 
