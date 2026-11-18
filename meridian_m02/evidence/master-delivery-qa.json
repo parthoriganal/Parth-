@@ -1,0 +1,38 @@
+{
+  "status": "pass",
+  "video": [
+    1920,
+    1080,
+    24
+  ],
+  "decoded_frames": 192,
+  "seconds": 8,
+  "native_3d_plate_res": [
+    1152,
+    648
+  ],
+  "inspected_plates": 192,
+  "subtitles": 3,
+  "audio": {
+    "cue_alignment": [
+      {
+        "sample": 0,
+        "shot": "tide",
+        "verified_amplitude": 0.148
+      },
+      {
+        "sample": 120000,
+        "shot": "canopy",
+        "verified_amplitude": 0.145
+      },
+      {
+        "sample": 264000,
+        "shot": "summit",
+        "verified_amplitude": 0.143
+      }
+    ],
+    "decoded_samples": 384000,
+    "expected_samples": 384000
+  },
+  "video_sha256": "d06ea119d64b7d36910243d653ec93391049877c4b17e09f1a30e552c312b7f9"
+}

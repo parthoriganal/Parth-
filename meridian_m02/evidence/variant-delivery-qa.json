@@ -1,0 +1,45 @@
+{
+  "audio": {
+    "cue_alignment": [
+      {
+        "sample": 0,
+        "shot": "west-entry",
+        "verified_amplitude": 0.144
+      },
+      {
+        "sample": 80000,
+        "shot": "east-exit",
+        "verified_amplitude": 0.15
+      }
+    ],
+    "decoded_samples": 168960,
+    "expected_samples": 168000
+  },
+  "audio_peak_dbfs": -9.88,
+  "decoded_frames": 42,
+  "ffmpeg": "ffmpeg version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2024 the FFmpeg developers",
+  "inspected_plates": 42,
+  "native_3d_plate_res": [
+    640,
+    360
+  ],
+  "pixel_inspection_sha256": "d15bf4f1e6b9008906e6f90dade9fc8a05a640721a7cc3f3574f6028b24a67fe",
+  "preset": "draft",
+  "project_id": "d1eebd42f8de81ab963bdc72c366478be94086c9ad3cd7fc46f530b97dd7ec5f",
+  "seconds": 3.5,
+  "series": "M/02",
+  "status": "pass",
+  "subtitles": 2,
+  "verified_inputs": {
+    "east-exit": 22,
+    "west-entry": 20
+  },
+  "video": [
+    768,
+    432,
+    12
+  ],
+  "video_file": "lichen-crossing.mp4",
+  "video_sha256": "98dc9c4ff72374a4921f0b2c9992db1d6d9a291105b8aed94fa53fc6497c5454",
+  "visual_engine": "Weather Atlas \u2022 Pillow / FFmpeg CPU"
+}

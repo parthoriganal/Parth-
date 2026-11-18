@@ -6,7 +6,9 @@ M/02 adds set generation, clipped-module architecture, layered shading, target-b
 
 ![Three Weather Atlas midpoint samples rendered on CPU](evidence/weather-atlas.jpg)
 
-See [Verification](VERIFICATION.md) for actual renders, delivery links, coverage, and untested cases.
+**[Download the 1080p film, editable Blender ZIP and QA](https://github.com/parthoriganal/Parth-/actions/runs/44255533345/artifacts/14405802634)** (GitHub sign-in; available until December 18, 2026). The film is 8 seconds, 24 fps, with three English closed captions. The master was rendered on standard CPU runners at 1152×648 native plates, then edited at 1920×1080.
+
+See [Verification](VERIFICATION.md) for the run receipts, actual rendered comparisons, verified features and open limits.
 
 ## Reproduce on CPU
 
