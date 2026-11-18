@@ -18,17 +18,18 @@ def log_event(folder, event, **data):
     print(json.dumps(record, sort_keys=True), flush=True)
 
 
-def load_scene(bpy, blend, threads):
+def load_scene(bpy, blend, threads, *, persistent_data=False):
     if bpy.ops.wm.open_mainfile(filepath=str(blend), load_ui=False, use_scripts=False) != {"FINISHED"}:
         raise PipelineError(f"Could not open {blend}")
     scene = bpy.context.scene
     scene.render.threads_mode, scene.render.threads = "FIXED", threads
-    scene.render.use_persistent_data = False  # Don't hold a render cache in each worker's RAM.
+    scene.render.use_persistent_data = persistent_data  # Opt in per project/worker memory budget.
     return scene
 
 
-def render(bundle, frames_root, shard_id, threads=None, attempts=2):
-    project, profile = load_manifest(bundle)
+def render(bundle, frames_root, shard_id, threads=None, attempts=2, *, manifest_loader=load_manifest,
+           blend_name=BLEND, persistent_data=False):
+    project, profile = manifest_loader(bundle)
     shard = next((item for item in project["shards"] if item["id"] == shard_id), None)
     if shard is None:
         raise PipelineError(f"Unknown shard {shard_id!r}; use the id from the matrix command")
@@ -67,8 +68,8 @@ def render(bundle, frames_root, shard_id, threads=None, attempts=2):
         raise PipelineError(f"Worker Blender build {build_hash} does not match the scene build")
     available = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else (os.cpu_count() or 1)
     threads = min(threads or available, available)
-    blend = (bundle / BLEND).resolve()
-    scene = load_scene(bpy, blend, threads)
+    blend = (bundle / blend_name).resolve()
+    scene = load_scene(bpy, blend, threads, persistent_data=persistent_data)
     for i in missing:
         dest = (folder / frame_name(i)).resolve()
         tmp = dest.with_name(f".{dest.stem}.partial.png")
@@ -92,7 +93,7 @@ def render(bundle, frames_root, shard_id, threads=None, attempts=2):
                 log_event(folder, "failed_frame", frame=i, attempt=attempt, reason=str(exc))
                 if attempt == attempts:
                     raise PipelineError(f"{shard_id}: frame {i} still failed after {attempts} attempt(s)") from exc
-                scene = load_scene(bpy, blend, threads)
+                scene = load_scene(bpy, blend, threads, persistent_data=persistent_data)
             finally:
                 tmp.unlink(missing_ok=True)
     log_event(folder, "shard_complete", new_frames=len(missing), reused_frames=len(receipt["frames"]) - len(missing),

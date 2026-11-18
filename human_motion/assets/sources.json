@@ -1,0 +1,338 @@
+{
+  "LICENSE-MH.md": {
+    "bytes": 6962,
+    "license": "CC0-1.0",
+    "path": "LICENSE.ASSETS.md",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "f6089cba01cb570a24712b41ab8a586ccd3cc5ef53dc266ca50b95c288956d2c"
+  },
+  "LICENSE-MPFB.md": {
+    "bytes": 6962,
+    "license": "CC0-1.0",
+    "path": "LICENSE.ASSETS.md",
+    "repository": "makehumancommunity/mpfb2",
+    "revision": "9de0707fdc88438d7c53a1a2ac7937d9221e2431",
+    "sha256": "f6089cba01cb570a24712b41ab8a586ccd3cc5ef53dc266ca50b95c288956d2c"
+  },
+  "body.obj": {
+    "bytes": 1749303,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/3dobjs/base.obj",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "8e761e6624b8f54536409135d1636da63b32486a90d4897f84e121d144f6fb4c"
+  },
+  "brown-eye.png": {
+    "bytes": 610817,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/eyes/materials/brown_eye.png",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "4659691c7295ad6206c78b003e5fd0e5f91dcd53032fa914a229bb48cabe424b"
+  },
+  "eye-fit.mhclo": {
+    "bytes": 72490,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/eyes/high-poly/high-poly.mhclo",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "b183cfe37120ab726f9b3f2ea6cd3a64c44ce7b4bd91a77c841cf70c04f83a0d"
+  },
+  "eyes.obj": {
+    "bytes": 100882,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/eyes/high-poly/high-poly.obj",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "da2493215b708a344c33dc72f2a9a5b8fa985dcc5a70ad3b208995cf871da8e1"
+  },
+  "face/african/eye-left-closure.target": {
+    "bytes": 3859,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/expression/units/african/eye-left-closure.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "5a9fc811ddff5f5657f7c9566ca07dfe31f68865d001804324fca5ecffd3992f"
+  },
+  "face/african/eye-right-closure.target": {
+    "bytes": 3686,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/expression/units/african/eye-right-closure.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "3bb393418e84b1c3ebc9af075dbeff54f9161cafd9bb7e04caa40d155d4619ff"
+  },
+  "face/african/eyebrows-left-up.target": {
+    "bytes": 1381,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/expression/units/african/eyebrows-left-up.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "4f770b7281ed9502c2e164850e41265310a445d0534bbc9a8faa949c05677775"
+  },
+  "face/african/eyebrows-right-up.target": {
+    "bytes": 1486,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/expression/units/african/eyebrows-right-up.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "496a446cb77aad463dfd952a8a648e758ee0954c64a96a4e4412f9a042391881"
+  },
+  "face/african/mouth-corner-puller.target": {
+    "bytes": 14083,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/expression/units/african/mouth-corner-puller.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "9cec6411ee6e4c1307030d41781c26e3808e3b6f4538d7e4d595c1dfff89bfe6"
+  },
+  "face/asian/eye-left-closure.target": {
+    "bytes": 3926,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/expression/units/asian/eye-left-closure.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "96d43015f95af63d1d5d64c2d234ac29571d7b05a21e900cf5ee15a246337ebf"
+  },
+  "face/asian/eye-right-closure.target": {
+    "bytes": 3756,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/expression/units/asian/eye-right-closure.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "772a8a1c62dac36fa2ed6b0808d167bda298ec1ece956af0561e7324a0c91a6b"
+  },
+  "face/asian/eyebrows-left-up.target": {
+    "bytes": 1381,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/expression/units/asian/eyebrows-left-up.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "4f770b7281ed9502c2e164850e41265310a445d0534bbc9a8faa949c05677775"
+  },
+  "face/asian/eyebrows-right-up.target": {
+    "bytes": 1486,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/expression/units/asian/eyebrows-right-up.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "496a446cb77aad463dfd952a8a648e758ee0954c64a96a4e4412f9a042391881"
+  },
+  "face/asian/mouth-corner-puller.target": {
+    "bytes": 15163,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/expression/units/asian/mouth-corner-puller.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "75ec1f2356c381aa44065f2b812daafae85c5a918843b978d04cf6d8bc79dbe4"
+  },
+  "face/caucasian/eye-left-closure.target": {
+    "bytes": 3946,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/expression/units/caucasian/eye-left-closure.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "e38cb77fd888de3d0d944efe6f3511bf3ca4076b0397fa7c840d8368f08205c2"
+  },
+  "face/caucasian/eye-right-closure.target": {
+    "bytes": 3776,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/expression/units/caucasian/eye-right-closure.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "58faf2c199272bfd87478ea122cdaa4b4b8669505be0d75f777c5471527b2b15"
+  },
+  "face/caucasian/eyebrows-left-up.target": {
+    "bytes": 1381,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/expression/units/caucasian/eyebrows-left-up.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "4f770b7281ed9502c2e164850e41265310a445d0534bbc9a8faa949c05677775"
+  },
+  "face/caucasian/eyebrows-right-up.target": {
+    "bytes": 1486,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/expression/units/caucasian/eyebrows-right-up.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "496a446cb77aad463dfd952a8a648e758ee0954c64a96a4e4412f9a042391881"
+  },
+  "face/caucasian/mouth-corner-puller.target": {
+    "bytes": 15163,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/expression/units/caucasian/mouth-corner-puller.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "75ec1f2356c381aa44065f2b812daafae85c5a918843b978d04cf6d8bc79dbe4"
+  },
+  "masks/ears.jpg": {
+    "bytes": 18900,
+    "license": "CC0-1.0",
+    "path": "src/mpfb/data/textures/mpfb_ears.jpg",
+    "repository": "makehumancommunity/mpfb2",
+    "revision": "9de0707fdc88438d7c53a1a2ac7937d9221e2431",
+    "sha256": "8c1becd3887b65df50720de87e91807667155107d23a6da9f5142d84142b724b"
+  },
+  "masks/eyelids.jpg": {
+    "bytes": 22684,
+    "license": "CC0-1.0",
+    "path": "src/mpfb/data/textures/mpfb_eyelids.jpg",
+    "repository": "makehumancommunity/mpfb2",
+    "revision": "9de0707fdc88438d7c53a1a2ac7937d9221e2431",
+    "sha256": "2b6f41d6c51f1a991f715025f87a0c8626c889201c8fe9c12514fcc579710532"
+  },
+  "masks/face.jpg": {
+    "bytes": 36416,
+    "license": "CC0-1.0",
+    "path": "src/mpfb/data/textures/mpfb_face.jpg",
+    "repository": "makehumancommunity/mpfb2",
+    "revision": "9de0707fdc88438d7c53a1a2ac7937d9221e2431",
+    "sha256": "6f2d7abee30d63378b7b4214cf43a47d4cae65d967c12b34e365e058448b96df"
+  },
+  "masks/fingernails.jpg": {
+    "bytes": 18321,
+    "license": "CC0-1.0",
+    "path": "src/mpfb/data/textures/mpfb_fingernails.jpg",
+    "repository": "makehumancommunity/mpfb2",
+    "revision": "9de0707fdc88438d7c53a1a2ac7937d9221e2431",
+    "sha256": "0828222964a14c14a46e72445f549a2124de06f072daab71e5a6716324c37362"
+  },
+  "masks/inside-mouth.jpg": {
+    "bytes": 20184,
+    "license": "CC0-1.0",
+    "path": "src/mpfb/data/textures/mpfb_inside-mouth.jpg",
+    "repository": "makehumancommunity/mpfb2",
+    "revision": "9de0707fdc88438d7c53a1a2ac7937d9221e2431",
+    "sha256": "dc3e5b39e677351e3bb4c60653dc4d3516f585690076ec4c749e04402db3bf05"
+  },
+  "masks/lips.jpg": {
+    "bytes": 20552,
+    "license": "CC0-1.0",
+    "path": "src/mpfb/data/textures/mpfb_lips.jpg",
+    "repository": "makehumancommunity/mpfb2",
+    "revision": "9de0707fdc88438d7c53a1a2ac7937d9221e2431",
+    "sha256": "572630c2b4bb061dfd3b5bb75228615527442296b0db40feffffb0d439e8c203"
+  },
+  "shape/african-male-young.target": {
+    "bytes": 406170,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/macrodetails/african-male-young.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "894abc1fbb3d28543a51fef16f89d5d4bdf9aa2e1534413339811a3d47818b7d"
+  },
+  "shape/asian-male-young.target": {
+    "bytes": 421040,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/macrodetails/asian-male-young.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "ed2e8c191cb6b87b4a2d97c80486acb2604fa549316c7aa2a738a5d5a14334dc"
+  },
+  "shape/caucasian-male-young.target": {
+    "bytes": 396479,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/macrodetails/caucasian-male-young.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "70e228ba7164737dae664454394536fc5935fa48d333c1a97d77e2dc6eacc5f5"
+  },
+  "shape/chin-cleft-incr.target": {
+    "bytes": 1323,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/chin/chin-cleft-incr.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "93f523e952d436094321a5ec8ea38bafcdbe272ada894d3dfa12de7bd4c717d5"
+  },
+  "shape/head-oval.target": {
+    "bytes": 36452,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/head/head-oval.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "a17cd3a600588a344babe520fbd4d4edcb096db3328051fe692dfb997a1a678d"
+  },
+  "shape/l-eye-height1-incr.target": {
+    "bytes": 4053,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/eyes/l-eye-height1-incr.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "75ce5285db2e3721ae5434c8a9d27669eb632da7e588000a112d34264216de20"
+  },
+  "shape/l-eye-height2-incr.target": {
+    "bytes": 6758,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/eyes/l-eye-height2-incr.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "8521b63c1bf07af06194e96e14eb522dce43615ef1139b8117f104f5132fbc69"
+  },
+  "shape/l-eye-height3-incr.target": {
+    "bytes": 8511,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/eyes/l-eye-height3-incr.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "61fd32eedef0b3718e529c544b54bd0979d3d92496d881468942d11e7292f458"
+  },
+  "shape/mouth-lowerlip-volume-incr.target": {
+    "bytes": 3585,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/mouth/mouth-lowerlip-volume-incr.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "dbdaf045b00c67bf8672d53bc8cf94eb3e3dea316de6fe18a278f7080564c65d"
+  },
+  "shape/nose-hump-incr.target": {
+    "bytes": 6836,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/nose/nose-hump-incr.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "87f167e76cc908e8f28fed8623cf55e737f59499e8338cfe78f5d635382a5191"
+  },
+  "shape/r-eye-height1-incr.target": {
+    "bytes": 3586,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/eyes/r-eye-height1-incr.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "daab8f4115ade91e776f9bb4622926ddd20cff2ddcfe74e1ff3654132b727933"
+  },
+  "shape/r-eye-height2-incr.target": {
+    "bytes": 5514,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/eyes/r-eye-height2-incr.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "35e1f070ab8a77dc103aab81c478f04136f6afec378a7003d8834e49ff02d916"
+  },
+  "shape/r-eye-height3-incr.target": {
+    "bytes": 8184,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/targets/eyes/r-eye-height3-incr.target",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "2f715100eeb9a1cec7f57d9bb875d746b5a9472ada16d685098f748c5eebebf7"
+  },
+  "skeleton.json": {
+    "bytes": 117790,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/rigs/default.mhskel",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "99f179bce0aa850b45d4191a1d0d234c5851f881c057439470ded3bddf729a24"
+  },
+  "weights.json": {
+    "bytes": 897521,
+    "license": "CC0-1.0",
+    "path": "makehuman/data/rigs/default_weights.mhw",
+    "repository": "makehumancommunity/makehuman",
+    "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "sha256": "0f3641d651ae3d00ad6b4ccee43142edb109d3bd909d27d9e4139ef1beed8625"
+  }
+}

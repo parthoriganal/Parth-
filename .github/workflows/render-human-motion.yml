@@ -1,0 +1,226 @@
+name: Render A Passing Hello (CPU)
+
+on:
+  push:
+    branches: ['arena/**']
+    paths:
+      - 'human_motion/**'
+      - '.github/workflows/render-human-motion.yml'
+  workflow_dispatch:
+    inputs:
+      plate_run:
+        description: 'Optional verified plate source run on this branch'
+        required: false
+      review_relay:
+        description: 'Enable the small exact-media review transfer through the GitHub API'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: passing-hello-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  WORK: out/a-passing-hello
+
+jobs:
+  select:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[human master]')
+    name: Select a verified checkpoint or start fresh
+    runs-on: ubuntu-24.04
+    outputs:
+      plate_run: ${{ steps.pick.outputs.plate_run }}
+    steps:
+      - name: Check previous plate identity and matrix completeness
+        id: pick
+        env:
+          INPUT_RUN: ${{ inputs.plate_run }}
+          MESSAGE: ${{ github.event.head_commit.message }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          run="${INPUT_RUN:-$(sed -nE 's/^Human-Plate-Run: ([0-9]+)$/\1/p' <<< "$MESSAGE" | tail -1)}"
+          if [ -n "$run" ]; then
+            [[ "$run" =~ ^[0-9]+$ ]]
+            endpoint="repos/$GITHUB_REPOSITORY/actions/runs/$run"
+            gh api "$endpoint" | jq -e --arg branch "$GITHUB_REF_NAME" --arg repo "$GITHUB_REPOSITORY" '
+              .status == "completed" and .head_branch == $branch and .head_repository.full_name == $repo
+              and .path == ".github/workflows/render-human-motion.yml"'
+            gh api --paginate "$endpoint/jobs?per_page=100" | jq -es '
+              [.[].jobs[]] as $jobs |
+              [$jobs[] | select(.name | startswith("Human Cycles CPU"))] as $workers |
+              (($workers | length) == 20) and all($workers[]; .conclusion == "success") and
+              any($jobs[]; .name == "Build and reopen the editable take" and .conclusion == "success")'
+          fi
+          echo "plate_run=$run" >> "$GITHUB_OUTPUT"
+
+  prepare:
+    needs: select
+    if: needs.select.outputs.plate_run == ''
+    name: Build and reopen the editable take
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      matrix: ${{ steps.build.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-blender-cpu
+        with:
+          lock: blender_pipeline/requirements-build.lock
+      - name: Run film and shared-worker regressions
+        run: |
+          python -m unittest discover -s human_motion/tests -v
+          python -m unittest discover -s blender_pipeline/tests -v
+          python -m unittest discover -s production/tests -v
+          python -m unittest discover -s meridian_m02/tests -v
+      - name: Freeze the Blender scene and evaluate all 360 poses
+        id: build
+        run: |
+          python -u -m human_motion build
+          matrix=$(python -m human_motion matrix)
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: human-source
+          path: out/a-passing-hello/bundle/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
+          overwrite: true
+
+  plates:
+    needs: prepare
+    name: Human Cycles CPU / ${{ matrix.first }}–${{ matrix.last }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 28
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-blender-cpu
+        with:
+          lock: blender_pipeline/requirements-render.lock
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
+        with:
+          name: human-source
+          path: out/a-passing-hello/bundle/
+      - if: ${{ github.run_attempt != '1' }}
+        continue-on-error: true
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
+        with:
+          name: human-frames-${{ matrix.id }}
+          path: out/a-passing-hello/frames/shard-${{ matrix.id }}/
+          github-token: ${{ github.token }}
+          run-id: ${{ github.run_id }}
+      - name: Render only missing and damaged frames
+        id: render
+        env:
+          PART: ${{ matrix.id }}
+        run: python -u -m human_motion render --shard "$PART" --threads 4
+      - if: ${{ !cancelled() && (steps.render.outcome == 'success' || steps.render.outcome == 'failure') }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: human-frames-${{ matrix.id }}
+          path: out/a-passing-hello/frames/shard-${{ matrix.id }}/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+          overwrite: true
+
+  deliver:
+    needs: [select, plates]
+    if: ${{ !cancelled() && needs.select.result == 'success' && (needs.plates.result == 'success' || needs.select.outputs.plate_run != '') }}
+    name: Verify, encode, decode and archive the film
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    permissions:
+      contents: write  # only used by the explicitly requested exact-media review relay
+      actions: read
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.11.18'
+      - name: Install the locked media-only toolchain
+        run: python -m pip install --only-binary=:all: --require-hashes -r meridian_m02/requirements-media.lock
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
+        with:
+          name: human-source
+          path: out/a-passing-hello/bundle/
+          github-token: ${{ github.token }}
+          run-id: ${{ needs.select.outputs.plate_run || github.run_id }}
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
+        with:
+          pattern: human-frames-*
+          path: out/a-passing-hello/checkpoints/
+          github-token: ${{ github.token }}
+          run-id: ${{ needs.select.outputs.plate_run || github.run_id }}
+      - name: Validate all source images and round-trip the 1080p film
+        run: |
+          mkdir -p "$WORK/frames"
+          for dir in "$WORK"/checkpoints/human-frames-*; do
+            name=${dir##*/}
+            mv "$dir" "$WORK/frames/shard-${name#human-frames-}"
+          done
+          python -u -m human_motion deliver
+          python -m zipfile -e "$WORK/delivery/a-passing-hello-source.zip" "$WORK/extracted"
+          pushd "$WORK/extracted/rebuild"
+          python -m human_motion --root /tmp/a-passing-hello-portability --help
+          python -m unittest discover -s human_motion/tests -v
+          popd
+          jq -ce '{status, decoded_frames, fps, native_resolution, delivery_resolution, duration_s, render_timing, mp4_sha256}' "$WORK/delivery/delivery-qa.json" | sed 's/^/::notice title=Decoded film receipt::/'
+      - if: ${{ failure() }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: human-delivery-diagnostics
+          path: out/a-passing-hello/delivery/encode.log
+          if-no-files-found: ignore
+          retention-days: 7
+          overwrite: true
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        id: film
+        with:
+          name: a-passing-hello-film-and-editable-source
+          path: |
+            out/a-passing-hello/delivery/
+            !out/a-passing-hello/delivery/encode.log
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+          overwrite: true
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        id: sequence
+        with:
+          name: a-passing-hello-native-frame-sequence
+          path: out/a-passing-hello/a-passing-hello-frames.zip
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+          overwrite: true
+      - name: Link both checked packages
+        env:
+          FILM: ${{ steps.film.outputs.artifact-url }}
+          FRAMES: ${{ steps.sequence.outputs.artifact-url }}
+        run: |
+          {
+            echo '## A Passing Hello — 15-second continuous take'
+            echo "[MP4, editable Blender scene, source, contact sheet and QA]($FILM)"
+            echo
+            echo "[Complete native frame sequence and per-frame checksums]($FRAMES)"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Transfer only the small exact review files on request
+        if: inputs.review_relay == true || contains(github.event.head_commit.message, '[human review relay]')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python -m human_motion.review_relay put "$GITHUB_REPOSITORY" "$WORK/delivery"

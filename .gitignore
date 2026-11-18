@@ -21,3 +21,6 @@ singularity-bloom/out/
 
 # Meridian M/02 portable media is delivered outside Git; small evidence boards are tracked.
 /meridian_m02/demo-assets/
+
+# A Passing Hello local delivery copies (source and small evidence remain tracked).
+/human_motion/demo-assets/
