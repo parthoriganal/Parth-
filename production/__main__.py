@@ -25,6 +25,7 @@ def main():
     r.add_argument('--threads', type=int, choices=range(1,5))
     cmd.add_parser('manim')
     cmd.add_parser('stage')
+    cmd.add_parser('compose', help='compose with Pillow/FFmpeg instead of Remotion')
     cmd.add_parser('export')
     args = p.parse_args()
     root = args.root.resolve()
@@ -44,6 +45,9 @@ def main():
             case 'stage':
                 from .delivery import stage
                 stage(root)
+            case 'compose':
+                from .open_compose import compose
+                compose(root)
             case 'export':
                 from .delivery import export
                 export(root)

@@ -15,6 +15,7 @@ from blender_pipeline.media import check_cached, ffmpeg_run, frame_stats, load_r
 from .audio import score, subtitles, verify_sync
 from .edl import BLENDER_TEMPLATES, FONT_ROOT, blend_path, load_plan, project_path
 
+FONT_LICENSES = ('InstrumentSerif-OFL.txt','JetBrainsMono-OFL.txt','Outfit-OFL.txt')
 FONTS = ('InstrumentSerif-Regular.ttf','JetBrainsMono-Regular.ttf','Outfit-Bold.ttf')
 
 
@@ -142,6 +143,10 @@ def export(root):
         if shot['template']=='diagram':
             shutil.copyfile(root/'diagrams'/shot['id']/'source.mp4',out/f"{shot['id']}-manim.mp4")
             shutil.copyfile(root/'diagrams'/shot['id']/'receipt.json',out/f"{shot['id']}-qa.json")
+    licenses=out/'licenses'
+    licenses.mkdir(exist_ok=True)
+    for name in FONT_LICENSES:
+        shutil.copyfile(FONT_ROOT/name,licenses/name)
     shutil.copyfile(project_path(root),out/'project.json')
     shutil.copyfile(root/'bundle/scene-qa.json',out/'scene-qa.json')
     report={'status':'pass','project_id':doc['project_id'],'preset':doc['preset'],'video':[w,h,fps],
