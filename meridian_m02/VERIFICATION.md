@@ -1,20 +1,41 @@
 # Weather Atlas · verification
 
-This report separates rendered evidence from implementation and explicitly notes what was not tested. The `m02-preflight`, `m02-rendered-evidence` and `weather-atlas-production` artifacts from the [M/02 workflow](../.github/workflows/render-meridian-m02.yml) carry the original PNGs and JSON measurements. Native plate resolution and encoded resolution are reported separately.
+## Test material
 
-## Coverage
+- [Three local master-preset stills](evidence/weather-atlas.jpg) and [locked-camera motion pairs](evidence/locked-camera-motion.jpg). Local midpoint rendering was inspected at native 1152×648 and after 1920×1080 composition. The stills are not a substitute for the hosted full master decode.
 
-| Capability | Rendered test and acceptance signal |
+- [Rendered fault/repair pairs](evidence/rendered-repairs.jpg) · [Controlled look tests and JSON variants](evidence/look-and-reuse.jpg) · [Numeric evidence and PNG hashes](evidence/local-evidence.json).
+- On [the master run](https://github.com/parthoriganal/Parth-/actions/runs/44253579420), [`m02-preflight`](https://github.com/parthoriganal/Parth-/actions/runs/44253579420/artifacts/14404004337) and [`m02-rendered-evidence`](https://github.com/parthoriganal/Parth-/actions/runs/44253579420/artifacts/14404972575) contain original images, scene/repair receipts and variant `.blend` files. The hosted prepare and rendered-evidence jobs passed. The delivery job is separate from the Blender jobs and checks all plates before muxing. See the run for its current status.
+- Local proof platform: Debian 12, two CPUs, Blender **5.0.1** headless/Cycles CPU, NumPy 1.26.4, Trimesh 5.2.1, Pillow 13.0.0 and `imageio-ffmpeg` 0.6.0. Proof probes are 480×270. Hosted runtime is standard Ubuntu 24.04, not an accelerator or a custom render farm.
+
+## Local draft delivery
+
+- Completed on CPU: **768×432, 12 fps, 96 frames, 8.0 seconds**, with all 96 native 640×360 plates checked, not frame-interpolated. [Draft delivery receipt](evidence/draft-delivery-qa.json) records the video hash and decoded media QA. The [local contact sheet](evidence/draft-contact-sheet.jpg) comes from the decoded MP4.
+- 384,000 decoded stereo samples at 48 kHz. The chimes were found at samples **0 / 120,000 / 264,000**; all three English captions round-tripped with their exact text and cut times. The editable ZIP passed CRC and Blender member SHA-256 checks and includes the sidecar WAV/SRT and source tree.
+- The all-frame image inspection recorded opening-to-closing luma deltas of **0.08087 / 0.06460 / 0.06628** in edit order. The score, retiming, labels and caption timing use the same storyboard clock.
+
+## Verified with rendered images
+
+| Capability | What was checked |
 |---|---|
-| Procedural environments | The tidal archive, glasshouse and alpine observatory are separately authored, reopened and rendered; their mesh/module counts accompany the PNGs. Only closed architectural extrusions are counted as Trimesh-validated solids. |
-| Layered materials and light | A frozen tide view and pose are rendered normally, rerendered with material layers bypassed, and rerendered with another sun/sky recipe. Pixel deltas and input hashes accompany the A/B images. |
-| Character animation | World-space two-link foot IK with evaluated sole height, stance drift and swing clearance. The greenhouse close-up renders the same phase on the raised and corrected foot plane. |
-| Automated image inspection | The entire animation plate set is decoded, checksum checked and measured before composition. A valid blank Cycles render is explicitly rejected. |
-| Correction | With separate injected-fault inputs, full-set lens fit, off-deck IK and underexposure must activate and re-render successfully; a fixed-shot overexposure also tests downward correction. |
-| Storyboard to sequence | The JSON resolves reusable sets, per-take camera/light, frame counts and sound-caption cut timestamps. The edit decodes at the expected frame cadence. |
-| Object/camera motion | Full-shot opening-to-closing image deltas and keyed camera/lens evaluation; separate locked camera pairs reveal instrument motion independently of the camera path. |
-| Reuse | Lichen Crossing reuses a differently seeded, differently colored five-bay asset in two independently rendered takes. |
+| **Procedural architecture and environments** | Three editable scenes saved, reopened and actually rendered. Tide: **5** caissons, **3,888** seeded water vertices, six-bladed rotor. Glasshouse: **4** roof modules, **8** beds, **288** linked leaf objects, skinned surveyor. Snow observatory: **12** radial dome segments, **130** ribs, **1,209** terrain vertices and **32** linked rocks. Trimesh validates the closed extrusions (11 / 20 / 4), not every scene mesh. |
+| **Layered materials and lighting** | Same tide pose and locked view: original vs. bypassed procedural roughness/micro-normal, coat and anisotropy gives mean absolute luma change **0.01377** on a 0–1 scale. Keeping materials and pose fixed while swapping amber vs. polar sun/sky changes luma by **0.04388**. The comparison frames were visually inspected, including water highlights and stamped metal. This is a combined layer test, not independent calibration of each BSDF parameter. |
+| **Rig and gait** | Reopened 13-bone weighted suit, **2** native leg IK chains, 2,340 mesh vertices; all 36 draft frames sampled. Maximum ankle error **0.00005 m**, all stance soles **0.00596–0.00600 m** above path, max planted XY drift **0.00001 m**; peak swing clearance **0.13096 m** and root travel **2.65433 m**. The render shows one planted leg and the opposing lifted leg, not just moving controls. |
+| **Image inspection** | Display-luma P90/median, high/low luma coverage, spread and edge signal measured over the shot region. A real **black Cycles PNG** is detected as `low_detail_or_blank` and rejected by the shared frame decoder. Unlike the image exposure checks, the crop/fit and walking contact checks use projected vertices and evaluated scene geometry. |
+| **Framing correction** | Tide lens deliberately enlarged; minimum set-and-plinth margin across the track **−11.698% → +5.4%**. The same midpoint renders show the clipped base and its recovered edges. The rule scales focal lengths, does not move or retarget the camera. |
+| **Grounding correction** | A **+0.31 m** plane error raised the surveyor. All evaluated stance soles moved from approximately **0.316 m** above the deck to **0.006 m** when rekeyed to the path. Same-phase close renders show the gap and restored contact. No control change is written into the clean movie to create the test. |
+| **Exposure correction** | Underexposed alpine probe P90 **0.1861 → 0.5713**, at **−5.85 → −3.30 EV**, one corrective render. Overexposed alpine median **0.9402 → 0.7249** and near-white pixels **42.029% → 6.510%**, two corrective renders. These are policy passes, not automatic artistic grades. |
+| **Checkpoint repair** | Truncated a *copy* of draft `tide-00/frame-00004.png` to 79 bytes. The shared worker rejected its receipt entry, rendered **only frame 4**, and verified all 640×360 PNGs. The seven peers retained original hashes and mtimes. Rebuilt content need not hash identically to a previous CPU render. |
+| **Storyboard and shot sequencing** | One board drives scene selection, camera/lens/aim tracks, light, hard cuts, typography, cues and subtitles at **0 / 2.5 / 5.5 s**. Opening/mid/closing renders are built from it; each .blend is editable. The default probes needed no lens, exposure or IK adjustment. |
+| **Prop and camera motion** | Reopened default shots have camera travel **3.277 / 2.671 / 2.769 m**, changing focal length and animated instrument rotations **2.04 / 0.81 / 0.98 rad**. Independent fixed-view render pairs reveal tide vane rotation, climate louvers and dish sweep; the full-field moving images and transform checks are separate. |
+| **Reusable assets** | `lichen-crossing.json` changes canopy seed **451→8128**, green→copper accent, and **4→5** bays. The two saved variant takes each contain **477** objects and five northlight bays; opening/mid/closing renders from opposite tracks under amber and polar light reuse that one library entry. This variant is a rendered set/take comparison, not a second required 1080p film. |
 
-## Not claimed
+## Regression
 
-No GPU, Eevee, Blender GUI, arbitrary script import, live editor integration, optics plugin, M/02 Remotion/Manim export or cloud DCC was tested. No arbitrary scene understanding, automatic aesthetic rating, collision correction outside the authored floor, temporal denoising/flicker removal, or photometric or professional-quality certification. Master encodes 1080p from 1152×648 Cycles plates, not native 1080p Cycles for every frame.
+All **15** test methods passed locally: 5 M/02, 5 M/01, 5 Lantern Tide. The existing M/01 **Copper Field** plates were recomposed and decoded successfully in the unchanged Pillow/FFmpeg path: 768×432, 12 fps, 66 frames, three captions/cues, MP4 byte-identical to the verified reference (`2a9155979dcb4a44a324be3cc3111271e0f717796c7d697a087960707ec4c36a`). Lantern Tide CI-plate reassembly was likewise byte-identical (`097d125cf006a2f95d6a7c6e052a909b602ef319bca65487a284ae42a1932553`). This is a recomposition regression, not a new render of those past films. Existing M/01 releases and workflows were not altered.
+
+## Not verified / out of scope
+
+- **Native 1920×1080 Cycles** for all frames, higher samples, temporal denoising/flicker removal, broad color grading, calibrated lighting, production/aesthetic certification. The master preset renders native **1152×648** plates and sizes the edit to **1920×1080**.
+- All set parameter extremes, long edits, arbitrary camera paths, solving arbitrary malformed geometry, or non-flat walking surfaces/obstacle collision. No arbitrary scene understanding or retrained vision model. Exposure repair acts at the representative image and verifies endpoints; failures in final plate QA stop delivery rather than silently modifying the whole movie.
+- Interactive Blender UI, GPU/Eevee, arbitrary script/scene import, distributed DCC or MCP/editor integrations, and hosted rerun recovery. Only isolated local frame-recovery was forced. Manim/Remotion are not used by M/02, and their historical M/01 results were not rerun as part of this addition.

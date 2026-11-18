@@ -4,6 +4,8 @@ An eight-second miniature field atlas: a low-water **Tide Archive**, a working *
 
 M/02 adds set generation, clipped-module architecture, layered shading, target-based gait and measured repair **on top of** the M/01 clock, Cycles CPU worker/receipts, and FFmpeg delivery checks. It has its own CLI, output directory and [Actions workflow](../.github/workflows/render-meridian-m02.yml). [M/01](../production/README.md) and [Lantern Tide](../lantern-tide/README.md) are unchanged. Their existing Manim and optional Remotion path are not needed for M/02.
 
+![Three Weather Atlas midpoint samples rendered on CPU](evidence/weather-atlas.jpg)
+
 See [Verification](VERIFICATION.md) for actual renders, delivery links, coverage, and untested cases.
 
 ## Reproduce on CPU
@@ -24,7 +26,7 @@ python -m meridian_m02 compose
 python -m meridian_m02 export
 ```
 
-Use `--root PATH` **before** the verb to keep separate versions, or use `--preset master` on build. `matrix` prints the batch IDs and ranges; `render --shard tide-00` runs one independent batch. `draft` is 768×432 at 12 fps with 640×360 plates (6 samples); `master` is 1920×1080 at 24 fps with 1152×648 plates (12 samples, denoised and scaled in the edit). Neither claims native 1080p rendering of the complete film. The four-CPU-worker cap limits concurrent memory per job; a six-job matrix fan-out handles the 16 master batches. Pushes touching the M/02 pipeline run draft by default. Add `[m02 master]` to the triggering commit message for a master run; once the workflow is on the default branch it can also be dispatched manually.
+Use `--root PATH` **before** the verb to keep separate versions, or use `--preset master` on build. `matrix` prints the batch IDs and ranges; `render --shard tide-00` runs one independent batch. `draft` is 768×432 at 12 fps with 640×360 plates (6 samples); `master` is 1920×1080 at 24 fps with 1152×648 plates (12 samples, denoised and scaled in the edit). Neither claims native 1080p rendering of the complete film. The four-CPU-worker cap limits concurrent memory per job; a six-job matrix fan-out handles the 16 master batches. Pushes touching the M/02 pipeline run draft by default. Add `[m02 master]` to the triggering commit message for a master run; once the workflow is on the default branch it can also be dispatched manually. For edit/mux retries, the optional `plate_run` input uses a completed same-branch run with passing Blender batches and rendered evidence. On an eligible push, the exact commit-message trailer `M02-Plate-Run: <run-id>` selects the same reuse path. It verifies the original receipts and runs media QA again; it does not re-render the plates.
 
 `out/meridian-m02/delivery/` holds `weather-atlas.mp4`, `weather-atlas-editable.zip`, `contact-sheet.jpg`, and source `.blend`, WAV, SRT, checksums and JSON reports. The ZIP includes a `rebuild/` source subset and font licenses. A generated `.blend` has packed typography and native editable objects, camera/aim/lens tracks, control targets, materials and lights. The score and captions are separate from the .blend. To retime cuts or change templates, edit the board and rebuild; if editing the .blend in Blender, use Blender's own render controls or intentionally create a new bundle, since the worker rejects modified files under old hashes.
 

@@ -1,0 +1,51 @@
+{
+  "audio": {
+    "cue_alignment": [
+      {
+        "sample": 0,
+        "shot": "tide",
+        "verified_amplitude": 0.148
+      },
+      {
+        "sample": 120000,
+        "shot": "canopy",
+        "verified_amplitude": 0.145
+      },
+      {
+        "sample": 264000,
+        "shot": "summit",
+        "verified_amplitude": 0.143
+      }
+    ],
+    "decoded_samples": 384000,
+    "expected_samples": 384000
+  },
+  "audio_peak_dbfs": -9.36,
+  "decoded_frames": 96,
+  "ffmpeg": "ffmpeg version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2024 the FFmpeg developers",
+  "inspected_plates": 96,
+  "native_3d_plate_res": [
+    640,
+    360
+  ],
+  "pixel_inspection_sha256": "d0333cb308e2c77b6379a89c13db434334c3ae5f5bc02b9a5f845973185db851",
+  "preset": "draft",
+  "project_id": "35fec2c7b372f8d52a64bfb66271e8cb35f2f5eb1f2230fe30806bb37619e5af",
+  "seconds": 8.0,
+  "series": "M/02",
+  "status": "pass",
+  "subtitles": 3,
+  "verified_inputs": {
+    "canopy": 36,
+    "summit": 30,
+    "tide": 30
+  },
+  "video": [
+    768,
+    432,
+    12
+  ],
+  "video_file": "weather-atlas.mp4",
+  "video_sha256": "f649857c461bc413f1a5ff281c102e18b1e83d50800d2930bc1f4201af5abb13",
+  "visual_engine": "Weather Atlas \u2022 Pillow / FFmpeg CPU"
+}

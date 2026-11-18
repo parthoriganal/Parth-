@@ -3,12 +3,11 @@
 from dataclasses import dataclass
 from math import atan2, cos, pi, sin, tau
 
-import bpy
 import numpy as np
 import trimesh
 from mathutils import Vector
 
-from production.studio import box, collection, curve, empty, label, lathe, mesh, ring
+from production.studio import box, collection, empty, label, lathe, mesh, ring
 from .geometry import ModuleStats, bar, footprint, links_from, parent_local, patch, slab
 from .look import signal, surface
 from .rig import build_walker
@@ -30,7 +29,7 @@ def plinth(kind, mats, s, w=10.15, d=7.4):
     slab(s,grp,'Upper site datum',footprint(w-.25,d-.25,.49),-.273,.035,mats['deck'],.035)
     box(grp,'Inset index block',(0,-d*.5-.015,-.49),(2.85,.125,.28),mats['base'],.026)
     label(grp,'Packed datum typography',kind,(0,-d*.5-.081,-.555),.135,mats['line'])
-    floor=box(grp,'Seamless exhibition ground',(0,0,-.89),(1600,1600,.18),mats['ground'])
+    box(grp,'Seamless exhibition ground',(0,0,-.89),(1600,1600,.18),mats['ground'])
     return grp
 
 

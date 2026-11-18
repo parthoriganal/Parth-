@@ -5,7 +5,6 @@ from itertools import product
 from math import log2
 import json
 import os
-from pathlib import Path
 import shutil
 
 import bpy

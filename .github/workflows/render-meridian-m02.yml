@@ -15,6 +15,10 @@ on:
         type: choice
         options: [draft, master]
         default: master
+      plate_run:
+        description: 'Optional completed M/02 run on this branch; verify and reuse its rendered plates'
+        type: string
+        required: false
 
 permissions:
   contents: read
@@ -34,7 +38,44 @@ env:
   OMP_NUM_THREADS: '4'
 
 jobs:
+  select:
+    name: Select a new render or verify a frozen plate run
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    outputs:
+      plate_run: ${{ steps.select.outputs.plate_run }}
+    steps:
+      - name: Admit only a completed same-branch run with all render jobs passed
+        id: select
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REQUESTED: ${{ inputs.plate_run }}
+          MESSAGE: ${{ github.event.head_commit.message }}
+        run: |
+          source_run="$REQUESTED"
+          if [[ -z "$source_run" ]]; then
+            source_run=$(printf '%s\n' "$MESSAGE" | sed -nE 's/^M02-Plate-Run: ([0-9]+)$/\1/p')
+          fi
+          if [[ -z "$source_run" ]]; then
+            echo 'plate_run=' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          [[ "$source_run" =~ ^[1-9][0-9]{0,17}$ ]] || { echo 'Invalid M/02 source run ID'; exit 1; }
+          api="repos/$GITHUB_REPOSITORY/actions/runs/$source_run"
+          gh api "$api" | jq -e --arg branch "$GITHUB_REF_NAME" --arg repo "$GITHUB_REPOSITORY" '
+            .status == "completed" and .head_branch == $branch and .head_repository.full_name == $repo
+            and .path == ".github/workflows/render-meridian-m02.yml"'
+          gh api --paginate "$api/jobs?per_page=100" | jq -es '
+            [.[].jobs[]] as $jobs |
+            [$jobs[] | select(.name | startswith("Cycles CPU ·"))] as $plates |
+            ($plates | length > 0 and all(.conclusion == "success")) and
+            any($jobs[]; .conclusion == "success" and (.name | startswith("Compile the storyboard"))) and
+            any($jobs[]; .conclusion == "success" and (.name | startswith("Render fault/correction pairs")))'
+          echo "plate_run=$source_run" >> "$GITHUB_OUTPUT"
+
   prepare:
+    needs: select
+    if: needs.select.outputs.plate_run == ''
     name: Compile the storyboard, inspect candidates and save editable sets
     runs-on: ubuntu-24.04
     timeout-minutes: 12
@@ -80,6 +121,7 @@ jobs:
   plates:
     name: Cycles CPU · ${{ matrix.shot }} ${{ matrix.first }}–${{ matrix.last }}
     needs: prepare
+    if: needs.prepare.result == 'success'
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     strategy:
@@ -128,6 +170,7 @@ jobs:
   rendered-evidence:
     name: Render fault/correction pairs, controlled closeups and reusable-board proof
     needs: prepare
+    if: needs.prepare.result == 'success'
     runs-on: ubuntu-24.04
     timeout-minutes: 14
     steps:
@@ -164,7 +207,8 @@ jobs:
 
   deliver:
     name: Inspect all images and verify the captioned, scored delivery
-    needs: [plates, rendered-evidence]
+    needs: [select, plates, rendered-evidence]
+    if: ${{ !cancelled() && needs.select.result == 'success' && (needs.select.outputs.plate_run != '' || (needs.plates.result == 'success' && needs.rendered-evidence.result == 'success')) }}
     runs-on: ubuntu-24.04
     timeout-minutes: 18
     steps:
@@ -182,10 +226,14 @@ jobs:
         with:
           name: m02-source
           path: out/meridian-m02/bundle/
+          github-token: ${{ github.token }}
+          run-id: ${{ needs.select.outputs.plate_run || github.run_id }}
       - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           pattern: m02-frames-*
           path: out/meridian-m02/shards/
+          github-token: ${{ github.token }}
+          run-id: ${{ needs.select.outputs.plate_run || github.run_id }}
       - name: Validate all plates, then edit and encode
         run: |
           mkdir -p "$WORK/frames"
@@ -203,6 +251,10 @@ jobs:
           cd "$WORK/extracted/rebuild"
           python -m meridian_m02 plan --preset draft > /tmp/m02-portable-plan.json
           jq -e '.series == "M/02" and .frames == 96' /tmp/m02-portable-plan.json
+      - name: Record machine-readable media evidence on the check run
+        run: |
+          qa=$(jq -c '{status, video, decoded_frames, seconds, native_3d_plate_res, inspected_plates, subtitles, audio, video_sha256}' "$WORK/delivery/delivery-qa.json")
+          printf '::notice title=Weather Atlas verified media::%s\n' "${qa//%/%25}"
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: failure()
         with:
@@ -225,9 +277,11 @@ jobs:
       - name: Link the verified film and editable assets
         env:
           URL: ${{ steps.delivery.outputs.artifact-url }}
+          SOURCE_RUN: ${{ needs.select.outputs.plate_run || github.run_id }}
         run: |
           {
             printf '## Meridian M/02 — Weather Atlas\n\n[Download the film, editable Blender set ZIP and QA](%s)\n\n' "$URL"
+            printf 'Validated CPU plate source: %s\n\n' "$SOURCE_RUN"
             echo '```json'
             cat "$WORK/delivery/delivery-qa.json"
             echo '```'

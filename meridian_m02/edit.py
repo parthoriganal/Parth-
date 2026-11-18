@@ -3,6 +3,7 @@
 from functools import lru_cache
 import hashlib
 from math import cos, pi
+import re
 import shutil
 import subprocess
 from zipfile import ZIP_STORED, ZipFile

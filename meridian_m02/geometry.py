@@ -1,7 +1,6 @@
 """Shared cast modules, ribs and linked meshes for deterministic climate kits."""
 
 from dataclasses import dataclass
-from math import pi
 
 import numpy as np
 import trimesh
