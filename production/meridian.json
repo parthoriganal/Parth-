@@ -1,0 +1,12 @@
+{
+  "title": "Meridian M/01",
+  "edition": "FIELD LIGHTING SYSTEM",
+  "clock": 24,
+  "shots": [
+    {"id":"object", "template":"product", "ticks":48, "marker":"01 / OBJECT", "title":["Light after","dark."], "label":"M/01  —  PORTABLE LUMINAIRE", "audio":"[Low synth pulse]", "note":164.81},
+    {"id":"shelter", "template":"pavilion", "ticks":42, "marker":"02 / SHELTER", "title":["A place","to pause."], "label":"MODULAR VAULT / HUMAN SCALE", "audio":"[Soft percussive steps]", "note":220.00},
+    {"id":"terrain", "template":"landscape", "ticks":42, "marker":"03 / TERRAIN", "title":["Go where","light goes."], "label":"FIELD POSITION / BLUE HOUR", "audio":"[Airy rising tone]", "note":246.94},
+    {"id":"optics", "template":"diagram", "ticks":48, "marker":"04 / OPTICS", "title":["Shape","the glow."], "label":"SECTION AA  /  OPTICAL STUDY", "audio":"[Glass-like chimes]", "note":329.63},
+    {"id":"signature", "template":"endcard", "source":"object", "ticks":36, "marker":"05 / SIGNATURE", "title":["Meridian.",""], "label":"DESIGNED FOR THE IN-BETWEEN", "audio":"[Music resolves]", "note":164.81}
+  ]
+}

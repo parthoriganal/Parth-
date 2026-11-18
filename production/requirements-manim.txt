@@ -1,0 +1,6 @@
+# Cairo/Pango headers and pkg-config are system prerequisites. Use a separate venv
+# from Blender, whose official bpy 5.0.1 wheel requires NumPy < 2.
+manim==0.22.1
+numpy==2.2.6
+pycairo==1.29.2
+manimpango==0.7.1
