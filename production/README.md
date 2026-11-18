@@ -2,7 +2,11 @@
 
 ![Rendered product chapter: cream editorial type and an illuminated petrol-and-brass lantern](meridian.jpg)
 
-**Meridian** is a nine-second field-light design reel: a product reveal, an architectural shelter with a walking guide, a coastal environment, an animated optics section, and a signature card. One [edit decision list](meridian.json) drives the picture cuts, animation durations, stereo score, and closed captions. All plates and graphics are produced without GPU acceleration.
+**Meridian** is a nine-second field-light design reel: a product reveal, an architectural shelter with a walking guide, a coastal environment, an animated optics section, and a signature card. One [edit decision list](meridian.json) drives the picture cuts, animation durations, stereo score, and closed captions. All plates and graphics are produced without GPU acceleration. See [render verification](VERIFICATION.md) and the [rendered template variants](template-variants.jpg).
+
+**[Download the finished 1080p reel and source kit](https://github.com/parthoriganal/Parth-/actions/runs/44245101395/artifacts/14401578320)** · [passing render and export run](https://github.com/parthoriganal/Parth-/actions/runs/44245101395)
+
+The nine-second master passed at **1920×1080, 24 fps** on standard GitHub-hosted Linux CPU runners. The download is a ZIP (`meridian-production`); GitHub sign-in is required and it expires on 2026-12-18. It includes the MP4, three matching editable Blender scenes, separate captions and score, the Manim plate, and decoded visual proofs.
 
 ## Reuse the pieces
 
@@ -26,7 +30,7 @@ To make another edit, copy `meridian.json`, change labels and eligible templates
 | `draft` | 768 × 432 @ 12 fps | 640 × 360 | 6 | 108 / 8 |
 | `master` | 1920 × 1080 @ 24 fps | 1152 × 648 | 12 | 216 / 14 |
 
-The `master` typography and Cairo plates render at **native 1080p**; its 3D plates are composited up to 1080p. Native 1080p Cycles plates are **not** claimed. The preset uses OIDN, adaptive sampling, bounded bounces, packed fonts, modest mesh budgets, tiled Cycles, at most four Cycles threads per worker and two Chromium composition workers. The workflow partitions plates by **shot and frame range**, with six batches allowed in flight, and does not retain per-frame scene data in Blender. GitHub's availability and billing policies still apply.
+The `master` typography and Cairo plates render at **native 1080p**; its 3D plates are composited up to 1080p. Native 1080p Cycles plates are **not** claimed. The preset uses OIDN, adaptive sampling, bounded bounces, packed fonts, modest mesh budgets, 768-pixel Cycles tiles, a cap of four Cycles threads per worker, and two Chromium composition workers. The workflow partitions plates by **shot and frame range**, with six batches allowed in flight, and does not retain per-frame scene data in Blender. GitHub's availability and billing policies still apply.
 
 [Render Meridian (CPU production)](../.github/workflows/render-meridian.yml) creates `meridian-production`: `meridian.mp4` (H.264/AAC and toggleable English subtitles), `meridian.srt`, the source score WAV, decoded poster/contact sheet, Manim source plate, three portable `.blend` shots, and QA/manifest files. The full artifact is retained for 30 days; the large intermediate PNG artifacts expire after 7. No release, Pages deployment, or binary commit is needed.
 
@@ -40,8 +44,13 @@ python3.11 -m venv .venv
   -r blender_pipeline/requirements-build.lock -r blender_pipeline/requirements-media.lock
 .venv/bin/python -m production build --preset draft
 .venv/bin/python -m production matrix
-# Run one worker for each ID in the matrix; distinct IDs can run concurrently.
-.venv/bin/python -m production render --shard object-00 --threads 2
+# Render every planned batch sequentially; distinct IDs may also run on separate workers.
+set -o pipefail
+.venv/bin/python -m production matrix | .venv/bin/python -c \
+  'import json,sys; print("\n".join(b["id"] for b in json.load(sys.stdin)["include"]))' | \
+  while IFS= read -r batch; do
+    .venv/bin/python -m production render --shard "$batch" --threads 2 || exit
+  done
 ```
 
 Keep `out/meridian/bundle` unchanged when resuming: rerun the same shard to skip verified PNGs and regenerate only missing/corrupt frames. Writes are atomic, bound to the scene/render manifest and recorded in a SHA-256 receipt. A normal render error retries with a freshly loaded scene. A cancelled or timed-out hosted job can lose frames not uploaded yet; same-run artifact restoration is best-effort. To render a different project or profile without replacing the current bundle, pass `--root out/new-edit` **before** the stage name.
