@@ -12,7 +12,6 @@ from .edl import load_plan
 def optical_scene(m, seconds):
     class OpticalStudy(m.Scene):
         def construct(self):
-            self.camera.background_color = '#0e242a'
             grid = m.VGroup(*(m.Line([i*.45,-3.6,0],[i*.45,3.6,0],stroke_width=.7, color='#294c50')
                               for i in range(-1,16)),
                             *(m.Line([-.45,i*.45,0],[6.72,i*.45,0],stroke_width=.7,color='#294c50')
@@ -91,22 +90,29 @@ def render_diagrams(root):
         log = folder / 'manim.log'
         with TemporaryDirectory(dir=folder, prefix='.cairo-') as temp:
             with m.tempconfig({'renderer':'cairo','pixel_width':w,'pixel_height':h,'frame_rate':fps,
-                               'media_dir':temp,'output_file':shot['id'],'write_to_movie':True,
+                               'background_color':'#0e242a','format':'mp4','background_opacity':1.0,
+                               'media_dir':temp,'output_file':shot['id'],
                                'disable_caching':True,'verbosity':'WARNING','progress_bar':'none'}):
                 scene = optical_scene(m,shot['frames']/fps)
                 scene.render()
                 movie = Path(scene.renderer.file_writer.movie_file_path)
                 if not movie.is_file():
                     raise PipelineError('Manim did not produce an optical plate')
-                movie.replace(folder / 'source.mp4')
-        ffmpeg_run(imageio_ffmpeg.get_ffmpeg_exe(), ['-hide_banner','-v','error','-y','-i',str(folder/'source.mp4'),
-                                                    '-frames:v',str(shot['frames']),'-pix_fmt','rgb24',
-                                                    '-threads','2','-start_number','1',str(folder/'frame-%05d.png')], log)
-        hashes = {}
-        for i in range(1,shot['frames']+1):
-            p = folder / frame_name(i)
-            frame_stats(p,(w,h))
-            hashes[str(i)] = digest(p)
+            # Decode into a fresh directory: a short plate must not accidentally reuse PNGs
+            # from a previous attempt. Publish only after all requested frames decode.
+            tiles = Path(temp) / 'frames'
+            tiles.mkdir()
+            ffmpeg_run(imageio_ffmpeg.get_ffmpeg_exe(), ['-hide_banner','-v','error','-xerror','-y',
+                       '-threads','2','-i',str(movie),'-frames:v',str(shot['frames']),'-pix_fmt','rgb24',
+                       '-threads','2','-start_number','1',str(tiles/'frame-%05d.png')], log)
+            hashes = {}
+            for i in range(1,shot['frames']+1):
+                path = tiles / frame_name(i)
+                frame_stats(path,(w,h))
+                hashes[str(i)] = digest(path)
+            movie.replace(folder/'source.mp4')
+            for i in range(1,shot['frames']+1):
+                (tiles/frame_name(i)).replace(folder/frame_name(i))
         def sample(i):
             with Image.open(folder/frame_name(i)) as im:
                 return im.resize((320,180))
@@ -114,5 +120,6 @@ def render_diagrams(root):
         if diff < .15:
             raise PipelineError(f"Manim {shot['id']} appears static ({diff:.3f})")
         write_json(folder/'receipt.json', {'project_id':doc['project_id'],'shot':shot['id'],'frames':hashes,
-                   'motion_delta':round(diff,3), 'manim':m.__version__, 'renderer':'cairo'})
+                   'motion_delta':round(diff,3), 'manim':m.__version__, 'renderer':'cairo',
+                   'source_sha256':digest(folder/'source.mp4')})
         print(f"Manim {m.__version__} / Cairo: {shot['frames']} real frames at {w}x{h}, delta {diff:.2f}.",flush=True)
