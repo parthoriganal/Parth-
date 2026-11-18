@@ -1,0 +1,3 @@
+# Linux x86_64 / CPython 3.11 wheel lock. Use --only-binary=:all: --require-hashes.
+-r requirements-render.lock
+trimesh==5.2.1 --hash=sha256:ba4b5dbdf030bbffbb6337d9c67595435a8d1f224f23eb6500e9662f42a3c5df

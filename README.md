@@ -8,13 +8,14 @@ Built on [rxpelle/kdp-scout](https://github.com/rxpelle/kdp-scout) (MIT) as the 
 
 ---
 
-## 🪐 Also in this repo: three visual toys
+## 🪐 Also in this repo: four visual projects
 
 | Project | What it is |
 |---|---|
 | **[Gravity Lab](./gravity-lab/)** | A Barnes–Hut N-body gravitational simulator — leapfrog integration, inelastic merging, and eight real astrophysical initial conditions (solar system, galaxy collision, the figure-eight three-body choreography, a Plummer-sphere cluster, an accreting black hole…). No WebGL, no libraries. [`README`](./gravity-lab/README.md) · [`test/physics.cjs`](./gravity-lab/test/physics.cjs) |
 | **[Contribution City](./contribution-city/)** | Your GitHub contribution graph rebuilt as a beveled 3D city by a hand-rolled software renderer inside a Blender-flavoured UI. |
 | **[Singularity Bloom](./singularity-bloom/)** | A real 3D sculpture generated entirely by Python running inside **Blender 5.0** (headless, no display server), path-traced with Cycles, exported to glTF and spun in a three.js viewer. 25 crystal petals, two torus knots, 380 dust motes, an obsidian shell around a glowing heart. [`README`](./singularity-bloom/README.md) |
+| **[Lantern Tide](./lantern-tide/)** | A procedural lighthouse island and looping camera orbit. The [Blender CPU pipeline](./blender_pipeline/) builds the editable `.blend`, renders frames in parallel on GitHub Actions, and validates the assembled MP4. [Compatibility audit](./docs/BLENDER_COMPATIBILITY.md). |
 
 ```bash
 npm run sim            # serve Gravity Lab at :8080

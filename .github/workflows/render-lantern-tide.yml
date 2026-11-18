@@ -1,0 +1,176 @@
+name: Render Lantern Tide (Blender CPU)
+
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'lantern-tide/render_scene.py'
+      - 'blender_pipeline/**'
+      - '.github/actions/setup-blender-cpu/**'
+      - '.github/workflows/render-lantern-tide.yml'
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: Render profile (CI smoke, preview, or higher quality)
+        type: choice
+        options: [ci, preview, quality]
+        default: ci
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: blender-cpu-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  prepare:
+    name: Build and audit editable scene
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-blender-cpu
+        with:
+          lock: blender_pipeline/requirements-build.lock
+      - name: Exercise manifest and frame QA failure cases
+        run: python -m unittest discover -s blender_pipeline/tests -v
+      - id: plan
+        name: Generate, reopen and verify the scene
+        env:
+          PROFILE: ${{ inputs.profile || 'ci' }}
+        run: |
+          mkdir -p out/blender-cpu/bundle
+          python -u -m blender_pipeline build --profile "$PROFILE" 2>&1 | tee out/blender-cpu/bundle/build.log
+          matrix=$(python -m blender_pipeline matrix)
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+          cat out/blender-cpu/bundle/scene-qa.json
+      - name: Share the frozen scene and frame plan with all workers
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: blender-scene
+          path: out/blender-cpu/bundle/
+          if-no-files-found: error
+          compression-level: 0
+          overwrite: true
+          retention-days: 7
+
+  render:
+    name: Cycles CPU · frames ${{ matrix.first }}–${{ matrix.last }}
+    needs: prepare
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-blender-cpu
+        with:
+          lock: blender_pipeline/requirements-render.lock
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: blender-scene
+          path: out/blender-cpu/bundle
+      - name: Restore frames from a previous attempt of this run, if present
+        if: ${{ github.run_attempt != '1' }}
+        continue-on-error: true
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: blender-frames-${{ matrix.id }}
+          path: out/blender-cpu/frames/shard-${{ matrix.id }}
+          github-token: ${{ github.token }}
+          run-id: ${{ github.run_id }}
+      - id: worker
+        name: Render or resume this shard
+        env:
+          SHARD: ${{ matrix.id }}
+          ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          dest="out/blender-cpu/frames/shard-$SHARD"
+          mkdir -p "$dest"
+          python -u -m blender_pipeline render --shard "$SHARD" 2>&1 | tee "$dest/worker-$ATTEMPT.log"
+      - name: Save frames, receipts and logs (including partial progress on failure)
+        if: ${{ !cancelled() && (steps.worker.outcome == 'success' || steps.worker.outcome == 'failure') }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: blender-frames-${{ matrix.id }}
+          path: out/blender-cpu/frames/shard-${{ matrix.id }}/
+          if-no-files-found: error
+          compression-level: 0
+          overwrite: true
+          retention-days: 7
+
+  assemble:
+    name: Verify frames and assemble video
+    needs: render
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.11.18'
+      - name: Install Pillow and FFmpeg (no bpy)
+        run: |
+          python -m pip install --only-binary=:all: --require-hashes -r blender_pipeline/requirements-media.lock
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: blender-scene
+          path: out/blender-cpu/bundle
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          pattern: blender-frames-*
+          path: out/blender-cpu/downloads
+      - name: Validate all PNGs, encode MP4 and verify the full decode
+        run: |
+          mkdir -p out/blender-cpu/frames
+          for received in out/blender-cpu/downloads/blender-frames-*; do
+            mv "$received" "out/blender-cpu/frames/shard-${received##*-}"
+          done
+          python -u -m blender_pipeline assemble
+          cat out/blender-cpu/final/render-qa.json
+      - name: Save FFmpeg diagnostics when assembly fails
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: blender-encode-failure
+          path: out/blender-cpu/final/encode.log
+          if-no-files-found: ignore
+          overwrite: true
+          retention-days: 7
+      - name: Publish editable scene, poster, MP4 and QA reports
+        id: result
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: lantern-tide
+          path: out/blender-cpu/final/
+          if-no-files-found: error
+          compression-level: 0
+          overwrite: true
+          retention-days: 30
+      - name: Link and summarize the verified render
+        env:
+          ARTIFACT_URL: ${{ steps.result.outputs.artifact-url }}
+        run: |
+          {
+            echo '## Lantern Tide · CPU render'
+            printf '\n[Download the editable .blend, MP4, poster and QA reports](%s).\n\n' "$ARTIFACT_URL"
+            echo '```json'
+            cat out/blender-cpu/final/render-qa.json
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
