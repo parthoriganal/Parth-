@@ -4,9 +4,9 @@
 
 **Meridian** is a nine-second field-light design reel: a product reveal, an architectural shelter with a walking guide, a coastal environment, an animated optics section, and a signature card. One [edit decision list](meridian.json) drives the picture cuts, animation durations, stereo score, and closed captions. All plates and graphics are produced without GPU acceleration. See [render verification](VERIFICATION.md) and the [rendered template variants](template-variants.jpg).
 
-**[Download the finished 1080p reel and source kit](https://github.com/parthoriganal/Parth-/actions/runs/44245101395/artifacts/14401578320)** · [passing render and export run](https://github.com/parthoriganal/Parth-/actions/runs/44245101395)
+**[Download the 1080p film (MP4)](https://github.com/parthoriganal/Parth-/releases/download/meridian-m01-v1/meridian.mp4)** · [editable Blender scenes and production files (ZIP)](https://github.com/parthoriganal/Parth-/actions/runs/44245101395/artifacts/14401578320) · [passing render and export run](https://github.com/parthoriganal/Parth-/actions/runs/44245101395)
 
-The nine-second master passed at **1920×1080, 24 fps** on standard GitHub-hosted Linux CPU runners. The download is a ZIP (`meridian-production`); GitHub sign-in is required and it expires on 2026-12-18. It includes the MP4, three matching editable Blender scenes, separate captions and score, the Manim plate, and decoded visual proofs.
+The nine-second master passed at **1920×1080, 24 fps** on standard GitHub-hosted Linux CPU runners. The MP4 link is a public GitHub Release download. The separate ZIP (`meridian-production`) requires GitHub sign-in and expires on 2026-12-18. The ZIP includes the MP4, three matching editable Blender scenes, separate captions and score, the Manim plate, and decoded visual proofs.
 
 ## Reuse the pieces
 
