@@ -7,7 +7,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+    - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
       with:
         python-version: '3.11.18'
         cache: pip
@@ -19,9 +19,27 @@ runs:
         LOCK: ${{ inputs.lock }}
       shell: bash
       run: |
-        sudo apt-get update -qq
-        sudo apt-get install -y --no-install-recommends \
+        log=$(mktemp)
+        trap 'rm -f "$log"' EXIT
+        run_stage() {
+          local label=$1 status=0 detail
+          shift
+          "$@" >"$log" 2>&1 || status=$?
+          cat "$log"
+          if (( status )); then
+            detail=$(tail -n 12 "$log" | cut -c1-240 | paste -sd '|' -)
+            detail=${detail//%/%25}
+            printf '::error title=Blender setup: %s::Exit %s. %s\n' "$label" "$status" "$detail"
+            return "$status"
+          fi
+        }
+        run_stage 'apt update' sudo apt-get update -qq
+        run_stage 'system libraries' sudo apt-get install -y --no-install-recommends \
           libgl1 libice6 libsm6 libx11-6 libxext6 libxfixes3 libxi6 libxkbcommon0 libxrender1
-        python -m pip install --only-binary=:all: --require-hashes -r "$LOCK"
-        python -m pip check
-        python -c 'import bpy; assert bpy.app.background; print("Blender", bpy.app.version_string)'
+        run_stage 'create Python venv' python -m venv .venv
+        run_stage 'locked wheel install' .venv/bin/python -m pip install --disable-pip-version-check \
+          --only-binary=:all: --require-hashes -r "$LOCK"
+        run_stage 'wheel dependencies' .venv/bin/python -m pip check
+        run_stage 'Blender headless import' .venv/bin/python -c \
+          'import bpy; assert bpy.app.background; print("Blender", bpy.app.version_string)'
+        echo "$GITHUB_WORKSPACE/.venv/bin" >> "$GITHUB_PATH"
