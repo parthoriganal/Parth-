@@ -1,0 +1,13 @@
+{
+  "title": "Meridian M/01 — Copper Field",
+  "edition": "COPPER FIELD KIT",
+  "clock": 24,
+  "shots": [
+    {"id":"object", "template":"product", "ticks":48, "marker":"01 / OBJECT", "title":["Copper.","After dark."], "label":"BURNISHED CHASSIS / 20 KNURLS", "audio":"[Low synth pulse]", "note":164.81,
+     "model":{"body_radius":0.57,"rib_count":20,"chassis":"#763c34","output":2.9}},
+    {"id":"shelter", "template":"pavilion", "ticks":42, "marker":"02 / SHELTER", "title":["A quieter","shelter."], "label":"TWO-VAULT MODULE / MINERAL TINT", "audio":"[Soft percussive steps]", "note":220,
+     "model":{"bays":2,"span":3.58,"bay_spacing":1.64,"stone":"#89a1a0"}},
+    {"id":"terrain", "template":"landscape", "ticks":42, "marker":"03 / TERRAIN", "title":["A coastal","waypoint."], "label":"NINE LAYERS / SEED 87", "audio":"[Airy rising tone]", "note":246.94,
+     "model":{"layers":9,"radius":4.32,"seed":87}}
+  ]
+}

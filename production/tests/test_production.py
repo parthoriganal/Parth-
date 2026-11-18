@@ -7,6 +7,7 @@ import wave
 from blender_pipeline.manifest import PipelineError, frame_ids, read_json
 from production.audio import score, subtitles, verify_sync
 from production.edl import PRESETS, ROOT, editorial_plan
+from production.models import LampSpec, model_spec
 
 
 class EditorialTests(unittest.TestCase):
@@ -36,6 +37,32 @@ class EditorialTests(unittest.TestCase):
         changed=deepcopy(self.project)
         changed['shots'][-1]['source']='optics'
         with self.assertRaisesRegex(PipelineError,'preceding Blender'):
+            editorial_plan(changed,'master')
+
+    def test_resolve_model_variants_without_changing_the_edit_clock(self):
+        variants=read_json(ROOT/'examples/copper-field.json')
+        plan=editorial_plan(variants,'draft')
+        control=editorial_plan(self.project,'draft')
+        self.assertEqual([s['audio_sample'] for s in plan['shots']],
+                         [s['audio_sample'] for s in control['shots'][:3]])
+        product, pavilion, landscape=[s['model'] for s in plan['shots']]
+        self.assertEqual((product['chassis'], product['scale'], product['rib_count']),
+                         ('763C34', LampSpec.scale, 20))
+        self.assertEqual((pavilion['bays'], pavilion['stone']), (2, '89A1A0'))
+        self.assertEqual((landscape['layers'],landscape['seed']), (9, 87))
+
+    def test_reject_unknown_or_out_of_budget_model_values(self):
+        for template, overrides in (
+            ('product', {'knurls':20}), ('product', {'output':float('nan')}),
+            ('product', {'chassis':'purple'}), ('pavilion', {'bays':True}),
+            ('pavilion', {'bays':1e4}), ('landscape', {'seed':4.5}),
+            ('landscape', []),
+        ):
+            with self.subTest(template=template, overrides=overrides), self.assertRaises(PipelineError):
+                model_spec(template, overrides)
+        changed=deepcopy(self.project)
+        changed['shots'][-1]['model']={}
+        with self.assertRaisesRegex(PipelineError,'only to 3D templates'):
             editorial_plan(changed,'master')
 
     def test_pcm_contains_cue_at_each_cut_and_muted_track_is_rejected(self):

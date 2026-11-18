@@ -18,8 +18,8 @@ on:
       compositor:
         description: 'Remotion (Free License eligible only) or Pillow/FFmpeg'
         type: choice
-        options: [remotion, pillow]
-        default: remotion
+        options: [pillow, remotion]
+        default: pillow
 
 permissions:
   contents: read
@@ -35,7 +35,7 @@ defaults:
 
 env:
   WORK: out/meridian
-  COMPOSITOR: ${{ inputs.compositor || 'remotion' }}
+  COMPOSITOR: ${{ inputs.compositor || 'pillow' }}
 
 jobs:
   prepare:
@@ -58,7 +58,8 @@ jobs:
       - name: Build, reopen and audit the Blender source
         id: build
         env:
-          PRESET: ${{ inputs.preset || 'master' }}
+          # Every relevant push exercises the full edit without spending master-render minutes.
+          PRESET: ${{ inputs.preset || 'draft' }}
         run: |
           python -u -m production build --preset "$PRESET"
           cat "$WORK/bundle/scene-qa.json"

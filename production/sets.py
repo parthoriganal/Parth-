@@ -1,38 +1,14 @@
 """Parametric Blender scene templates for product, architectural and field shots."""
 
-from dataclasses import dataclass
 from math import cos, pi, sin, tau
 import random
 
 import bpy
 
 from .character import field_guide, fk_walk
+from .models import LAND_SEGMENTS, LampSpec, LandSpec, PavilionSpec, model_spec
 from .studio import (area, atmosphere, box, camera_move, collection, configure, curve, empty,
                      label, lathe, material, mesh, ring)
-
-
-@dataclass(frozen=True)
-class LampSpec:
-    scale: float = 1.0
-    body_radius: float = .62
-    rib_count: int = 32
-    chassis: str = '25474B'
-    output: float = 2.35
-
-
-@dataclass(frozen=True)
-class PavilionSpec:
-    bays: int = 3
-    span: float = 3.48
-    bay_spacing: float = 1.35
-    stone: str = 'BC8B70'
-
-
-@dataclass(frozen=True)
-class LandSpec:
-    layers: int = 8
-    radius: float = 4.6
-    seed: int = 67
 
 
 def luminaire(at=(0, 0, 0), spec=LampSpec()):
@@ -117,8 +93,9 @@ def pavilion(spec=PavilionSpec()):
     inner = spec.span * .5
     end = -1.0 + (spec.bays - 1) * spec.bay_spacing
     center = (end - 1.0) / 2
+    extra_depth = max(0, (spec.bays - 1) * spec.bay_spacing - 2.7)
     for i, (w, dep, z) in enumerate(((5.65,5.25,.066),(5.28,4.95,.196),(4.97,4.38,.307))):
-        box(group, 'Plinth course', (0, center+(i*.14),z), (w,dep,.135), deck if i<2 else stone, .035)
+        box(group, 'Plinth course', (0, center+(i*.14),z), (w,dep+extra_depth,.135), deck if i<2 else stone, .035)
     for i in range(spec.bays):
         y = -1 + spec.bay_spacing*i
         portal(group, f'Vault module {i+1:02}', y, inner, .885, .29, .365, stone, trim)
@@ -142,7 +119,7 @@ def terrain(spec=LandSpec()):
     rng = random.Random(spec.seed)
     pal = [material(f'Geology course {i+1:02}', h, .82, grit=.023) for i,h in enumerate(
         ('443D48','65535A','895A55','A37467','886669','AC7E68','765B5C','BD917A'))]
-    n = 52
+    n = LAND_SEGMENTS
     phase = rng.uniform(0, tau)
     verts, faces, indices = [], [], []
     for k in range(spec.layers + 1):
@@ -188,7 +165,7 @@ def sweep(group, name, mat):
     return mesh(group,name,points,[(i,i+1,i+3,i+2) for i in range(0,len(points)-2,2)],[mat],smooth=True)
 
 
-def product_scene(scene, plan, frames):
+def product_scene(scene, plan, frames, spec=LampSpec()):
     grp = collection('01 • Product cyclorama')
     rig = collection('00 • Camera & lighting')
     atmosphere(scene, (.32,.48,.49), .16)
@@ -199,7 +176,7 @@ def product_scene(scene, plan, frames):
     lathe(grp, 'Hero platform', (.50,0,0), [(1.43,.005),(1.52,.025),(1.52,.18),(1.45,.225)], [stand])
     ring(grp, 'Registration', (.50,0,.219), 1.33,.006,accent)
     label(grp, 'Platform serial', '0 1', (.5,-1.498,.075), .123,accent)
-    luminaire((.50,0,.224))
+    luminaire((.50,0,.224), spec)
     area(rig,'Warm softbox',(-3.3,-3.1,5.9),(.4,0,1.6),1270,3.6,(1,.78,.60),height=4.5)
     area(rig,'Cool edge strip',(3.1,1.9,3.6),(.5,0,1.7),1330,1.8,(.47,.81,1),height=4.4)
     area(rig,'Bronze top',(0,2.8,6.4),(.5,0,1.5),985,2.5,(1,.55,.31))
@@ -209,13 +186,13 @@ def product_scene(scene, plan, frames):
         (.52,(5.10,-8.05,3.38),(-.71,0,1.81),50),(1,(5.64,-7.66,3.50),(-.67,0,1.83),51)], aperture=5.6)
 
 
-def shelter_scene(scene, plan, frames):
+def shelter_scene(scene, plan, frames, spec=PavilionSpec()):
     grp = collection('01 • Desert court')
     rig = collection('00 • Camera & lighting')
     atmosphere(scene,(.45,.50,.56),.20)
     ground = material('Blue hour court • compacted terracotta dust','745D59',.76,grit=.023)
     sweep(grp,'Continuous court backdrop',ground)
-    pavilion()
+    pavilion(spec)
     luminaire((1.21,-.69,.80),LampSpec(.255,rib_count=20,output=4.1))
     bpy.context.view_layer.update()
     actor, _ = field_guide()
@@ -228,20 +205,21 @@ def shelter_scene(scene, plan, frames):
         (.50,(5.05,-9.1,3.51),(-.85,.35,1.56),41),(1,(4.11,-8.74,3.28),(-.84,.32,1.53),42)])
 
 
-def landscape_scene(scene,plan,frames):
+def landscape_scene(scene,plan,frames,spec=LandSpec()):
     rig = collection('00 • Camera & lighting')
-    grp = terrain()
+    grp = terrain(spec)
+    lift = .25 * (spec.layers - LandSpec.layers)
     atmosphere(scene,(.35,.42,.62),.25)
     pedestal = material('Waypoint • basalt','3E4447',.69,grit=.014)
-    lathe(grp,'Lookout base',(1.23,-.05,2.035),[(.45,0),(.48,.06),(.44,.19)], [pedestal],sides=44)
-    luminaire((1.23,-.05,2.224),LampSpec(.34,chassis='30474E',rib_count=20,output=4.6))
-    box(grp,'Survey marker',(.20,-.94,2.043),(.95,.115,.046),pedestal,.01,yaw=.12)
+    lathe(grp,'Lookout base',(1.23,-.05,2.035+lift),[(.45,0),(.48,.06),(.44,.19)], [pedestal],sides=44)
+    luminaire((1.23,-.05,2.224+lift),LampSpec(.34,chassis='30474E',rib_count=20,output=4.6))
+    box(grp,'Survey marker',(.20,-.94,2.043+lift),(.95,.115,.046),pedestal,.01,yaw=.12)
     area(rig,'Honey dusk edge',(-4.9,4.7,6.8),(0,0,1.3),2500,5.2,(1,.56,.33))
     area(rig,'Sea bounce',(4.5,-5.2,6.3),(0,0,1.3),1770,7,(.49,.76,1))
     area(rig,'Surface softbox',(-4.7,-3,5.3),(0,0,1),730,4.1,(.79,.85,1))
     configure(scene,plan,frames,exposure=-.06)
-    camera_move(scene,rig,frames,[(0,(8.1,-10.7,6.8),(-.39,.02,1.40),39),
-        (.54,(8.75,-10.05,5.8),(-.41,.05,1.46),40),(1,(9.1,-9.9,5.53),(-.43,.08,1.45),41)])
+    camera_move(scene,rig,frames,[(0,(8.1,-10.7,6.8),(-.39,.02,1.40+lift*.55),39),
+        (.54,(8.75,-10.05,5.8),(-.41,.05,1.46+lift*.55),40),(1,(9.1,-9.9,5.53),(-.43,.08,1.45+lift*.55),41)])
 
 
 TEMPLATES = {'product': product_scene, 'pavilion': shelter_scene, 'landscape': landscape_scene}
@@ -251,7 +229,8 @@ def make_scene(shot, settings):
     bpy.ops.wm.read_factory_settings(use_empty=True)
     scene = bpy.context.scene
     scene.name = f"Meridian / {shot['marker']}"
-    TEMPLATES[shot['template']](scene, settings, shot['frames'])
+    template = shot['template']
+    TEMPLATES[template](scene, settings, shot['frames'], model_spec(template, shot.get('model', {})))
     scene.frame_set(1)
     for screen in bpy.data.screens:
         for area_ in screen.areas:

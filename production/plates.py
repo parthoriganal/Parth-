@@ -1,5 +1,7 @@
 """Build portable shot files; render and resume each shot in independent batches."""
 
+from dataclasses import asdict
+
 import os
 import resource
 import time
@@ -10,6 +12,7 @@ from blender_pipeline.media import RECEIPT, check_cached, empty_receipt, frame_s
 from blender_pipeline.worker import load_scene, log_event
 
 from .edl import BLENDER_TEMPLATES, blend_path, editorial_plan, load_plan, write_plan
+from .models import LAND_SEGMENTS, model_spec
 
 
 def check(condition, label):
@@ -45,6 +48,22 @@ def audit(bpy, shot, settings):
     report = {'shot': shot['id'], 'objects':len(scene.objects), 'materials':len(bpy.data.materials),
               'packed_fonts':sum(bool(f.packed_file) for f in bpy.data.fonts),
               'camera_travel':round(distance, 3), 'lens_mm':[round(lens,2), round(scene.camera.data.lens,2)]}
+    template = shot['template']
+    model = model_spec(template, shot.get('model', {}))
+    if template == 'product':
+        count = sum(o.name.startswith('Indexed knurl') for o in scene.objects)
+        check(count == 2 * model.rib_count, 'incorrect modeled knurl count')
+        report['knurls'] = count
+    elif template == 'pavilion':
+        count = sum(o.name.startswith('Vault module ') and o.name.endswith(' • cast vault') for o in scene.objects)
+        check(count == model.bays, 'incorrect modeled vault count')
+        report['vault_bays'] = count
+    elif template == 'landscape':
+        land = scene.objects.get('Headland • stratified terrain surface')
+        check(land and len(land.data.vertices) == (model.layers + 1) * LAND_SEGMENTS,
+              'incorrect modeled terrain rings')
+        report['terrain_vertices'] = len(land.data.vertices)
+    report['model'] = asdict(model)
     if rig:
         after = suit.evaluated_get(bpy.context.evaluated_depsgraph_get()).data.vertices
         changed = sum((a.co - b).length > .02 for a,b in zip(after, before))

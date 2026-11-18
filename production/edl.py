@@ -7,9 +7,11 @@ import re
 
 from blender_pipeline.manifest import PipelineError, digest, identity, read_json, write_json
 
+from .models import MODEL_TYPES, model_spec
+
 ROOT = Path(__file__).resolve().parent
 FONT_ROOT = ROOT.parent / '.claude/skills/anthropic/canvas-design/canvas-fonts'
-BLENDER_TEMPLATES = {'product', 'pavilion', 'landscape'}
+BLENDER_TEMPLATES = frozenset(MODEL_TYPES)
 SAMPLE_RATE = 48000
 
 
@@ -51,13 +53,18 @@ def editorial_plan(project, preset_name):
         if len(spec['title']) != 2 or not all(isinstance(part, str) for part in spec['title']):
             raise PipelineError(f'{name} requires two title lines (second may be empty)')
         length = ticks * preset.fps // clock
+        if length < 6:
+            raise PipelineError(f'{name} needs at least six frames for the authored motion')
         shot = {**spec, 'start': cursor, 'frames': length, 'audio_sample': cursor * (SAMPLE_RATE // preset.fps)}
+        if 'model' in spec and template not in BLENDER_TEMPLATES:
+            raise PipelineError(f'{name} model overrides apply only to 3D templates')
         if template == 'endcard':
             source = seen.get(spec.get('source'))
             if not source or source['template'] not in BLENDER_TEMPLATES:
                 raise PipelineError('An endcard must reference a preceding Blender shot')
             shot['hold'] = source['frames']
         elif template in BLENDER_TEMPLATES:
+            shot['model'] = asdict(model_spec(template, spec.get('model', {})))
             for i, first in enumerate(range(1, length + 1, preset.batch)):
                 shards.append({'id': f'{name}-{i:02}', 'shot': name, 'first': first,
                                'last': min(first + preset.batch - 1, length)})

@@ -1,4 +1,4 @@
-"""Optional all-free Pillow/FFmpeg compositor for projects not eligible for Remotion."""
+"""Open-source Pillow/FFmpeg compositor; runs without Chromium or Remotion."""
 
 from functools import lru_cache
 import subprocess
@@ -34,7 +34,14 @@ def compose(root):
         end=shot['template']=='endcard'
         name=shot['source'] if end else shot['id']
         with Image.open(root/'public'/name/frame_name(shot['hold'] if end else frame+1)) as im:
-            r=im.convert('RGBA').resize((w,h),Image.Resampling.LANCZOS)
+            crop = None
+            if end:
+                # Eased 4.5% push-in, measured from the shot clock as in the Remotion edit.
+                t = frame / max(1, shot['frames'] - 1)
+                zoom = 1 + .045 * t*t*(3 - 2*t)
+                dx, dy = (im.width*(1 - 1/zoom)/2, im.height*(1 - 1/zoom)/2)
+                crop = (dx, dy, im.width-dx, im.height-dy)
+            r=im.convert('RGBA').resize((w,h),Image.Resampling.LANCZOS,box=crop)
         r=Image.alpha_composite(r,matte).convert('RGB')
         d=ImageDraw.Draw(r)
         def tag(x,y,text,size,fill=cream,typeface=mono):
