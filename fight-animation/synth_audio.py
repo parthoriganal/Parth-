@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
-Procedural 48 kHz stereo cinematic battle score & foley synthesizer
-for KAGE // CRIMSON ECLIPSE (24.0s @ 24fps = 576 frames).
-Zero external audio assets — pure NumPy DSP synced to every animation beat.
+Procedural 48 kHz stereo anime battle soundtrack & foley synthesizer
+for KAGE // CRIMSON ECLIPSE (22.0s @ 24fps = 528 frames — Studio Sakuga Cut).
+Synced to the exact millisecond of every cut, impact frame, bullet-time freeze,
+screen-tear severance, and katana sheathe click.
 """
 import os
 import sys
@@ -10,29 +11,19 @@ import wave
 import numpy as np
 
 SR = 48000
-DUR = 24.0
+DUR = 22.0
 N = int(SR * DUR)
 
 rng = np.random.default_rng(20261120)
 
 
-def one_pole_lp(x: np.ndarray, cutoff_hz: float) -> np.ndarray:
-    rc = 1.0 / (2.0 * np.pi * max(cutoff_hz, 1.0))
-    dt = 1.0 / SR
-    alpha = dt / (rc + dt)
-    out = np.empty_like(x)
-    y = 0.0
-    for i in range(len(x)):
-        y += alpha * (x[i] - y)
-        out[i] = y
-    return out
-
-
 def fft_bandpass(x: np.ndarray, low_hz: float, high_hz: float) -> np.ndarray:
     X = np.fft.rfft(x)
     freqs = np.fft.rfftfreq(len(x), 1.0 / SR)
-    mask = np.exp(-0.5 * ((np.clip(freqs, 1.0, None) - np.sqrt(low_hz * high_hz)) / max((high_hz - low_hz) * 0.55, 1.0)) ** 2)
-    mask[(freqs < low_hz * 0.45) | (freqs > high_hz * 1.8)] *= 0.05
+    center = np.sqrt(max(low_hz, 1.0) * max(high_hz, 2.0))
+    bw = max((high_hz - low_hz) * 0.55, 1.0)
+    mask = np.exp(-0.5 * ((np.clip(freqs, 1.0, None) - center) / bw) ** 2)
+    mask[(freqs < low_hz * 0.45) | (freqs > high_hz * 1.8)] *= 0.04
     return np.fft.irfft(X * mask, n=len(x))
 
 
@@ -51,222 +42,215 @@ def add_stereo(L: np.ndarray, R: np.ndarray, sig: np.ndarray, t0: float, gain: f
     R[i0:end] += seg * gR
 
 
-def synth_taiko(dur=0.55, f0=115.0, f1=44.0, punch=1.0):
+def synth_taiko(dur=0.52, f0=125.0, f1=42.0, punch=1.2):
     t = np.linspace(0, dur, int(SR * dur), endpoint=False)
-    freq = f1 + (f0 - f1) * np.exp(-t * 24.0)
+    freq = f1 + (f0 - f1) * np.exp(-t * 26.0)
     phase = 2.0 * np.pi * np.cumsum(freq) / SR
-    body = np.sin(phase) * np.exp(-t * 6.5) + 0.35 * np.sin(phase * 1.98) * np.exp(-t * 14.0)
-    slap = rng.standard_normal(len(t)) * np.exp(-t * 95.0) * 0.45 * punch
-    slap = fft_bandpass(slap, 500, 3200)
-    return np.tanh((body + slap) * 1.6)
+    body = np.sin(phase) * np.exp(-t * 6.5) + 0.38 * np.sin(phase * 1.97) * np.exp(-t * 14.0)
+    slap = fft_bandpass(rng.standard_normal(len(t)) * np.exp(-t * 95.0), 500, 3600) * 0.5 * punch
+    return np.tanh((body + slap) * 1.7)
 
 
-def synth_sub_drop(dur=1.4, f0=95.0, f1=30.0):
+def synth_sub_drop(dur=1.5, f0=105.0, f1=28.0):
     t = np.linspace(0, dur, int(SR * dur), endpoint=False)
-    freq = f1 + (f0 - f1) * np.exp(-t * 4.2)
+    freq = f1 + (f0 - f1) * np.exp(-t * 4.5)
     phase = 2.0 * np.pi * np.cumsum(freq) / SR
-    env = np.minimum(t / 0.008, 1.0) * np.exp(-t * 2.1)
-    sig = np.sin(phase) + 0.35 * np.sin(phase * 2.0) * np.exp(-t * 5.0)
-    click = rng.standard_normal(len(t)) * np.exp(-t * 140.0) * 0.4
-    return np.tanh((sig * env + click) * 1.5)
+    env = np.minimum(t / 0.006, 1.0) * np.exp(-t * 2.0)
+    sig = np.sin(phase) + 0.4 * np.sin(phase * 2.0) * np.exp(-t * 5.0)
+    click = rng.standard_normal(len(t)) * np.exp(-t * 140.0) * 0.45
+    return np.tanh((sig * env + click) * 1.6)
 
 
-def synth_whoosh(dur=0.28, f_start=450.0, f_end=2600.0):
+def synth_whoosh(dur=0.30, f_start=420.0, f_end=3200.0):
     n = int(SR * dur)
     t = np.linspace(0, dur, n, endpoint=False)
     noise = rng.standard_normal(n)
-    env = np.sin(np.pi * (t / dur)) ** 1.4
-    # Sweep resonant tone + filtered air
+    env = np.sin(np.pi * (t / dur)) ** 1.35
     freq = f_start * (f_end / f_start) ** (t / dur)
     phase = 2.0 * np.pi * np.cumsum(freq) / SR
     whistle = np.sin(phase) * 0.16 * env
-    air = fft_bandpass(noise, min(f_start, f_end) * 0.8, max(f_start, f_end) * 1.2) * env * 0.85
+    air = fft_bandpass(noise, min(f_start, f_end) * 0.8, max(f_start, f_end) * 1.25) * env * 0.9
     return air + whistle
 
 
-def synth_sword_clash(dur=0.85, base=1680.0, intensity=1.0):
+def synth_sword_clash(dur=0.95, base=1620.0, intensity=1.1):
     n = int(SR * dur)
     t = np.linspace(0, dur, n, endpoint=False)
-    # Inharmonic metallic partials + FM ring
     ratios = [1.0, 1.47, 2.09, 2.86, 3.74, 4.92, 6.18]
-    decays = [4.5, 6.0, 8.2, 11.0, 14.5, 19.0, 25.0]
+    decays = [4.2, 5.8, 8.0, 10.8, 14.2, 18.5, 24.0]
     sig = np.zeros(n)
     for r, d in zip(ratios, decays):
         f = base * r
-        fm = np.sin(2.0 * np.pi * f * 0.63 * t) * 1.4 * np.exp(-t * 18.0)
+        fm = np.sin(2.0 * np.pi * f * 0.63 * t) * 1.5 * np.exp(-t * 18.0)
         sig += np.sin(2.0 * np.pi * f * t + fm) * np.exp(-t * d) / (r ** 0.45)
-    spark = fft_bandpass(rng.standard_normal(n), 2800, 11000) * np.exp(-t * 45.0) * 0.9
-    thud = synth_taiko(min(0.3, dur), 150.0, 48.0, punch=1.2)
-    out = sig * 0.42 + spark * 0.6
-    out[: len(thud)] += thud * 0.55
-    return np.tanh(out * intensity * 1.5)
+    spark = fft_bandpass(rng.standard_normal(n), 2800, 11500) * np.exp(-t * 42.0) * 0.95
+    thud = synth_taiko(min(0.32, dur), 155.0, 44.0, punch=1.3)
+    out = sig * 0.44 + spark * 0.62
+    out[: len(thud)] += thud * 0.6
+    return np.tanh(out * intensity * 1.55)
 
 
-def synth_slash(dur=0.22, high=3600.0):
+def synth_slash(dur=0.22, high=3800.0):
     n = int(SR * dur)
     t = np.linspace(0, dur, n, endpoint=False)
-    noise = fft_bandpass(rng.standard_normal(n), 1400, high * 1.6)
-    env = np.minimum(t / 0.006, 1.0) * np.exp(-t * 16.0)
-    ring = (np.sin(2 * np.pi * high * t) + 0.5 * np.sin(2 * np.pi * high * 1.53 * t)) * np.exp(-t * 22.0) * 0.25
-    return np.tanh((noise * env * 1.1 + ring) * 1.4)
+    noise = fft_bandpass(rng.standard_normal(n), 1500, high * 1.65)
+    env = np.minimum(t / 0.005, 1.0) * np.exp(-t * 15.5)
+    ring = (np.sin(2 * np.pi * high * t) + 0.55 * np.sin(2 * np.pi * high * 1.52 * t)) * np.exp(-t * 21.0) * 0.28
+    return np.tanh((noise * env * 1.15 + ring) * 1.45)
 
 
-def synth_plasma_crackle(dur=0.6):
+def synth_plasma_crackle(dur=0.65):
     n = int(SR * dur)
     t = np.linspace(0, dur, n, endpoint=False)
-    bursts = (rng.random(n) > 0.992).astype(float) * rng.standard_normal(n) * 3.0
-    buzz = np.sign(np.sin(2 * np.pi * (95.0 + 35.0 * np.sin(2 * np.pi * 14 * t)) * t)) * 0.14
-    raw = fft_bandpass(bursts + buzz, 900, 9500)
+    bursts = (rng.random(n) > 0.991).astype(float) * rng.standard_normal(n) * 3.2
+    buzz = np.sign(np.sin(2 * np.pi * (92.0 + 38.0 * np.sin(2 * np.pi * 15 * t)) * t)) * 0.14
+    raw = fft_bandpass(bursts + buzz, 900, 9800)
     env = np.sin(np.pi * t / dur) ** 0.6
-    return np.tanh(raw * env * 1.6)
+    return np.tanh(raw * env * 1.65)
 
 
 def synth_sheathe_click():
-    dur = 0.45
+    dur = 0.50
     n = int(SR * dur)
     t = np.linspace(0, dur, n, endpoint=False)
-    # Metallic slide + crisp tsuba lock click at 0.08s
-    slide = fft_bandpass(rng.standard_normal(n), 3000, 8500) * np.exp(-((t - 0.04) / 0.03) ** 2) * 0.35
-    click_t = np.maximum(t - 0.09, 0.0)
-    mask = (t >= 0.09).astype(float)
+    slide = fft_bandpass(rng.standard_normal(n), 3200, 9000) * np.exp(-((t - 0.04) / 0.03) ** 2) * 0.35
+    click_t = np.maximum(t - 0.08, 0.0)
+    mask = (t >= 0.08).astype(float)
     click = mask * (
-        np.sin(2 * np.pi * 2950 * click_t) * np.exp(-click_t * 35.0) * 0.65
-        + np.sin(2 * np.pi * 4620 * click_t) * np.exp(-click_t * 48.0) * 0.45
-        + np.sin(2 * np.pi * 640 * click_t) * np.exp(-click_t * 60.0) * 0.5
+        np.sin(2 * np.pi * 3100 * click_t) * np.exp(-click_t * 32.0) * 0.72
+        + np.sin(2 * np.pi * 4850 * click_t) * np.exp(-click_t * 45.0) * 0.5
+        + np.sin(2 * np.pi * 660 * click_t) * np.exp(-click_t * 58.0) * 0.55
     )
-    return np.tanh((slide + click) * 1.8)
+    return np.tanh((slide + click) * 1.85)
 
 
 def main():
-    out_path = sys.argv[1] if len(sys.argv) > 1 else "fight-animation/audio.wav"
+    out_path = sys.argv[1] if len(sys.argv) > 1 else "/tmp/kage_audio.wav"
     os.makedirs(os.path.dirname(out_path) or ".", exist_ok=True)
 
     L = np.zeros(N, dtype=np.float64)
     R = np.zeros(N, dtype=np.float64)
     t_all = np.linspace(0, DUR, N, endpoint=False)
 
-    # 1. Atmospheric rain bed + brooding dark cyber-drone (D minor / Phrygian: D1=36.71Hz, Eb1=38.89Hz, A1=55Hz)
-    rain_L = fft_bandpass(rng.standard_normal(N), 900, 6200) * 0.045
-    rain_R = fft_bandpass(rng.standard_normal(N), 950, 6500) * 0.045
-    L += rain_L
-    R += rain_R
+    # Storm rain bed + dark Phrygian anime-phonk bassline
+    L += fft_bandpass(rng.standard_normal(N), 900, 6200) * 0.045
+    R += fft_bandpass(rng.standard_normal(N), 950, 6500) * 0.045
 
-    # Dark pulsing synth bassline across acts (active 0.4s -> 16.5s, drops out during bullet-time, returns softly)
-    drone_freq = np.where(t_all < 12.5, 36.71, np.where(t_all < 16.5, 38.89, 36.71))
-    drone_phase = 2.0 * np.pi * np.cumsum(drone_freq) / SR
-    saw = 0.55 * np.sin(drone_phase) + 0.28 * np.sin(2 * drone_phase) + 0.14 * np.sin(3 * drone_phase)
-    # 16th-note cyberpunk sidechain pulse during combat (3.5s -> 16.5s)
-    pulse = np.where((t_all >= 3.5) & (t_all < 16.5), 0.55 + 0.45 * (0.5 - 0.5 * np.cos(2 * np.pi * 5.0 * t_all)), 0.45)
-    drone_env = np.clip(t_all / 1.2, 0, 1) * np.where(t_all > 21.8, np.exp(-(t_all - 21.8) * 1.2), 1.0)
-    # High-tension dissonant shimmer pad in Act IV (12.5s - 16.5s)
-    shimmer = np.sin(2 * np.pi * 293.66 * t_all) * 0.05 + np.sin(2 * np.pi * 311.13 * t_all) * 0.045
-    shimmer *= np.where((t_all >= 12.5) & (t_all < 16.5), np.sin(np.pi * np.clip((t_all - 12.5) / 4.0, 0, 1)), 0.0)
+    # Aggressive bass notes (D1 -> Eb1 -> F1 -> Eb1 -> D1)
+    drone_freq = np.where(
+        t_all < 7.4, 36.71,
+        np.where(t_all < 10.3, 38.89,
+                 np.where(t_all < 12.8, 43.65,
+                          np.where(t_all < 15.1, 38.89, 36.71)))
+    )
+    phase = 2.0 * np.pi * np.cumsum(drone_freq) / SR
+    bass = np.tanh((0.65 * np.sin(phase) + 0.35 * np.sin(2 * phase) + 0.2 * np.sin(3 * phase)) * 1.8)
+    # 135 BPM energetic sidechain pump during active combat (3.7s -> 15.1s)
+    pulse = np.where((t_all >= 3.7) & (t_all < 15.1), 0.45 + 0.55 * (0.5 - 0.5 * np.cos(2 * np.pi * 4.5 * t_all)), 0.42)
+    env = np.clip(t_all / 0.8, 0, 1) * np.where(t_all > 19.6, np.exp(-(t_all - 19.6) * 1.0), 1.0)
 
-    L += (saw * pulse * drone_env * 0.22) + shimmer
-    R += (saw * pulse * drone_env * 0.22) - shimmer * 0.8
+    # High-tension dissonant anime string shimmer during Overdrive (12.8s - 15.1s)
+    shimmer = (np.sin(2 * np.pi * 293.66 * t_all) * 0.055 + np.sin(2 * np.pi * 311.13 * t_all) * 0.05)
+    shimmer *= np.where((t_all >= 12.8) & (t_all < 15.1), np.sin(np.pi * np.clip((t_all - 12.8) / 2.3, 0, 1)), 0.0)
 
-    # 2. Act I — Title slash & Eye Cut-in (0.0s - 3.5s)
-    add_stereo(L, R, synth_sub_drop(1.6, 80, 32), 0.15, gain=0.65, pan=0.0)
-    add_stereo(L, R, synth_slash(0.28, 4200), 1.05, gain=0.55, pan=0.1)  # Title slice!
-    add_stereo(L, R, synth_taiko(0.6, 100, 42), 2.40, gain=0.72, pan=-0.2)  # Eye cut-in slam
-    add_stereo(L, R, synth_plasma_crackle(0.8), 2.45, gain=0.35, pan=0.2)
-    add_stereo(L, R, synth_taiko(0.45, 130, 50), 3.15, gain=0.65, pan=0.25)
+    L += (bass * pulse * env * 0.24) + shimmer
+    R += (bass * pulse * env * 0.24) - shimmer * 0.85
 
-    # 3. Driving Taiko / Industrial battle groove during Acts II–IV (3.5s - 16.3s)
-    beat = 0.25  # 120 BPM 8th-note grid (240 pulses/min feel)
-    t_beat = 3.5
+    # Beat 1 (0.0s - 2.5s): Standoff + Title Slice at 1.20s
+    add_stereo(L, R, synth_sub_drop(1.6, 82, 30), 0.10, gain=0.68, pan=0.0)
+    add_stereo(L, R, synth_slash(0.26, 4400), 1.20, gain=0.62, pan=0.1)
+
+    # Beat 2 (2.5s - 3.7s): Eye Clash Slam
+    add_stereo(L, R, synth_taiko(0.60, 115, 40, 1.4), 2.50, gain=0.85, pan=0.0)
+    add_stereo(L, R, synth_plasma_crackle(0.95), 2.52, gain=0.45, pan=0.0)
+
+    # Beat 3 (3.7s - 5.0s): Supersonic Dash Launch
+    add_stereo(L, R, synth_taiko(0.45, 140, 44, 1.5), 3.70, gain=0.82, pan=-0.3)
+    add_stereo(L, R, synth_whoosh(0.45, 320, 3600), 3.85, gain=0.78, pan=-0.4)
+    add_stereo(L, R, synth_plasma_crackle(0.85), 3.90, gain=0.42, pan=-0.2)
+    add_stereo(L, R, synth_whoosh(0.32, 480, 4200), 4.65, gain=0.85, pan=0.15)
+
+    # Driving Taiko War Groove (3.7s -> 15.0s)
+    beat = 0.222  # ~135 BPM 8th-note drive
+    tb = 3.7
     idx = 0
-    while t_beat < 16.2:
-        # Pause percussion during first clash hit-stop (4.60 - 5.15)
-        if not (4.60 <= t_beat <= 5.15):
+    while tb < 14.95:
+        if not (5.0 <= tb <= 5.45) and not (8.1 <= tb <= 8.35):
             if idx % 4 == 0:
-                add_stereo(L, R, synth_taiko(0.45, 120, 42, 1.2), t_beat, gain=0.58, pan=-0.12)
+                add_stereo(L, R, synth_taiko(0.42, 125, 42, 1.3), tb, gain=0.62, pan=-0.12)
             elif idx % 4 == 2:
-                add_stereo(L, R, synth_taiko(0.32, 170, 65, 1.4), t_beat, gain=0.44, pan=0.18)
+                add_stereo(L, R, synth_taiko(0.30, 178, 66, 1.5), tb, gain=0.48, pan=0.18)
             elif idx % 8 == 7:
-                add_stereo(L, R, synth_taiko(0.22, 220, 88, 1.0), t_beat, gain=0.34, pan=-0.25)
-        t_beat += beat
+                add_stereo(L, R, synth_taiko(0.20, 230, 90, 1.1), tb, gain=0.38, pan=-0.22)
+        tb += beat
         idx += 1
 
-    # 4. Act II — Dash & First Blade Clash (3.5s - 7.5s)
-    add_stereo(L, R, synth_whoosh(0.35, 350, 3200), 3.95, gain=0.65, pan=-0.5)
-    add_stereo(L, R, synth_whoosh(0.35, 300, 2600), 4.05, gain=0.65, pan=0.5)
-    # HUGE FIRST CLASH at 4.60s!
-    add_stereo(L, R, synth_sword_clash(1.1, 1520.0, 1.25), 4.60, gain=0.95, pan=0.0)
-    add_stereo(L, R, synth_sub_drop(1.1, 110, 34), 4.62, gain=0.88, pan=0.0)
-    add_stereo(L, R, synth_plasma_crackle(0.95), 4.85, gain=0.45, pan=0.0)
-    # Lock scrape & pushback
-    add_stereo(L, R, synth_sword_clash(0.55, 2100.0, 0.85), 6.45, gain=0.72, pan=-0.15)
-    add_stereo(L, R, synth_whoosh(0.32, 1800, 420), 6.85, gain=0.55, pan=0.3)
+    # Beat 4 (5.00s - 7.40s): HUGE BLADE CLASH + IMPACT FRAME
+    add_stereo(L, R, synth_sword_clash(1.25, 1480.0, 1.35), 5.00, gain=1.05, pan=0.0)
+    add_stereo(L, R, synth_sub_drop(1.25, 125, 30), 5.00, gain=0.95, pan=0.0)
+    add_stereo(L, R, synth_plasma_crackle(1.2), 5.20, gain=0.48, pan=0.0)
+    add_stereo(L, R, synth_sword_clash(0.55, 2050.0, 0.9), 6.55, gain=0.72, pan=-0.15)
 
-    # 5. Act III — Ground Slam + 7-Slash Aerial Flurry + Counter Kick (7.5s - 12.5s)
-    # Oni-Zero colossal downward ground cleave at 7.90s
-    add_stereo(L, R, synth_whoosh(0.32, 260, 1400), 7.60, gain=0.68, pan=0.2)
-    add_stereo(L, R, synth_sub_drop(1.2, 125, 28), 7.90, gain=0.95, pan=0.0)
-    add_stereo(L, R, synth_taiko(0.65, 95, 32, 1.5), 7.90, gain=0.85, pan=0.0)
-    # 7-slash supersonic aerial barrage (8.8s - 11.2s)
-    slash_times = [8.85, 9.18, 9.48, 9.76, 10.05, 10.35, 10.68]
+    # Beat 5 (7.40s - 8.10s): Rapid Oni Reaction Punch-In
+    add_stereo(L, R, synth_taiko(0.45, 98, 34, 1.4), 7.40, gain=0.82, pan=0.25)
+    add_stereo(L, R, synth_whoosh(0.35, 240, 1800), 7.75, gain=0.75, pan=0.15)
+
+    # Beat 6 (8.10s - 10.30s): COLOSSAL BRIDGE GROUND SMASH
+    add_stereo(L, R, synth_sub_drop(1.4, 135, 26), 8.10, gain=1.05, pan=0.0)
+    add_stereo(L, R, synth_taiko(0.68, 95, 30, 1.6), 8.10, gain=0.95, pan=0.0)
+    add_stereo(L, R, synth_sword_clash(0.85, 1100.0, 0.95), 8.14, gain=0.72, pan=0.0)
+    add_stereo(L, R, synth_whoosh(0.38, 1200, 3800), 9.95, gain=0.68, pan=-0.35)
+
+    # Beat 7 (10.30s - 12.80s): 7-SLASH SUPERSONIC AERIAL BARRAGE
+    slash_times = [10.45, 10.72, 10.98, 11.24, 11.50, 11.78, 12.06]
     for k, st in enumerate(slash_times):
-        pan = -0.6 + (k / 6.0) * 1.2
-        add_stereo(L, R, synth_slash(0.20, 3100 + k * 240), st, gain=0.72, pan=pan)
-        if k >= 4:  # Oni-Zero parries final 3 slashes!
-            add_stereo(L, R, synth_sword_clash(0.42, 1850 + k * 140, 0.9), st + 0.04, gain=0.72, pan=pan)
-    # Counter-kick + billboard shatter at 11.55s
-    add_stereo(L, R, synth_taiko(0.45, 140, 38, 1.6), 11.55, gain=0.88, pan=-0.35)
-    add_stereo(L, R, synth_plasma_crackle(0.55), 11.62, gain=0.52, pan=-0.4)
+        pan = -0.65 + (k / 6.0) * 1.3
+        add_stereo(L, R, synth_slash(0.20, 3200 + k * 240), st, gain=0.78, pan=pan)
+        if k >= 3:
+            add_stereo(L, R, synth_sword_clash(0.38, 1900 + k * 160, 0.95), st + 0.03, gain=0.76, pan=pan)
 
-    # 6. Act IV — Crimson Eclipse Overdrive (12.5s - 16.5s)
-    add_stereo(L, R, synth_sub_drop(2.2, 75, 28), 12.60, gain=0.85, pan=0.0)
-    add_stereo(L, R, synth_plasma_crackle(1.8), 12.80, gain=0.45, pan=0.0)
-    # Lightning pillars
-    add_stereo(L, R, synth_sword_clash(0.6, 980, 0.9), 13.50, gain=0.65, pan=-0.5)
-    add_stereo(L, R, synth_sword_clash(0.6, 1120, 0.9), 14.20, gain=0.65, pan=0.5)
-    # Colossal crimson wave launch at 15.10s
-    add_stereo(L, R, synth_whoosh(0.85, 180, 2900), 15.10, gain=0.92, pan=0.15)
-    add_stereo(L, R, synth_sub_drop(1.3, 130, 30), 15.20, gain=0.92, pan=0.0)
+    # Beat 8 (12.80s - 15.10s): CRIMSON ECLIPSE OVERDRIVE
+    add_stereo(L, R, synth_sub_drop(1.8, 90, 28), 12.80, gain=0.95, pan=0.0)
+    add_stereo(L, R, synth_plasma_crackle(1.7), 12.90, gain=0.52, pan=0.0)
+    add_stereo(L, R, synth_sword_clash(0.65, 960.0, 0.95), 13.45, gain=0.72, pan=-0.45)
+    add_stereo(L, R, synth_whoosh(0.85, 220, 3200), 14.15, gain=0.95, pan=0.1)
 
-    # 7. Act V — Bullet-Time Silence & Zero-Point Eclipse Severance (16.5s - 21.0s)
-    # Dramatic vacuum silence duck from 16.55s to 17.55s (only heartbeat + faint high ring!)
-    duck_mask = np.ones(N, dtype=np.float64)
-    i_d0, i_d1 = int(16.55 * SR), int(17.60 * SR)
-    duck_mask[i_d0:i_d1] = 0.08
-    # Smooth 40ms edges
+    # Beat 9 (15.10s - 16.75s): BULLET-TIME SILENCE + HEARTBEAT!
+    duck = np.ones(N, dtype=np.float64)
+    i0, i1 = int(15.10 * SR), int(16.75 * SR)
+    duck[i0:i1] = 0.06
     ramp = int(0.04 * SR)
-    duck_mask[i_d0 : i_d0 + ramp] = np.linspace(1.0, 0.08, ramp)
-    duck_mask[i_d1 - ramp : i_d1] = np.linspace(0.08, 1.0, ramp)
-    L *= duck_mask
-    R *= duck_mask
+    duck[i0 : i0 + ramp] = np.linspace(1.0, 0.06, ramp)
+    duck[i1 - ramp : i1] = np.linspace(0.06, 1.0, ramp)
+    L *= duck
+    R *= duck
 
-    # Heartbeat thump inside bullet-time silence
-    add_stereo(L, R, synth_taiko(0.35, 68, 34, 0.2), 16.85, gain=0.52, pan=0.0)
-    add_stereo(L, R, synth_taiko(0.28, 62, 32, 0.2), 17.12, gain=0.38, pan=0.0)
+    add_stereo(L, R, synth_taiko(0.36, 68, 32, 0.15), 15.48, gain=0.62, pan=0.0)
+    add_stereo(L, R, synth_taiko(0.28, 62, 30, 0.15), 15.78, gain=0.45, pan=0.0)
+    # Subtle steel-draw whisper as thumb pushes blade 1 inch out
+    add_stereo(L, R, synth_slash(0.32, 5200), 16.15, gain=0.38, pan=-0.1)
 
-    # ULTIMATE FLASH-STEP SEVERANCE at 17.65s!!
-    add_stereo(L, R, synth_slash(0.30, 5400), 17.62, gain=1.0, pan=-0.3)
-    add_stereo(L, R, synth_sword_clash(1.5, 1440.0, 1.35), 17.68, gain=1.05, pan=0.0)
-    add_stereo(L, R, synth_sub_drop(2.1, 140.0, 26.0), 17.70, gain=1.15, pan=0.0)
-    add_stereo(L, R, synth_plasma_crackle(1.2), 17.85, gain=0.55, pan=0.0)
+    # Beat 10 (16.75s - 17.55s): ZERO-POINT SCREEN-TEAR SEVERANCE!!
+    add_stereo(L, R, synth_slash(0.32, 5800), 16.74, gain=1.08, pan=-0.2)
+    add_stereo(L, R, synth_sword_clash(1.6, 1420.0, 1.45), 16.78, gain=1.12, pan=0.0)
+    add_stereo(L, R, synth_sub_drop(2.2, 150.0, 26.0), 16.80, gain=1.25, pan=0.0)
+    add_stereo(L, R, synth_plasma_crackle(1.3), 16.95, gain=0.62, pan=0.0)
 
-    # 8. Act VI — Katana Sheathe Click & Eclipse Shatter (21.0s - 24.0s)
-    add_stereo(L, R, synth_sheathe_click(), 21.65, gain=0.92, pan=-0.15)
-    # Delayed shockwave shatter right after click!
-    add_stereo(L, R, synth_sub_drop(1.6, 88.0, 28.0), 21.95, gain=0.78, pan=0.1)
-    add_stereo(L, R, synth_plasma_crackle(0.85), 22.00, gain=0.32, pan=0.2)
+    # Beat 11 (17.55s - 22.00s): KATANA SHEATHE CLICK (19.20s) + DELAYED SHATTER (19.45s)
+    add_stereo(L, R, synth_sheathe_click(), 19.12, gain=0.98, pan=0.2)
+    add_stereo(L, R, synth_sub_drop(1.6, 92.0, 28.0), 19.45, gain=0.82, pan=-0.2)
+    add_stereo(L, R, synth_plasma_crackle(0.85), 19.50, gain=0.35, pan=-0.25)
 
-    # Global gentle fade-in (0.15s) and fade-out (0.8s)
-    fi = int(0.15 * SR)
-    fo = int(0.8 * SR)
+    # Clean fade-in / fade-out & broadcast-grade mastering limiter
+    fi, fo = int(0.12 * SR), int(0.95 * SR)
     L[:fi] *= np.linspace(0, 1, fi)
     R[:fi] *= np.linspace(0, 1, fi)
     L[-fo:] *= np.linspace(1, 0, fo)
     R[-fo:] *= np.linspace(1, 0, fo)
 
-    # Soft mastering limiter & normalize to -1.5 dBFS
-    stereo = np.stack([L, R], axis=1)
-    stereo = np.tanh(stereo * 0.82)
+    stereo = np.tanh(np.stack([L, R], axis=1) * 0.85)
     peak = np.max(np.abs(stereo)) + 1e-9
-    target_peak = 10 ** (-1.5 / 20.0)
-    stereo = stereo * (target_peak / peak)
+    stereo *= (10 ** (-1.2 / 20.0)) / peak
 
     pcm = np.clip(stereo * 32767.0, -32768, 32767).astype(np.int16)
     with wave.open(out_path, "wb") as wf:
