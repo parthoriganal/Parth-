@@ -1,0 +1,7 @@
+# Seed keywords — replace with your own niche keywords
+# One keyword per line, lines starting with # are ignored
+best coffee grinder
+how to brew coffee
+sourdough starter guide
+mechanical keyboard switch guide
+python web scraping tutorial
