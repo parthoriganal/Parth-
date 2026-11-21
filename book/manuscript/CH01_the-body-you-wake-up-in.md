@@ -17,9 +17,9 @@ That is a smaller promise than the ones you have probably been offered. It is al
 
 There is a definition that most of the medical world uses, and it is worth knowing because it is more careful than the way we usually talk.
 
-The International Association for the Study of Pain defines pain as an unpleasant sensory and emotional experience that is associated with — or that resembles what is associated with — actual or potential tissue damage.
+The International Association for the Study of Pain, whose definitions are the ones most clinicians work from, describes pain as an unpleasant experience that combines sensation and emotion. On their account it arises in connection with tissue that is actually damaged or potentially at risk of damage, or with something that closely resembles it.
 
-Read it again, slowly, and notice where the weight falls. *Experience.* Not damage. Not a signal with a fixed volume. The definition puts pain in the category of things that happen to a person, alongside fear and hunger and grief, rather than in the category of things that happen to a tissue, like a bruise or a fracture. The word *unpleasant* is doing real work too: pain is not a neutral measurement that happens to be uncomfortable. The unpleasantness is part of what it is.
+Notice where the weight falls in that sentence. *Experience.* Not damage. Not a signal with a fixed volume. The definition puts pain in the category of things that happen to a person, alongside fear and hunger and grief, rather than in the category of things that happen to a tissue, like a bruise or a fracture. The word *unpleasant* is doing real work too: pain is not a neutral measurement that happens to be uncomfortable. The unpleasantness is part of what it is.
 
 The association that published that definition adds a second point in its notes, and this is the one that matters most for the chapters ahead. Pain and nociception are different things. Nociception is the nervous system's process of detecting and encoding potentially damaging stimuli — a physical, measurable event. Pain is what a person experiences. You cannot work out how much pain someone is in by measuring the activity in their sensory nerves, because the relationship between the two is not fixed.
 
@@ -27,7 +27,9 @@ A plain example. You are absorbed in something and you burn your hand on a pan, 
 
 None of this means pain is imaginary. It means pain is produced. Your nervous system constructs it, using information about tissue state, but also using attention, expectation, memory, fear, fatigue, and how safe the situation feels. That is not a flaw in the way the system works. It is how the system has always worked, and it is why pain can be both entirely real and a poor measure of how much damage is present.
 
-There is a line in that same set of notes that I want to put on the record before we go any further, because it is the rule this book is written under: **a person's report of their own pain should be respected.** Not tolerated, not taken with a grain of salt. Respected. If you are reading this, you are the only person with direct access to what you feel, and nothing in the pages that follow is going to suggest that you are mistaken about it.
+The association makes one further point in the notes attached to that definition, and it is the rule this book is written under. When a person says they are in pain, what they say should be respected. Not tolerated. Not taken with a grain of salt. Respected.
+
+The reason is simple. You are the only person with direct access to what you feel. Nothing in the pages that follow is going to suggest that you are mistaken about it.
 
 ---
 
@@ -37,9 +39,9 @@ If you have had an aching hip or a stiff neck for more than a few months, the ch
 
 It is worth knowing what those words mean in a body that has no pain at all.
 
-In 2015, a group of researchers pooled 33 studies covering 3,110 people who had no back pain whatsoever — volunteers, not patients — and looked at how common these findings were in their spines. The results are startling if you have never seen them, and old news if you work in the field. Disc degeneration was present in 37 per cent of people in their twenties, and in 96 per cent of people in their eighties. A disc bulge, the finding that frightens people most, was present in 30 per cent of twenty-year-olds and 84 per cent of eighty-year-olds. Annular fissures followed the same curve, from 19 per cent to 29 per cent.
+In 2015, a group of researchers pooled 33 studies covering 3,110 people who had no back pain whatsoever — volunteers, not patients — and looked at how common these findings were in their spines. The results are startling if you have never seen them, and old news if you work in the field. Disc degeneration was present in 37 per cent of people in their twenties, and in 96 per cent of people in their eighties. A disc bulge, the finding that frightens people most, was present in 30 per cent of twenty-year-olds and 84 per cent of eighty-year-olds.
 
-None of these people had back pain. They were not in remission, and they had not learned to live with it. They were simply people whose spines looked like that, in the way that most of us will eventually have knees and hips that look like something.
+None of these people had back pain. They were simply people whose spines looked like that, in the way that most of us will eventually have knees and hips that look like something. And to be clear about the other reading: a finding this common is not a sentence. Most of the people in those studies went about their lives without giving their spines a thought.
 
 The authors drew the conclusion the data supports: many of these imaging features are probably part of normal ageing, and are not associated with pain. Not "are not always associated with pain." Not "should be interpreted with caution." Part of normal ageing, unassociated with pain, in the majority of people who have them.
 
@@ -47,7 +49,7 @@ If you have been carrying a scan result around as though it were a diagnosis, th
 
 But I am not going to leave it there, because the version of this argument that gets passed around online is not honest. The same research group published a companion review in the same year, looking at whether these findings are *more* common in people who do have back pain. Some of them are, and the pattern is more interesting than a simple yes.
 
-They pooled fourteen studies and 3,097 people aged fifty or under, about a third of them pain-free. In that group, disc bulges were substantially more common in people with pain, and so were disc degeneration, disc extrusion and protrusion, Modic 1 changes, and spondylolysis. But other findings showed no clear association with pain at all — Modic changes taken as a whole, central canal stenosis, and the high-intensity zone that shows up in so many reports.
+They pooled fourteen studies and 3,097 people aged fifty or under, about four in ten of them without back pain. In that group, disc bulges were substantially more common in people with pain, and so were disc degeneration, disc extrusion and protrusion, Modic 1 changes, and spondylolysis. But other findings showed no clear association with pain at all — Modic changes taken as a whole, central canal stenosis, and the high-intensity zone that shows up in so many reports.
 
 So the honest position is not "scans are meaningless." It is narrower, and stranger: some structural findings track with pain in younger adults and some do not, and which is which is not something you can read off your own report.
 
@@ -61,11 +63,11 @@ Which brings me to the sentence I most want to prevent you from hearing, because
 
 ### What this chapter is not saying
 
-There is a temptation, when you first learn that pain and tissue damage are not the same thing, to run with it — to conclude that the body doesn't matter, that it's all nervous system, that you could think your way out of this. That is not what the evidence says, and it is not what this book teaches.
+There is a temptation, on learning that pain and tissue damage are not the same thing, to run with it — to decide that the body doesn't matter, that it's all nervous system, that you could think your way out of this. The evidence doesn't support that, and neither does anything in this book.
 
-The body matters. Load matters. Sleep matters. What you do with your arms above your head for eight hours a day matters. Tissue state is one of the inputs into pain, and it is the input most amenable to being changed by what you do. But it is one input among several, and it is not a dial you can turn directly.
+Tissue state is one input into pain, and it is the one most responsive to what you do: load, position, how you spend your hours. It is not the only input, and it is not a dial you can turn directly.
 
-So the position this book takes is deliberately uncomfortable. Your pain is real. Your tissue is real. The relationship between them is looser than either of the simple stories — the "something is damaged" story or the "it's all in your head" story — would suggest. Most of what follows is an attempt to work usefully inside that looseness rather than to resolve it.
+What follows is therefore less comfortable than either simple story. Your pain is real. Your tissue is real. The relationship between them is looser than "something is damaged" or "it's all in your head" would suggest, and the rest of the book works inside that looseness rather than trying to resolve it.
 
 ---
 
@@ -85,7 +87,7 @@ The morning check is not going to disappear. I still do it. But it can stop bein
 >
 > **We know** that common spinal imaging findings appear in most people with no pain at all, that some of them are nonetheless more common in younger adults who do have pain, and that others are not.
 >
-> **We know** that a person's report of their own pain should be respected, and that this is stated in the international definition itself.
+> **We know** that a person's account of their own pain should be respected, and that the association says so in the notes that accompany its definition.
 >
 > **We don't know**, for any one finding on any one scan, whether it is contributing to that person's pain. Two people with identical scans and identical habits can have entirely different experiences, and we cannot currently predict which will be which.
 >
