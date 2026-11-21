@@ -1,0 +1,199 @@
+{
+  "round": "3.5 pre-publication validation",
+  "date": "2026-11-21",
+  "verdict": "CONDITIONAL PASS",
+  "target_book": {
+    "asin": "B0GSQ9NCY6",
+    "title": "The Practical Guide To Myofascial Release",
+    "author": "Vincent Holt",
+    "rating": 4.6,
+    "ratings": 109,
+    "ratings_note": "SERP card showed 106 on one fetch, 109 on dp page and 2 other SERP fetches; 109 used",
+    "pub_date": "March 16, 2026",
+    "months_live": 8.2,
+    "ratings_per_month": 13.27,
+    "kindle_price": 3.99,
+    "in_kindle_unlimited": true,
+    "digital_list_price": 9.99,
+    "print_list_price": 15.95,
+    "paperback": 9.99,
+    "hardcover": 21.95,
+    "print_length_pages": 91,
+    "file_size_mb": 4.3,
+    "category_breadcrumb": "Books > Medical Books > Medicine > Internal Medicine > Physical Medicine & Rehabilitation",
+    "claims_dpt_review": true,
+    "includes_video_demos": 4,
+    "includes_illustrations": true,
+    "differentiators_claimed": [
+      "3-Phase System",
+      "70% Rule",
+      "No-Go Zones",
+      "integration exercises"
+    ],
+    "rank": "UNAVAILABLE - no Best Sellers Rank rendered in chunks 0-3 of /dp/",
+    "verdict": "CONFIRMED REAL. Round-3 assumption that it was priced $8.99 is WRONG - it is $3.99 + KU."
+  },
+  "corrections_to_round3": [
+    "Kindle price is $3.99 (KU), not ~$8.99",
+    "Filed in Medical/Physical-Medicine category, not consumer health",
+    "fascia=987 was a s=date-desc-rank sort artifact; Featured sort = 340",
+    "myofascial release = 186 separate from myofascial = 301",
+    "ratings 106 vs 109 discrepancy resolved to 109"
+  ],
+  "verified_result_counts": {
+    "fascial release": 107,
+    "myofascial triggers": 145,
+    "myofascial release": 186,
+    "tension headache": 204,
+    "myofascial": 301,
+    "fascia": 340,
+    "fascia reset": 16,
+    "sciatica exercises for seniors": 510,
+    "neck pain": 5000,
+    "plantar fasciitis": "not fetched"
+  },
+  "autocomplete_verified": {
+    "fascia": [
+      "fascia",
+      "fascia release",
+      "fascia connection"
+    ],
+    "fascial release": [
+      "fascial release"
+    ],
+    "plantar fasciitis": [
+      "plantar fasciitis night splint",
+      "plantar fasciitis brace",
+      "plantar fasciitis"
+    ],
+    "foam roller": [
+      "foam roller 36 inch",
+      "foam rollers free"
+    ],
+    "neck pain": [
+      "neck pain"
+    ],
+    "hip pain": [
+      "hip pain"
+    ],
+    "sciatica": [
+      "sciatica exercises for seniors",
+      "sciatica",
+      "sciatica pillow alignment lock system"
+    ],
+    "posture": [
+      "posture support cotton back brace women",
+      "posture",
+      "posture support bra"
+    ],
+    "tension headache": [
+      "tension headache"
+    ],
+    "frozen shoulder": [
+      "frozen shoulder desk support"
+    ],
+    "myofascial release": [
+      "APS alias -> myofascial release the search for excellence"
+    ],
+    "fascia stretching": [
+      "APS alias -> fascia stretching book"
+    ]
+  },
+  "competitor_quality_findings": {
+    "Practical Guide to Myofascial Release": {
+      "strengths": "91pp, illustrations, 4 videos, DPT reviewer badge, safety chapter (No-Go Zones), 109 reviews",
+      "weakness": "price so low royalty is $2.64; medical category limits discovery",
+      "price": 3.99
+    },
+    "28-Day Fascia Reset Method": {
+      "reviews": 114,
+      "price": 8.99,
+      "royalty": 6.14,
+      "weakness": "massive subtitle keyword-stuffing; 'calm your nervous system' overreach",
+      "status": "strongest commercial rival"
+    },
+    "Complete Fascia and Mobility Guide": {
+      "author": "D. Nova",
+      "kindle": 0.0,
+      "paperback": 34.99,
+      "hardcover": 39.99,
+      "status": "LOSS LEADER - free ebook funneling to $35-40 print; series of 6",
+      "threat": "high - zero-price"
+    },
+    "Heal Your Fascia": {
+      "reviews": 28,
+      "price": 9.99,
+      "weakness": "'release emotional trauma' - unsupported claim; weakest safety posture"
+    },
+    "Myofascial Triggers": {
+      "reviews": 142,
+      "price": 9.99,
+      "weakness": "'release stored emotions' - pseudoscientific framing"
+    },
+    "Fascial Fitness 2e": {
+      "reviews": 241,
+      "price": 12.99,
+      "publisher": "Penguin Random House",
+      "pub": 2021,
+      "weakness": "pre-dates current fascia surge; old photos"
+    },
+    "Pocket Atlas of Trigger Points": {
+      "reviews": 59,
+      "price": 9.99,
+      "publisher": "PRH",
+      "pub": 2023,
+      "weakness": "practitioner reference, not consumer protocol"
+    }
+  },
+  "market_observations": [
+    "No incumbent priced in the $5.99-$7.99 band - price gap",
+    "Multiple incumbents make unsupported emotional-trauma / nervous-system claims - credibility gap",
+    "Only ONE incumbent has a real safety protocol (No-Go Zones); rest ignore contraindications - safety gap",
+    "No incumbent is written by a credentialed clinician for the consumer market",
+    "DIY tools (tennis/lacrosse ball, foam roller, wall) get almost no coverage - cost barrier unaddressed"
+  ],
+  "medical_evidence": {
+    "MFR_chronic_low_back_pain": "8 RCTs n=375; significant pain + function improvement; GRADE moderate for pain/function, very low/quality of life. Frontiers in Medicine 2021",
+    "MFR_chronic_neck_pain": "10 RCTs n=549; significant pain reduction p=0.03, d=0.86; PPT and ROM inconclusive. Physiotherapy 2023",
+    "MFR_orthopaedic_systematic_review": "10 studies, mixed quality, PEDro 6-8/10; few conclusions drawable. PubMed 23725488",
+    "mechanism": "Mechanical 'breaking up adhesions' theory is NOT supported - hands cannot generate the force. Real mechanism is neurological (reduced muscle tone via sensory receptors)",
+    "comparison_to_exercise": "MFR did NOT outperform structured exercise for shoulder tendinopathy (n=72) - statistically non-significant on most outcomes",
+    "contraindications_expert_consensus": "open wounds (73%), fractures (84%); caution: local inflammation 97%, DVT 97%, bone infection 94%, myositis ossificans 92%"
+  },
+  "safety_rules_for_book": [
+    "NEVER claim to cure, fix, or heal any condition",
+    "NEVER claim to diagnose or to replace medical care",
+    "NO guaranteed outcomes or timelines",
+    "NO 'release stored trauma' / 'detox' / 'reset your nervous system' language",
+    "Include a contraindication checklist BEFORE any technique (DVT, anticoagulants, osteoporosis, fracture, open wound/burn, active cancer, aneurysm, uncontrolled hypertension, acute flare, post-surgical)",
+    "Explicit red-flag chapter: radiating pain, numbness, weakness, bladder/bowel changes, night pain, unexplained weight loss, fever, progressive deficit -> stop and see a clinician",
+    "NEVER instruct rolling the cervical spine, front of neck/carotid, IT band, bony prominences, inner thigh/armpit neurovascular bundles",
+    "Frame as 'may help some people manage discomfort' + 'evidence is moderate for low back and neck pain, limited elsewhere'",
+    "Advise medical clearance for anyone with a diagnosed condition",
+    "No before/after medical imagery, no testimonials implying cure"
+  ],
+  "beginner_author_assessment": {
+    "verdict": "PASS with conditions",
+    "for": [
+      "340-title niche readable on page 1",
+      "two dead sub-niches: fascia reset 16, fascial release 107",
+      "$5.99-$7.99 price gap",
+      "publisher pre-buys validate demand",
+      "free ebook rivals prove organic discovery works without ads"
+    ],
+    "against": [
+      "review moat 109-241 real",
+      "one rival is FREE",
+      "round-3 traction read may overstate sales because KU inflates ratings",
+      "requires illustrations for credibility",
+      "no author platform means zero initial review velocity"
+    ],
+    "critical_caveat": "The 13.27 ratings/mo reading is a CEILING not a baseline. Presence in Kindle Unlimited inflates ratings relative to paid sales. A new $6.99 non-KU book should be planned at a fraction of that.",
+    "decisive_condition": "You must have real subject-matter credibility or a credentialed reviewer. Without it this niche is unwinnable because the #1 rival advertises 'Reviewed by a Doctor of Physiotherapy'."
+  },
+  "access_notes": {
+    "bsr": "UNAVAILABLE - /dp/B0GSQ9NCY6 chunks 0-3 contained no Best Sellers Rank element",
+    "review_text": "UNAVAILABLE - product-reviews endpoint hits sign-in wall",
+    "kindle_vs_paid_split": "UNAVAILABLE - Amazon does not expose KU page-read vs paid-unit split"
+  }
+}

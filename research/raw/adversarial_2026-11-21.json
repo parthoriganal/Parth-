@@ -1,0 +1,37 @@
+{
+  "collected": "2026-11-21",
+  "purpose": "adversarial re-test of 'Peripheral Neuropathy Diet & Self-Management'",
+  "verdict": "FAIL",
+  "verified": {
+    "global_ratings_and_pubdate": [
+      {"asin":"B0H2718626","title":"The Simple Neuropathy Diet","pub":"2026-06-15","ratings":1,"category":"Cookbooks, Food & Wine","amazon_rank_for_neuropathy_diet":"#1"},
+      {"asin":"B0HD6NMNTK","title":"Neuropathy Nutrition Protocol for Seniors","pub":"2026-08-06","ratings":1},
+      {"asin":"B0F9VNCCG9","title":"Practical Guide to Peripheral Neuropathy","pub":"2025-05-24","ratings":52},
+      {"asin":"B0DM83JRT3","title":"Peripheral Neuropathy Diet Cookbook for Beginners","pub":"2024-11-06","ratings":4},
+      {"asin":"B0FHPF3J3Y","title":"Peripheral Neuropathy CURE GUIDE","pub":"2025-07-15","ratings":2},
+      {"asin":"B0049ENHPS","title":"You Can Cope With Peripheral Neuropathy","ratings":121,"price":9.99},
+      {"asin":"B0049ENHSU","title":"Peripheral Neuropathy (AAN Press)","ratings":355,"price":9.99},
+      {"asin":"B01FRMTRWM","title":"Defeat Neuropathy Now!","ratings":297,"price":12.97},
+      {"asin":"B0DFV8P71K","title":"Fall Prevention Balance Exercises For Seniors (28-Day)","pub":"2024-08-01","ratings":697},
+      {"asin":"B0F1YSHQVJ","title":"BALANCE AND FALL PREVENTION EXERCISES FOR SENIORS","pub":"2025-04-01","ratings":69,"amazon_rank":"#1"}
+    ],
+    "result_counts": {"neuropathy diet":323,"peripheral neuropathy":289,"neuropathy":592,"neuropathy cookbook":76,"balance exercises for seniors to prevent falls":"over 1000","vagus nerve reset":"over 1000","diverticulitis":583,"diverticulitis diet":559,"tinnitus relief":141,"pots syndrome":68},
+    "empty_long_tail_probes": ["neuropathy diet meal","neuropathy for seniors","neuropathy symptom","diabetic neuropathy diet"],
+    "book_intent_modifiers_google": {
+      "peripheral neuropathy diet": "diet book / diet plan / cookbook",
+      "diverticulitis diet": "diet book / book amazon / best diverticulitis diet book / recipe book",
+      "balance exercises for seniors": "book / amazon / 5 minute book / 10 minute book",
+      "vagus nerve": "book / book pdf / book amazon / book for anxiety"
+    },
+    "normalized_trends": {"baseline":0.532,"diverticulitis":0.55,"peripheral_neuropathy":1.32,"vagus_nerve":1.50,"menopause":1.12,"pots":1.04,"tinnitus":1.01,"histamine":0.71}
+  },
+  "not_obtainable": {
+    "BSR": "Amazon product pages did not expose Best Sellers Rank at any chunk offset attempted (0-12); chunks 5-9 were ad-tracking payload",
+    "unit_sales": "no free source",
+    "search_volume": "requires DataForSEO/Helium10 key"
+  },
+  "proxies_used": {
+    "review_velocity": "global ratings / months live; directionally reliable, NOT a sales figure; ~1-3% of buyers rate",
+    "pageviews": "Wikipedia normalised against control articles (Coffee 0.53, Diabetes 0.51)"
+  }
+}

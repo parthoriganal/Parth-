@@ -1,0 +1,39 @@
+{
+  "collected": "2026-11-21",
+  "marketplace": "amazon.com (US), department i=digital-text",
+  "method": "live Amazon autocomplete API + live Amazon SERP 'N results' + reviewer counts; Google suggest for cross-check; Wikimedia pageviews for trend",
+  "amazon_result_counts": {
+    "menopause anxiety": 923,
+    "diverticulitis diet": 559,
+    "neuropathy": 592,
+    "neuropathy diet": 323,
+    "peripheral neuropathy": 289,
+    "neuropathy cookbook": 76,
+    "histamine intolerance": 321,
+    "vagus nerve reset": "over 1000",
+    "tinnitus": 423,
+    "tinnitus relief": 141,
+    "pots syndrome": 68,
+    "balance exercises for seniors to prevent falls": "over 1000",
+    "gout diet book": 707
+  },
+  "top_organic_incumbent_reviews_observed": {
+    "neuropathy diet": {"#1 The Simple Neuropathy Diet (Jun 2026)": 1, "#2 Neuropathy Nutrition Protocol for Seniors (Aug 2026)": 1},
+    "peripheral neuropathy": {"#1 Practical Guide to Peripheral Neuropathy (May 2025)": 52},
+    "neuropathy cookbook": {"#1 Peripheral Neuropathy Diet Cookbook for Beginners (Nov 2024)": 4, "#2 CURE GUIDE (Jul 2025)": 2},
+    "balance exercises (to prevent falls)": {"#1 BALANCE AND FALL PREVENTION (new)": 69, "#2 Fall Prevention 28-Day (Aug 2024)": 697},
+    "vagus nerve reset": {"#1 Vagus Nerve Reset Workbook": "new/recent"},
+    "gout diet book": {"#1 28-Day Gout Diet Plan": 861, "#2 Healing Gout Cookbook": 1000}
+  },
+  "autocomplete_alias_signal": {
+    "note": "Amazon returns alias 'digital-text' when Kindle-dept suggestions exist for the prefix (stronger book signal), 'aps' when it falls back to all-departments (product-skewed query)",
+    "digital_text": ["menopause","perimenopause","neuropathy","tinnitus","gout","fatty liver","acid reflux","sciatica","diverticulitis","vertigo","knee replacement","balance exercises","parkinsons","stroke recovery","vagus nerve","somatic exercises","estrogen dominance","cortisol","long covid","sleep apnea","hypothyroidism","pots"],
+    "aps_product_skewed": ["neuropathy diet","peripheral neuropathy","nerve pain","kidney disease diet","diabetic neuropathy","frozen shoulder","histamine intolerance book"]
+  },
+  "wikipedia_trend_normalized": {
+    "platform_baseline_2026_vs_2024": 0.532,
+    "controls": {"Coffee": 0.53, "Diabetes": 0.51},
+    "niches": {"Peripheral neuropathy": 1.32, "Vagus nerve": 1.50, "Tinnitus": 1.01, "Menopause": 1.12, "POTS": 1.04, "Histamine intolerance": 0.71}
+  },
+  "verified_absent": ["BSR / sales rank for any title", "monthly search volume", "actual unit sales of competitors", "ad/keyword bid data"]
+}

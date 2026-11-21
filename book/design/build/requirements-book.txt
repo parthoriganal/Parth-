@@ -1,0 +1,11 @@
+# Book production toolchain — verified 2026-11-21
+# Install with: python3 -m venv .venv && .venv/bin/pip install -r requirements-book.txt
+reportlab==5.1.0        # typesetting engine (BSD)
+python-docx==1.2.0      # editable manuscript (MIT)
+pypdf==7.1.1            # PDF structure verification (BSD-3)
+pymupdf==2.1.0          # render/QA only, not shipped (AGPL-3.0)
+fonttools==4.68.0       # variable font instancing (MIT)
+pyphen==0.18.1          # en-GB hyphenation (GPL/LGPL/MPL)
+rapidocr-onnxruntime    # OCR for rendered-proof verification
+onnxruntime
+opencv-python-headless  # needed: rapidocr needs libGL, headless avoids it
