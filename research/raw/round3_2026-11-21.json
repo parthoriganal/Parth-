@@ -1,0 +1,205 @@
+{
+  "round": 3,
+  "date": "2026-11-21",
+  "marketplace": "amazon.com (US), Kindle Store / digital-text",
+  "verdict": "WINNER: Fascia / Myofascial Release self-treatment (ebook)",
+  "data_status_legend": {
+    "VERIFIED": "read directly off an Amazon/Google/Wikimedia page during this session",
+    "PROXY": "derived from a verified signal via a stated assumption",
+    "ESTIMATE": "modelled, assumption-based, not a measurement",
+    "UNAVAILABLE": "no free source produced it"
+  },
+  "not_obtainable": {
+    "bsr": "UNAVAILABLE - /dp/ pages returned zero BSR across 6 attempts in round 2",
+    "unit_sales": "UNAVAILABLE - no free source",
+    "search_volume": "UNAVAILABLE - no free source; Amazon completion API gives presence/position, not volume",
+    "ratings_to_sales_ratio": "UNAVAILABLE - unverified; revenue figures are ESTIMATE bands only",
+    "reviews_text": "UNAVAILABLE - /product-reviews/<ASIN> redirects to sign-in (blocked this session)",
+    "pubdate_for_every_title": "PARTIAL - only some SERP cards render a date"
+  },
+  "new_channels_opened_this_round": [
+    "Amazon Best Sellers /gp/bestsellers/digital-text/<catID> - sales-ranked, works",
+    "Amazon Hot New Releases /gp/new-releases/digital-text/<catID> - sales-ranked, works",
+    "SERP with non-default sort: &s=date-desc-rank - exposes publication dates on cards",
+    "Google Suggest suggestqueries.google.com/complete/search?client=firefox - book-intent cross-check",
+    "Wikimedia pageviews REST API - trend, control-normalized"
+  ],
+  "dead_channels_confirmed": [
+    "product-reviews/<ASIN> -> sign-in wall",
+    "/dp/<ASIN> -> no BSR (6 attempts round 2)",
+    "bash/curl -> network blocked (exit 000)",
+    "pip install -> PEP 668 blocked"
+  ],
+  "trend_normalized": {
+    "control_baseline": 0.532,
+    "Fascia": {
+      "raw_ratio": 0.97,
+      "normalized": 1.82,
+      "v2024_avg": 15757,
+      "v2026_avg": 15220
+    },
+    "Myofascial_pain_syndrome": {
+      "raw_ratio": 0.54,
+      "normalized": 1.01,
+      "v2024_avg": 5062,
+      "v2026_avg": 2730
+    },
+    "Perimenopause_control_check": {
+      "raw_ratio": 0.86,
+      "normalized": 1.61,
+      "v2024_avg": 939,
+      "v2026_avg": 805
+    }
+  },
+  "traction_ratings_per_month": {
+    "Practical Guide to Myofascial Release (B0GSQ9NCY6)": {
+      "ratings": 109,
+      "pub": "2026-03-16",
+      "months": 8.2,
+      "per_month": 13.27
+    },
+    "Myofascial Triggers (B0DWBVBQG8)": {
+      "ratings": 142,
+      "pub": "2025-02-06",
+      "months": 21.5,
+      "per_month": 6.62
+    },
+    "Heal Your Fascia (B0GPWDRHV2)": {
+      "ratings": 28,
+      "pub": "2026-02-24",
+      "months": 8.9,
+      "per_month": 3.16
+    },
+    "Fascial Fitness 2e (B08NWD59SN)": {
+      "ratings": 241,
+      "pub": "2021-07-06",
+      "months": 64.5,
+      "per_month": 3.74
+    },
+    "Pocket Atlas of Trigger Points (B0BQLKJDCN)": {
+      "ratings": 59,
+      "pub": "2023-09-19",
+      "months": 38.1,
+      "per_month": 1.55
+    },
+    "BENCHMARK neuropathy diet #1 (B0H2718626)": {
+      "ratings": 1,
+      "months": 5.2,
+      "per_month": 0.19
+    }
+  },
+  "competition_depth_verified": {
+    "fascial release": 107,
+    "myofascial triggers": 145,
+    "myofascial": 301,
+    "fascia": 340,
+    "fascia (date-desc-rank view)": 987,
+    "fascia reset": 16,
+    "neuropathy diet": 323,
+    "diverticulitis": 583,
+    "somatic exercises": 2000,
+    "sourdough": 2000,
+    "chronic pain relief": 3000,
+    "perimenopause": 5000,
+    "canning and preserving": 6000,
+    "social security retirement": 1000,
+    "medicare guide": 1000
+  },
+  "autocomplete_verified": {
+    "fascia": [
+      "fascia",
+      "fascia release",
+      "fascia connection"
+    ],
+    "fascial release": [
+      "fascial release"
+    ],
+    "somatic exercises": [
+      "somatic exercises"
+    ],
+    "myofascial release": [
+      "APS alias -> myofascial release the search for excellence"
+    ],
+    "medicare": [
+      "medicare for all",
+      "medicare for dummies 2026",
+      "medicare",
+      "medicare for all a citizen's guide",
+      "medicare and you 2027",
+      "medicare for you",
+      "medicare 2027",
+      "medicare mama",
+      "medicare agents"
+    ],
+    "social security": [
+      "social security money code",
+      "social security",
+      "social security and medicare",
+      "social security for dummies",
+      "social security simple and smart"
+    ]
+  },
+  "google_suggest_crosscheck": {
+    "fascia release book": [
+      "fascia release book",
+      "myofascial release book",
+      "myofascial release book pdf",
+      "myofascial release book ruth duncan",
+      "myofascial release book john barnes",
+      "best fascia release book",
+      "fascia release exercises book"
+    ],
+    "myofascial release self treatment": [
+      "myofascial release self treatment",
+      "... book",
+      "... self care",
+      "... self help",
+      "myofascial release tight neck and shoulder self treatment"
+    ],
+    "fascia book": [
+      "fascia books",
+      "fascia book pdf",
+      "fascia book amazon",
+      "fascia books reddit",
+      "book fascia release",
+      "fascia training book"
+    ]
+  },
+  "scorer_output": {
+    "note": "repo engine kdp_engine/scorer.py, unchanged weights. STRUCTURALLY BLIND: it ranks neuropathy diet 77.1 ABOVE fascia 73.2 despite fascia having 70x the measured buyer traction. Do not use alone.",
+    "results": {
+      "social security retirement": 77.4,
+      "neuropathy diet": 77.1,
+      "chronic pain relief": 74.8,
+      "fascial release": 73.6,
+      "myofascial": 73.3,
+      "fascia": 73.2,
+      "diverticulitis": 72.9,
+      "sourdough": 72.4,
+      "somatic exercises": 72.4,
+      "canning and preserving": 71.9,
+      "perimenopause": 69.1
+    }
+  },
+  "royalty_verified_engine": {
+    "0.99": 0.35,
+    "2.99": 1.94,
+    "4.99": 3.34,
+    "6.99": 4.74,
+    "8.99": 6.14,
+    "9.99": 6.84,
+    "12.99": 4.55,
+    "14.99": 5.25
+  },
+  "eliminated": {
+    "perimenopause": "5,000+ results; 16-chunk ad-heavy SERP",
+    "sourdough": "2,000+ results; page 1 consumed by a product ad and a KNEADACE kit",
+    "canning and preserving": "6,000+ results",
+    "chronic pain relief": "3,000+ results; commercial result contaminated by supplement ad",
+    "social security / medicare": "1,000+ results each and dominated by annual-edition giants (For Dummies 2026/2027, medicare and you 2027)",
+    "somatic exercises": "2,000+ results; heavy ad spend (Ashlyn Summers), vagus-nerve adjacency = fad risk",
+    "neuropathy diet": "rejected round 2 (0.19 ratings/mo)",
+    "diverticulitis": "rejected round 2 (trend 0.55)",
+    "balance & fall prevention": "viable runner-up but needs custom illustrations"
+  }
+}
