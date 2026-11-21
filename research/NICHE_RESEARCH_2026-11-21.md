@@ -1,4 +1,12 @@
 # KDP Ebook Niche Research — Autonomous Run
+
+> ## ⚠️ SUPERSEDED — round-1 recommendation FAILED adversarial validation (2026-11-21)
+> The winner below was **rejected** after review-velocity testing showed its market has
+> **0.12–0.28 ratings/month** (no buyers), 773 cumulative ratings among hidden incumbents,
+> and **no long-tail** to build a series on. **Do not act on this recommendation.**
+> See **`research/ADVERSARIAL_VALIDATION.md`** for the verdict, the corrected ranking,
+> and an explicit list of the errors made here.
+
 **Date:** 2026-11-21 · **Marketplace:** amazon.com (US) · **Department:** Kindle (`i=digital-text`)
 **Constraint:** organic sales only — no ads, no audience, no social, no external marketing.
 **Tooling:** this repo's own engine (`backend/kdp_engine/` — `scorer.py`, `bsr_model.py`, autocomplete port of `rxpelle/kdp-scout`).
