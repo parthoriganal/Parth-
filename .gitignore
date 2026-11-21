@@ -5,3 +5,6 @@ book/design/build/prototype*
 __pycache__/
 *.pyc
 .venv/
+
+# rendered interior proof — regenerate with PDF-REVIEW/proof_render.py
+book/PDF-REVIEW/interior-proof.pdf

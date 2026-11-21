@@ -3,12 +3,13 @@
 **Title:** *The 15-Minute Fascial Release Plan: Self-Treatment for Stiff Necks, Tight Shoulders, and Aching Hips — Using Only a Tennis Ball, a Wall, and a Towel*
 
 **Files assessed:**
-- `The_15_Minute_Fascial_Release_Plan_Final.docx` (68,028 bytes)
-- `The_15_Minute_Fascial_Release_Plan_Final.epub` (746,631 bytes)
+- `The_15_Minute_Fascial_Release_Plan_Final.docx` (68,206 bytes)
+- `The_15_Minute_Fascial_Release_Plan_Final.epub` (746,632 bytes)
 - Source manuscript: `book/short/` (10 markdown files)
+- Interior proof: `PDF-REVIEW/interior-proof.pdf` (48 pages, rendered for visual QA)
 
 **Date of assessment:** 21 November 2026
-**Assessed by:** automated structural, textual and schema validation, plus visual inspection of reflowed EPUB pages
+**Assessed by:** automated structural, textual and schema validation; visual inspection of reflowed EPUB pages; and visual inspection of a rendered 48-page interior proof of the DOCX (see §6a).
 
 ---
 
@@ -131,12 +132,70 @@ The 7 non-matches are **not losses**. They are the seven Contents-summary lines 
 
 Earlier automated comparisons in this assessment produced false alarms at a rate that is itself worth recording: a naive paragraph splitter, a tag-stripper that inserted spaces inside italicised words, and an HTML-entity-blind comparison each reported missing text that was in fact present. All integrity figures above come from the corrected comparison, verified by direct inspection of the disputed passages.
 
+## 6a. Visual inspection of the interior (new)
+
+The DOCX had never been seen rendered. It now has.
+
+**How.** No Word, LibreOffice, or PDF converter was installable in this
+environment. PyMuPDF's built-in DOCX reader was tried first and **rejected as a
+QA method**: it ignores embedded fonts, run-level page breaks and most style
+alignment, and flattened a 42-page book into an undifferentiated stream of
+paragraphs with no chapter openers and no Literata. Reporting that as a visual
+pass would have been false.
+
+Instead, `PDF-REVIEW/proof_render.py` walks the DOCX body in document order and
+sets each paragraph using the DOCX's **own** style definitions — pt size,
+family, weight, italic, alignment, first-line indent, left/right indent, space
+before/after, and paragraph shading — then flows it into pages at the true
+6 × 9 trim and true margins using the real embedded Literata and Inter files.
+Output: `PDF-REVIEW/interior-proof.pdf`, 48 pages.
+
+**Fidelity limits — what this proof is not.** Line breaking is MuPDF's, not
+Word's, so Word may break a line a word earlier or later and page breaks can
+shift by a line or two. Word's document grid and exact justification are not
+reproduced. Only folios are drawn; running heads are not. This is a proof of the
+typography the build produced, not a Word facsimile.
+
+**Pages inspected:** every one of the 48, plus a margin-containment check across
+all pages (no text crosses the 4.5 in measure; the only marks outside the text
+block are the folios, by design).
+
+**Defects found visually — none of which any structural check had caught:**
+
+| # | Defect | Fix |
+|---|---|---|
+| 1 | The copyright-page callout was the **only unshaded callout** in the book. It had been written out by hand instead of going through the callout emitter, so it shipped with no panel, no rule, and no Inter small-caps head. | Rebuilt through `emit_callout`. All 4 callout paragraphs are now shaded. |
+| 2 | The callout-head detector had a `len(text) < 70` cap, which silently demoted the 92-character clinical-review head to body style. The **most safety-critical sentence in the book was the only one not set as a heading.** | Cap removed; head is now detected by being the first all-caps line. |
+| 3 | Callouts broke into four separate shaded bands instead of reading as one panel, because each paragraph carried 5 pt of space after. | `space_after` set to 0 inside a callout; indents added so the panel is inset. |
+| 4 | **"Back Matter" shipped as a visible Chapter Title** on the appendix page. It is a label for the source file, not reader-facing content. | Suppressed in the DOCX; the appendix heading now opens the section. |
+| 5 | The appendix record table had a **blank header cell** in the "Day" column, which reads as a mistake at print size. | Header row labelled. |
+
+All five were fixed, both files rebuilt, and the proof re-rendered to confirm.
+Items 1–3 were in the visual-only category: they were invisible to every schema,
+XML and text-extraction test run before this point.
+
+## 6b. Clinician review packet
+
+Prepared at `book/CLINICIAN_REVIEW_PACKET.md` (8-page PDF), with a clean
+11-page review copy of only the material in scope at
+`PDF-REVIEW/CLINICIAN_MANUSCRIPT.pdf`.
+
+The packet asks 40 numbered questions across four parts: safety screening, each
+of the ten techniques, the front-matter notice, and eight evidence claims where
+a clinician's judgement beats an editor's. It provides a written response table
+and page references into `interior-proof.pdf` so the reviewer can mark up the
+proof directly.
+
+It asks the reviewer explicitly whether the book has been **over-cautious** to
+the point of misleading readers away from something that would help them.
+Honesty that understates benefit is also a failure.
+
 ## 7. Testing that could NOT be completed
 
 Stated plainly, because the brief requires it.
 
 1. **No clinical, medical, or physiotherapy review.** No clinician has read any part of this manuscript. This is the single most significant outstanding item, and it is a gate the brief sets before publication.
-2. **No visual proof of the DOCX.** No LibreOffice, Word, or PDF converter was available. The DOCX was verified structurally — geometry, styles, fields, table properties, XML element placement — but **no one has seen it rendered as pages**. Pagination, header/footer placement, table widths on the 4.5-inch measure, and the journal table's readability are all unverified visually. This is a real limitation, not a formality: the two most serious DOCX defects found in this assessment were both invisible to structural checks.
+2. **The DOCX is not proven in Word.** It has now been rendered and visually reviewed (§6a), but the renderer is MuPDF with the document's own styles, not Word. Word's pagination may differ by a line or two per page, and running heads have not been seen at all. A pass in Word or LibreOffice is still required before print. What has been verified is the typography, the callouts, the tables, and the page-flow — not Word's own line-breaking.
 3. **No print-ready interior PDF.** Not produced. No LaTeX, pandoc, Ghostscript, or working HTML-to-PDF converter was available.
 4. **No print proof, colour check, or binding test.** Both files are designed for 6×9 black-and-white, but neither has been through a physical or virtual press check.
 5. **Illustrations: 0 produced against a required 12.** See §8.

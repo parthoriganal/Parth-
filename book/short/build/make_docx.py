@@ -221,19 +221,20 @@ def build():
 
     page_break(doc)
     p = P(style="Section Heading"); p.add_run("Important Note to the Reader")
-    p = P(style="Callout Head"); p.add_run("This book has not been reviewed by a doctor, "
-                                           "physiotherapist, or other qualified clinician.")
-    para("It is written for general educational purposes. It is not a substitute for individual "
-         "medical assessment, diagnosis, or treatment, and no book can examine you.", "Callout Body")
-    para("", "Callout Body")
-    para("Read Chapter 4 before attempting anything in Chapter 5. Do not begin if you have any "
-         "condition on the contraindication list, are pregnant, have recently had surgery, take "
-         "anticoagulant medication, or are unsure whether these techniques are appropriate for you.",
-         "Callout Body")
-    para("", "Callout Body")
-    para("The information here reflects the published evidence available in 2026. Medicine changes. "
-         "If your situation changes, or if you are uncertain, consult a qualified healthcare "
-         "professional.", "Callout Body")
+    # Set through emit_callout so this block gets the same shading and rule as
+    # every other callout. It used to be written out by hand and was the only
+    # unshaded callout in the book.
+    emit_callout(doc, [
+        "THIS BOOK HAS NOT BEEN REVIEWED BY A DOCTOR, PHYSIOTHERAPIST, OR OTHER QUALIFIED CLINICIAN.",
+        "It is written for general educational purposes. It is not a substitute for individual "
+        "medical assessment, diagnosis, or treatment, and no book can examine you.",
+        "Read Chapter 4 before attempting anything in Chapter 5. Do not begin if you have any "
+        "condition on the contraindication list, are pregnant, have recently had surgery, take "
+        "anticoagulant medication, or are unsure whether these techniques are appropriate for you.",
+        "The information here reflects the published evidence available in 2026. Medicine changes. "
+        "If your situation changes, or if you are uncertain, consult a qualified healthcare "
+        "professional.",
+    ], P, para)
 
     page_break(doc)
     P(style="Section Heading").add_run("A Note on the Evidence")
@@ -318,7 +319,11 @@ def emit_chapter(doc, path, P, para, plain=False):
         if line.startswith("# "):
             title = line[2:].strip()
             if plain:
-                p = P(style="Chapter Title"); p.add_run(title)
+                # The top-level "# Back Matter" is a structural label for the
+                # source files, not something a reader should see on a page.
+                # The first real heading inside it ("Appendix...") takes over.
+                first_para = True
+                i += 1; continue
             else:
                 # "1 · The Morning Check" -> number + title
                 m = re.match(r"(\d+)\s*·\s*(.+)", title)
@@ -386,7 +391,11 @@ def emit_chapter(doc, path, P, para, plain=False):
 def emit_callout(doc, lines, P, para):
     from docx.shared import Pt
     for idx, text in enumerate(lines):
-        is_head = (idx == 0 and len(text) < 70
+        # A callout head is the first all-caps line. There used to be a
+        # len(text) < 70 cap here, which silently demoted any longer head to
+        # body style; the copyright notice is 92 characters and lost its
+        # small bold Inter treatment because of it.
+        is_head = (idx == 0
                    and text == text.upper()
                    and any(ch.isalpha() for ch in text))
         style = "Callout Head" if is_head else "Callout Body"
@@ -396,7 +405,14 @@ def emit_callout(doc, lines, P, para):
             r.font.bold = bold or None
             r.font.italic = ital or None
         shade(p)
-        p.paragraph_format.space_after = Pt(5)
+        # space_after must be 0 between the paragraphs of one callout, or the
+        # shading breaks into separate bands instead of reading as one panel.
+        # The gap between *separate* callouts comes from the preceding
+        # paragraph's spacing, not from inside the block.
+        p.paragraph_format.space_after = Pt(0)
+        p.paragraph_format.space_before = Pt(0)
+        p.paragraph_format.left_indent = Pt(8)
+        p.paragraph_format.right_indent = Pt(8)
 
 
 def emit_table(doc, block):

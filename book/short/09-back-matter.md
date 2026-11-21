@@ -4,7 +4,7 @@
 
 A page to copy, or to rule up in any notebook.
 
-| | Measure | 0–10 | Regions done | Next day worse? |
+| Day | Measure | 0–10 | Regions done | Next day worse? |
 |---|---|---|---|---|
 | Day 1 | | | | Y / N |
 | Day 2 | | | | Y / N |
