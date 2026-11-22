@@ -17,7 +17,9 @@
     "shot:sim": "node gravity-lab/test/render-shot.cjs",
     "bloom": "vite --config singularity-bloom/viewer/vite.config.js",
     "bloom:build": "vite build --config singularity-bloom/viewer/vite.config.js",
-    "bloom:render": "bash singularity-bloom/render.sh"
+    "bloom:render": "bash singularity-bloom/render.sh",
+    "figma": "vite --config figma-page/vite.config.js",
+    "figma:build": "vite build --config figma-page/vite.config.js"
   },
   "dependencies": {
     "chart.js": "^4.4.4",

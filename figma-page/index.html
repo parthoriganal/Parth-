@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Parth's Design Tokens — from Figma</title>
+<meta name="description" content="A living token sheet generated from Parth Gosra's Figma team library: six colour styles, three type styles, copy-ready CSS." />
+<meta name="color-scheme" content="light" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+
+<a class="skip" href="#palette">Skip to palette</a>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-top">
+      <span class="eyebrow">
+        <span class="dot" aria-hidden="true"></span>
+        Team library · synced from Figma
+      </span>
+      <a class="ghost-link" href="https://www.figma.com/design/jVyB81kl0gZUrm5oc0GPIn" target="_blank" rel="noopener">
+        Open in Figma <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+
+    <h1 class="display">
+      Six colours.<br />Three type styles.<br />
+      <span class="display-accent">One source of truth.</span>
+    </h1>
+
+    <p class="lede">
+      Every value on this page was read straight out of <b>Parth Gosra's team library</b> —
+      the styles you published, rendered in the browser and ready to paste into CSS.
+      Click anything to copy it.
+    </p>
+
+    <dl class="meta">
+      <div><dt>Source file</dt><dd>Parth Gosra's team library</dd></div>
+      <div><dt>File key</dt><dd class="mono">jVyB81kl0gZUrm5oc0GPIn</dd></div>
+      <div><dt>Version</dt><dd class="mono">2358139128570374243</dd></div>
+      <div><dt>Last modified</dt><dd><time datetime="2026-05-27T05:57:36Z">27 May 2026</time></dd></div>
+    </dl>
+
+    <a class="scroll-cue" href="#palette">
+      Start here <span class="cue-arrow" aria-hidden="true">↓</span>
+    </a>
+  </div>
+</header>
+
+<main>
+  <!-- ───────────────────────── Palette ───────────────────────── -->
+  <section id="palette" class="section" aria-labelledby="palette-title">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <h2 id="palette-title" class="h1">Colour</h2>
+          <p class="section-sub">Six published fill styles, in two families. Contrast is measured against white and against ink, live.</p>
+        </div>
+        <div class="toolbar">
+          <button class="btn" id="copy-css" type="button">Copy CSS variables</button>
+          <button class="btn btn-quiet" id="download-tokens" type="button">tokens.json ↓</button>
+        </div>
+      </div>
+
+      <div class="swatch-grid" id="swatch-grid"><!-- rendered from tokens --></div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── Type ───────────────────────── -->
+  <section id="type" class="section" aria-labelledby="type-title">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <h2 id="type-title" class="h1">Typography</h2>
+          <p class="section-sub">Your published text styles, set at their real size, weight, tracking and line height.</p>
+        </div>
+        <span class="pill mono">Work Sans</span>
+      </div>
+
+      <div class="type-list" id="type-list"><!-- rendered from tokens --></div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── In use ───────────────────────── -->
+  <section id="in-use" class="section" aria-labelledby="in-use-title">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <h2 id="in-use-title" class="h1">In use</h2>
+          <p class="section-sub">The same six colours and three styles, doing actual UI work — nothing here introduces a new value.</p>
+        </div>
+      </div>
+
+      <div class="demo-grid">
+        <article class="demo-card">
+          <span class="badge badge-iris">Header 2</span>
+          <h3 class="t-h2">Opportunity 78<span class="score-den">/100</span></h3>
+          <p class="t-body t-muted">Demand is strong and competition is thin. Two of the three ranking titles under-serve the buyer's intent.</p>
+          <div class="meter" role="img" aria-label="Opportunity score 78 out of 100">
+            <span style="--v:78%"></span>
+          </div>
+          <div class="demo-actions">
+            <button class="btn btn-primary" type="button">Open report</button>
+            <button class="btn btn-quiet" type="button">Save</button>
+          </div>
+        </article>
+
+        <article class="demo-card demo-card-fuschia">
+          <span class="badge badge-fuschia">Fuschia / 60</span>
+          <h3 class="t-h2">Launch checklist</h3>
+          <ul class="checklist t-body">
+            <li><span class="tick" aria-hidden="true">✓</span> Keyword set exported</li>
+            <li><span class="tick" aria-hidden="true">✓</span> Cover A/B tested</li>
+            <li class="is-open"><span class="tick tick-open" aria-hidden="true"></span> Blurb proofread</li>
+          </ul>
+          <div class="demo-actions">
+            <button class="btn btn-fuschia" type="button">Mark done</button>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <p class="t-body">
+      Built from <b>Parth Gosra's team library</b> · Figma <span class="mono">jVyB81kl0gZUrm5oc0GPIn</span>
+    </p>
+    <p class="t-body t-muted">
+      Colours and type decoded from the Figma document tree — no eyedropper, no guesses.
+    </p>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script type="module" src="./app.js"></script>
+</body>
+</html>
