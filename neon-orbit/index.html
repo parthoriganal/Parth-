@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>NEON ORBIT — a real-time sculpture</title>
+<meta name="description" content="A scroll-driven 3D instrument: chrome, glass and six colours from a real Figma library, rendered live in WebGL." />
+<meta name="theme-color" content="#04050A" />
+<meta name="color-scheme" content="dark" />
+<link rel="stylesheet" href="./src/tokens.css" />
+<link rel="stylesheet" href="./src/orbit.css" />
+
+<script>
+  // Set the mode before first paint so there is no flash of the wrong theme.
+  (function () {
+    var d = document.documentElement;
+    d.classList.remove('no-js');
+    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var small = matchMedia('(max-width: 860px)').matches;
+    var cores = navigator.hardwareConcurrency || 8;
+    var mem = navigator.deviceMemory;          // undefined on desktop Safari/Firefox/Chrome
+    var weak = (typeof mem === 'number' && mem <= 4) || cores <= 4;
+    d.dataset.reduced = String(reduce);
+    d.dataset.tier = (small || weak) ? 'low' : 'high';
+    // WebGL probe — the loader picks the fallback if this fails.
+    try {
+      var c = document.createElement('canvas');
+      var gl = c.getContext('webgl2') || c.getContext('webgl');
+      d.dataset.webgl = gl ? 'yes' : 'no';
+    } catch (e) { d.dataset.webgl = 'no'; }
+  })();
+</script>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════ loader ══ -->
+<div class="boot" id="boot" aria-hidden="true">
+  <div class="boot-inner">
+    <div class="boot-orbit">
+      <span class="boot-ring"></span>
+      <span class="boot-ring boot-ring-2"></span>
+      <span class="boot-core"></span>
+    </div>
+    <div class="boot-read">
+      <span class="boot-label">NEON ORBIT</span>
+      <span class="boot-pct"><b id="bootPct">0</b>%</span>
+    </div>
+    <div class="boot-bar"><span id="bootBar"></span></div>
+    <div class="boot-log mono" id="bootLog">calibrating</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ backdrop ══ -->
+<div class="world" aria-hidden="true">
+  <canvas id="stage"></canvas>
+  <div class="world-veil"></div>
+  <div class="world-grain"></div>
+  <div class="world-vignette"></div>
+</div>
+<div class="fallback" id="fallback" hidden>
+  <div class="fallback-card">
+    <p class="mono">WEBGL UNAVAILABLE</p>
+    <h2>This instrument needs a GPU context.</h2>
+    <p>The page still works — the artwork, palette and type all render in DOM. Enable hardware acceleration, or open it on another device, to fly the orbit.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ chrome ══ -->
+<header class="hud" id="hud">
+  <a class="hud-mark" href="#hero" aria-label="NEON ORBIT, back to top">
+    <span class="mark-glyph" aria-hidden="true"></span>
+    <span class="mark-text">NEON<b>ORBIT</b></span>
+  </a>
+
+  <nav class="hud-nav" aria-label="Sections">
+    <a href="#core" data-station="0"><i>01</i>Core</a>
+    <a href="#field" data-station="1"><i>02</i>Field</a>
+    <a href="#lab" data-station="2"><i>03</i>Lab</a>
+    <a href="#signal" data-station="3"><i>04</i>Signal</a>
+    <a href="#exit" data-station="4"><i>05</i>Exit</a>
+  </nav>
+
+  <div class="hud-right">
+    <span class="hud-stat mono"><b id="hudFps">–</b> fps · <span id="hudTier">–</span></span>
+    <button class="hud-btn mono" id="btnMotion" type="button" aria-pressed="false" title="Toggle motion">
+      <span class="motion-dot" aria-hidden="true"></span><span id="btnMotionLabel">Motion on</span>
+    </button>
+  </div>
+</header>
+
+<div class="rail" aria-hidden="true">
+  <span class="rail-line"><i id="railFill"></i></span>
+  <span class="rail-label mono" id="railLabel">01 / CORE</span>
+</div>
+
+<main id="main">
+
+  <!-- ══════════════════════════════════════ 01 · CORE / hero ══ -->
+  <section class="station hero" id="hero" data-station="0" data-name="CORE">
+    <div class="grid-lines" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+
+    <div class="hero-inner">
+      <p class="kicker mono reveal">◈ A real-time sculpture · WebGL · 60 fps</p>
+
+      <h1 class="hero-title">
+        <span class="line"><span class="w">NEON</span></span>
+        <span class="line indent"><span class="w">ORBIT</span><em class="hero-sup" aria-hidden="true">¹</em></span>
+      </h1>
+
+      <div class="hero-foot">
+        <p class="hero-blurb reveal">
+          A chrome artefact <span class="tick">orbiting</span> nothing in particular,
+          built from six colours published in a Figma library, rendered live.
+          Scroll to fly it.
+        </p>
+        <dl class="hero-specs mono reveal">
+          <div><dt>Medium</dt><dd>WebGL 2 · PBR</dd></div>
+          <div><dt>Geometry</dt><dd>procedural</dd></div>
+          <div><dt>Palette</dt><dd>6 styles</dd></div>
+          <div><dt>Type</dt><dd>Work Sans</dd></div>
+        </dl>
+      </div>
+    </div>
+
+    <a class="scroll-hint" href="#field">
+      <span class="mono">SCROLL</span>
+      <span class="hint-line" aria-hidden="true"></span>
+    </a>
+
+    <p class="hero-aside mono" aria-hidden="true">DRAG THE CORE<br />TO SPIN IT</p>
+  </section>
+
+  <!-- ═══════════════════════════════════ 02 · FIELD / scroll ══ -->
+  <section class="station field" id="field" data-station="1" data-name="FIELD">
+    <div class="field-sticky">
+      <div class="field-head">
+        <p class="kicker mono">02 — FIELD</p>
+        <h2 class="section-title">
+          The object<br /><span class="ital">unfolds</span><br />as you scroll.
+        </h2>
+      </div>
+
+      <div class="field-steps">
+        <article class="step" data-step="0">
+          <span class="step-n mono">i</span>
+          <h3>Chrome shell</h3>
+          <p>A single icosahedron, metalness 1, roughness 0.06 — it reflects the orbit instead of being lit by it.</p>
+        </article>
+        <article class="step" data-step="1">
+          <span class="step-n mono">ii</span>
+          <h3>Orbital cage</h3>
+          <p>Three rings on independent axes. Each is a real torus in the same world, not a drawn overlay.</p>
+        </article>
+        <article class="step" data-step="2">
+          <span class="step-n mono">iii</span>
+          <h3>Dispersion</h3>
+          <p>Scroll past halfway and the shell expands into shards. The colour split is chromatic, taken from the library's two families.</p>
+        </article>
+        <article class="step" data-step="3">
+          <span class="step-n mono">iv</span>
+          <h3>Reassembly</h3>
+          <p>Every part returns. Nothing is restarted, nothing is reloaded — the same meshes just move.</p>
+        </article>
+      </div>
+
+      <div class="field-meter" aria-hidden="true">
+        <span class="mono">TRANSFORM</span>
+        <div class="meter-track"><i id="fieldFill"></i></div>
+        <span class="mono" id="fieldPct">0%</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════ 03 · LAB / tokens ══ -->
+  <section class="station lab" id="lab" data-station="2" data-name="LAB">
+    <div class="lab-inner">
+      <header class="lab-head">
+        <div class="lab-head-main">
+          <p class="kicker mono">03 — LAB</p>
+          <h2 class="section-title">
+            Six published<br />styles, made<br /><span class="ital">tangible.</span>
+          </h2>
+        </div>
+        <p class="lab-note">
+          These are not swatches on a page. Each is a glass orb holding a point light in the
+          exact colour from the Figma library — <span class="mono">91:0</span> through
+          <span class="mono">91:5</span>. Hover to inspect. Click to copy the hex.
+        </p>
+      </header>
+
+      <ul class="orb-board" id="orbBoard" aria-label="Published colour styles"></ul>
+
+      <div class="lab-read" aria-live="polite">
+        <div class="lab-read-left">
+          <span class="lab-read-name mono" id="labName">Fuschia/100</span>
+          <span class="lab-read-hex mono" id="labHex">#EF5DA8</span>
+        </div>
+        <div class="lab-read-bar" aria-hidden="true">
+          <i id="labBar"></i>
+        </div>
+        <div class="lab-read-right">
+          <span class="mono" id="labContrast">6.80:1 on ink</span>
+          <span class="mono lab-read-node" id="labNode">node 91:0</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════ 04 · SIGNAL / experiment ══ -->
+  <section class="station signal" id="signal" data-station="3" data-name="SIGNAL">
+    <div class="signal-inner">
+      <header class="signal-head">
+        <p class="kicker mono">04 — SIGNAL</p>
+        <h2 class="section-title">
+          Disturb the<br />field. It<br /><span class="ital">remembers.</span>
+        </h2>
+      </header>
+
+      <div class="signal-stage" id="signalStage">
+        <canvas id="wavefield" aria-label="Interactive particle field. Move the pointer or drag across it to disturb the particles." role="img"></canvas>
+        <div class="signal-hint mono" id="signalHint">MOVE / DRAG / TAP TO DISTURB</div>
+        <div class="signal-read">
+          <span class="mono">ENERGY</span>
+          <b class="mono" id="signalEnergy">0.00</b>
+        </div>
+      </div>
+
+      <div class="signal-legend">
+        <article>
+          <h3>What you're touching</h3>
+          <p>A 6 000-point spring lattice on a single canvas. Your pointer injects velocity; every point relaxes back with damping. The marks you leave decay over about four seconds.</p>
+        </article>
+        <article>
+          <h3>Why it's here</h3>
+          <p>The library's colours drive the particle temperature — energy raises hue from Iris toward Fuschia. Same six values, a different kind of light.</p>
+        </article>
+        <ul class="signal-keys mono">
+          <li><kbd>drag</kbd> disturb</li>
+          <li><kbd>click</kbd> impulse</li>
+          <li><kbd>space</kbd> reset</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════ 05 · EXIT ══ -->
+  <section class="station exit" id="exit" data-station="4" data-name="EXIT">
+    <div class="exit-inner">
+      <p class="kicker mono">05 — EXIT</p>
+
+      <h2 class="exit-title">
+        <span class="exit-word" data-word="COME">COME</span>
+        <span class="exit-word" data-word="CLOSER">CLOSER</span>
+      </h2>
+
+      <p class="exit-blurb">
+        Everything you just saw is one scene: no video, no pre-rendered frames, no images.
+        Six colours and three text styles, wired to a GPU.
+      </p>
+
+      <div class="exit-actions">
+        <a class="btn btn-primary" href="#hero" id="btnRestart">
+          <span>Fly it again</span>
+          <svg viewBox="0 0 16 16" aria-hidden="true" width="14" height="14"><path d="M8 2.5a5.5 5.5 0 1 0 5.3 7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M13.5 2.5v4h-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a class="btn btn-ghost" href="#lab">Inspect the palette</a>
+      </div>
+
+      <dl class="exit-credits mono">
+        <div><dt>Palette &amp; type</dt><dd>Parth Gosra's team library</dd></div>
+        <div><dt>Figma file</dt><dd>jVyB81kl0gZUrm5oc0GPIn</dd></div>
+        <div><dt>Rendering</dt><dd>three.js r187 · procedural</dd></div>
+        <div><dt>Typefaces</dt><dd>Work Sans · JetBrains Mono</dd></div>
+      </dl>
+    </div>
+
+    <div class="exit-marquee" aria-hidden="true">
+      <div class="marquee-run">
+        <span>NEON ORBIT</span><span class="m-dot">◈</span><span>SIX COLOURS</span><span class="m-dot">◈</span><span>ONE SCENE</span><span class="m-dot">◈</span><span>WORK SANS</span><span class="m-dot">◈</span>
+        <span>NEON ORBIT</span><span class="m-dot">◈</span><span>SIX COLOURS</span><span class="m-dot">◈</span><span>ONE SCENE</span><span class="m-dot">◈</span><span>WORK SANS</span><span class="m-dot">◈</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <span class="mono">NEON ORBIT</span>
+  <span class="mono">BUILT IN WEBGL · NO IMAGES · NO VIDEO</span>
+  <a class="mono" href="#hero">BACK TO ORBIT ↑</a>
+</footer>
+
+<div class="toast mono" id="toast" role="status" aria-live="polite"></div>
+
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>

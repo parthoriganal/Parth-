@@ -19,7 +19,10 @@
     "bloom:build": "vite build --config singularity-bloom/viewer/vite.config.js",
     "bloom:render": "bash singularity-bloom/render.sh",
     "figma": "vite --config figma-page/vite.config.js",
-    "figma:build": "vite build --config figma-page/vite.config.js"
+    "figma:build": "vite build --config figma-page/vite.config.js",
+    "orbit": "vite --config neon-orbit/vite.config.js",
+    "orbit:build": "vite build --config neon-orbit/vite.config.js",
+    "test:orbit": "node neon-orbit/test/visual.mjs"
   },
   "dependencies": {
     "chart.js": "^4.4.4",

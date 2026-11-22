@@ -1,0 +1,72 @@
+/* ============================================================
+   NEON ORBIT — token layer
+   Colours and type below come verbatim from Parth Gosra's Figma
+   team library (jVyB81kl0gZUrm5oc0GPIn, styles 91:0-91:5 / 116:2-4).
+   ============================================================ */
+
+@font-face {
+  font-family: 'Work Sans';
+  src: url('../assets/fonts/WorkSans-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Work Sans';
+  src: url('../assets/fonts/WorkSans-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Work Sans';
+  src: url('../assets/fonts/WorkSans-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('../assets/fonts/JetBrainsMono-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('../assets/fonts/JetBrainsMono-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-display: swap;
+}
+
+:root {
+  /* ---- Figma published FILL styles -------------------------- */
+  --fuschia-100: #EF5DA8;
+  --fuschia-80:  #F178B6;
+  --fuschia-60:  #FCDDEC;
+  --iris-100:    #5D5FEF;
+  --iris-80:     #7879F1;
+  --iris-60:     #A5A6F6;
+
+  /* ---- Published TEXT styles (Work Sans) -------------------- */
+  --h1-size: 34px; --h1-weight: 700; --h1-lh: 1.15; --h1-track: -.68px;
+  --h2-size: 20px; --h2-weight: 700; --h2-lh: 1.25; --h2-track: -.4px;
+  --body-size: 13px; --body-weight: 400; --body-lh: 1.61; --body-track: -.26px;
+
+  /* ---- World palette (extends, never replaces, the tokens) --- */
+  --void:      #04050A;
+  --void-2:    #070912;
+  --ink:       #F4F5FA;
+  --ink-dim:   rgba(244, 245, 250, .58);
+  --ink-faint: rgba(244, 245, 250, .32);
+  --hair:      rgba(244, 245, 250, .14);
+  --hair-soft: rgba(244, 245, 250, .07);
+  --ice:       #9EEBFF;   /* technical / instrumentation */
+  --solar:     #FF8A4C;   /* one unexpected warm accent, used once */
+
+  --font-display: 'Work Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --ease: cubic-bezier(.22, 1, .36, 1);
+  --ease-io: cubic-bezier(.65, 0, .35, 1);
+  --gut: clamp(18px, 4.2vw, 56px);
+}
