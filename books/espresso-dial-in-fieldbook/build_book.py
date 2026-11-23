@@ -32,22 +32,24 @@ INK = HexColor("#202020")
 CHARCOAL = HexColor("#3D3D3D")
 MID = HexColor("#696969")
 LINE = HexColor("#A8A8A8")
-PALE = HexColor("#F1F1F1")
-PALE2 = HexColor("#E4E4E4")
+PALE = HexColor("#E6E6E6")
+PALE2 = HexColor("#D9D9D9")
 WHITE = white
 
 FONT_DIR = Path("/usr/share/fonts/truetype/dejavu")
+# ReportLab embeds the glyph subsets used by each page (with ToUnicode maps),
+# keeping the complete used glyph repertoire available without font substitution.
 pdfmetrics.registerFont(TTFont("FieldSans", str(FONT_DIR / "DejaVuSans.ttf")))
 pdfmetrics.registerFont(TTFont("FieldSans-Bold", str(FONT_DIR / "DejaVuSans-Bold.ttf")))
 pdfmetrics.registerFont(TTFont("FieldSerif", str(FONT_DIR / "DejaVuSerif.ttf")))
 pdfmetrics.registerFont(TTFont("FieldSerif-Bold", str(FONT_DIR / "DejaVuSerif-Bold.ttf")))
 
 styles = {
-    "body": ParagraphStyle("body", fontName="FieldSans", fontSize=9.4, leading=13.2, textColor=INK, spaceAfter=0),
-    "small": ParagraphStyle("small", fontName="FieldSans", fontSize=8.2, leading=11.2, textColor=CHARCOAL, spaceAfter=0),
-    "tiny": ParagraphStyle("tiny", fontName="FieldSans", fontSize=7.5, leading=9.5, textColor=MID, spaceAfter=0),
+    "body": ParagraphStyle("body", fontName="FieldSans", fontSize=11, leading=15.95, textColor=INK, spaceAfter=0),
+    "small": ParagraphStyle("small", fontName="FieldSans", fontSize=11, leading=15.95, textColor=CHARCOAL, spaceAfter=0),
+    "tiny": ParagraphStyle("tiny", fontName="FieldSans", fontSize=8.5, leading=12.0, textColor=MID, spaceAfter=0),
     "lead": ParagraphStyle("lead", fontName="FieldSerif", fontSize=12.0, leading=17.0, textColor=INK, spaceAfter=0),
-    "callout": ParagraphStyle("callout", fontName="FieldSans", fontSize=8.7, leading=12.0, textColor=INK, spaceAfter=0),
+    "callout": ParagraphStyle("callout", fontName="FieldSans", fontSize=9, leading=13.05, textColor=INK, spaceAfter=0),
     "center": ParagraphStyle("center", fontName="FieldSans", fontSize=9.0, leading=13.0, alignment=TA_CENTER, textColor=INK),
 }
 
@@ -61,6 +63,12 @@ c.setKeywords("espresso, home barista, dial-in, shot log, coffee workbook")
 page_no = 0
 page_text_manifest: list[tuple[int, str, str]] = []
 
+# Keep every embedded label/caption at or above 8.5 pt across legacy page helpers.
+_original_set_font = c.setFont
+def _print_safe_set_font(name, size, *args, **kwargs):
+    return _original_set_font(name, max(8.5, size), *args, **kwargs)
+c.setFont = _print_safe_set_font
+
 def esc(s: str) -> str:
     return html.escape(str(s), quote=False)
 
@@ -68,37 +76,65 @@ def start_page(section: str = "FIELD GUIDE", page_title: str | None = None, stra
     """Open a page with mirrored, generous KDP-safe margins and a quiet running header."""
     global page_no
     page_no += 1
-    # 8.5 x 11 in, no bleed. 0.72-in gutter and 0.50-in outside margin exceed
-    # KDP's 0.375-in inside / 0.25-in outside minima for a 24-150-page book.
-    inside = 0.72 * PT
-    outside = 0.50 * PT
+    # Exact 8.5 × 11 in no-bleed geometry and requested mirrored safe margins.
+    inside = 0.75 * PT
+    outside = 0.60 * PT
     left = inside if page_no % 2 else outside
     right = outside if page_no % 2 else inside
     x0, x1 = left, W - right
     width = x1 - x0
     if page_no not in (1, 2):
         c.setFillColor(MID)
-        c.setFont("FieldSans-Bold", 7.2)
-        c.drawString(x0, H - 28, "ESPRESSO  /  FIELDWORK")
-        c.setFont("FieldSans", 7.2)
-        c.drawRightString(x1, H - 28, section.upper())
+        c.setFont("FieldSans-Bold", 8.5)
+        if page_no % 2:
+            c.drawString(x0, H - 30, "ESPRESSO  /  FIELDWORK")
+            c.setFont("FieldSans", 8.5)
+            c.drawRightString(x1, H - 30, section.upper())
+        else:
+            c.drawString(x0, H - 30, section.upper())
+            c.setFont("FieldSans-Bold", 8.5)
+            c.drawRightString(x1, H - 30, "ESPRESSO  /  FIELDWORK")
         c.setStrokeColor(LINE)
-        c.setLineWidth(0.65)
-        c.line(x0, H - 36, x1, H - 36)
+        c.setLineWidth(0.5)
+        c.line(x0, H - 39, x1, H - 39)
         if show_folio:
             c.setFillColor(MID)
-            c.setFont("FieldSans", 7.5)
-            c.drawString(x0, 24, f"{page_no:03d}")
-            c.drawRightString(x1, 24, "ESPRESSO DIAL-IN FIELDBOOK")
+            c.setFont("FieldSans", 8.5)
+            if page_no % 2:
+                c.drawString(x0, 53, f"{page_no:03d}")
+                c.drawRightString(x1, 53, "ESPRESSO DIAL-IN FIELDBOOK")
+            else:
+                c.drawString(x0, 53, "ESPRESSO DIAL-IN FIELDBOOK")
+                c.drawRightString(x1, 53, f"{page_no:03d}")
     if page_title:
-        y = H - (64 if page_no > 2 else 0)
+        y = H - (70 if page_no > 2 else 66)
         c.setFillColor(INK)
-        c.setFont("FieldSerif-Bold", 22)
-        c.drawString(x0, y, page_title)
+        title_size = 28
+        title_available = width - (46 if page_no in {3, 23, 79, 93, 105} else 0)
+        title_width = pdfmetrics.stringWidth(page_title, "FieldSerif-Bold", title_size)
+        horiz_scale = min(100, (title_available / title_width) * 100) if title_width else 100
+        if horiz_scale < 90:
+            title_size = 26
+            title_width = pdfmetrics.stringWidth(page_title, "FieldSerif-Bold", title_size)
+            horiz_scale = min(100, (title_available / title_width) * 100) if title_width else 100
+        title_text = c.beginText(x0, y)
+        title_text.setFont("FieldSerif-Bold", title_size)
+        title_text.setHorizScale(horiz_scale)
+        title_text.textLine(page_title)
+        # Reset text horizontal scaling so later body/label text stays uncondensed.
+        title_text.setHorizScale(100)
+        c.drawText(title_text)
         if strap:
             c.setFillColor(MID)
             c.setFont("FieldSans", 8.5)
-            c.drawString(x0, y - 17, strap)
+            c.drawString(x0, y - 20, strap)
+    # Section-opening pages carry a quiet, oversized chapter numeral beside the title.
+    section_numbers = {3: "01", 23: "02", 79: "03", 93: "04", 105: "05"}
+    if page_no in section_numbers:
+        c.setFillColor(HexColor("#D9D9D9"))
+        c.setFont("FieldSerif-Bold", 30)
+        numeral_y = H - 110 if page_no == 23 else H - 76
+        c.drawRightString(x1, numeral_y, section_numbers[page_no])
     page_text_manifest.append((page_no, section, page_title or ""))
     return x0, x1, width
 
@@ -119,12 +155,12 @@ def label(text: str, x: float, y: float, size: float = 7.1, color=MID, bold=True
     c.setFont("FieldSans-Bold" if bold else "FieldSans", size)
     c.drawString(x, y, text.upper())
 
-def rule(x1: float, y: float, x2: float, color=LINE, width: float = 0.75):
+def rule(x1: float, y: float, x2: float, color=LINE, width: float = 0.5):
     c.setStrokeColor(color)
     c.setLineWidth(width)
     c.line(x1, y, x2, y)
 
-def box(x: float, y: float, w: float, h: float, fill=None, stroke=LINE, radius=7, line=0.8):
+def box(x: float, y: float, w: float, h: float, fill=None, stroke=LINE, radius=6, line=0.5):
     c.setLineWidth(line)
     c.setStrokeColor(stroke)
     if fill:
@@ -135,10 +171,10 @@ def box(x: float, y: float, w: float, h: float, fill=None, stroke=LINE, radius=7
 
 def callout(x: float, top: float, w: float, text: str, title: str | None = None, h: float = 58, fill=PALE):
     y = top - h
-    box(x, y, w, h, fill=fill, stroke=PALE2, radius=7, line=0.7)
+    box(x, y, w, h, fill=fill, stroke=PALE2, radius=6, line=0.5)
     if title:
         label(title, x + 12, top - 17, 7.3, CHARCOAL)
-        para(esc(text), x + 12, top - 25, w - 24, "callout", h - 30)
+        para(esc(text), x + 12, top - 25, w - 24, "callout", h - 22)
     else:
         para(esc(text), x + 12, top - 12, w - 24, "callout", h - 20)
     return y - 12
@@ -149,7 +185,7 @@ def field(x: float, top: float, w: float, name: str, h: float = 37, hint: str | 
         c.setFillColor(MID)
         c.setFont("FieldSans", 7.0)
         c.drawRightString(x + w, top - 9, hint)
-    rule(x, top - h + 5, x + w, LINE, 0.75)
+    rule(x, top - h + 5, x + w, LINE, 0.5)
     return top - h
 
 def field_lines(x: float, top: float, w: float, name: str, lines: int = 2, line_gap: float = 22, top_label: bool = True):
@@ -159,7 +195,7 @@ def field_lines(x: float, top: float, w: float, name: str, lines: int = 2, line_
     else:
         y = top
     for i in range(lines):
-        rule(x, y - i * line_gap, x + w, LINE, 0.75)
+        rule(x, y - i * line_gap, x + w, LINE, 0.5)
     return y - (lines - 1) * line_gap - 12
 
 def checkbox(x: float, y: float, text: str, size: float = 7.5):
@@ -172,7 +208,7 @@ def checkbox(x: float, y: float, text: str, size: float = 7.5):
 
 def scale(x: float, y: float, caption: str, n: int = 5, selected: int | None = None, diameter: float = 9, step: float = 17):
     c.setFillColor(MID)
-    c.setFont("FieldSans-Bold", 7.0)
+    c.setFont("FieldSans-Bold", 8.5)
     c.drawString(x, y + 2, caption.upper())
     start = x + 74
     for i in range(n):
@@ -185,7 +221,15 @@ def scale(x: float, y: float, caption: str, n: int = 5, selected: int | None = N
             c.circle(xx, y + 4, diameter / 2 - 2, stroke=0, fill=1)
     c.setFont("FieldSans", 7.0)
     c.setFillColor(MID)
-    c.drawString(start + n * step + 2, y + 2, "LOW  →  HIGH")
+    c.drawString(start + n * step + 2, y + 2, "LOW")
+    # Vector arrow keeps the direction cue independent of font glyph coverage.
+    ax = start + n * step + 29
+    c.setStrokeColor(MID); c.setLineWidth(0.8)
+    c.line(ax, y + 5, ax + 13, y + 5)
+    c.line(ax + 13, y + 5, ax + 9, y + 8)
+    c.line(ax + 13, y + 5, ax + 9, y + 2)
+    c.setFillColor(MID); c.setFont("FieldSans", 8.5)
+    c.drawString(ax + 17, y + 2, "HIGH")
 
 def section_tag(text: str, x: float, y: float):
     c.setFillColor(CHARCOAL)
@@ -208,8 +252,24 @@ def draw_four_dots(x: float, y: float, r: float = 8, gap: float = 24, active: in
         c.setLineWidth(1.1)
         c.circle(x + i * gap, y, r, fill=0, stroke=1)
         c.setFillColor(INK if i == active else MID)
-        c.setFont("FieldSans-Bold", 7)
+        c.setFont("FieldSans-Bold", 8.5)
         c.drawCentredString(x + i * gap, y - 2.5, str(i + 1))
+
+def coffee_bean(x: float, y: float, scale: float = 1.0):
+    """Small original vector coffee-bean mark."""
+    c.saveState()
+    c.translate(x, y); c.scale(scale, scale)
+    p = c.beginPath()
+    p.moveTo(-12, 0)
+    p.curveTo(-12, 10, -3, 16, 5, 12)
+    p.curveTo(14, 8, 14, -5, 5, -11)
+    p.curveTo(-4, -16, -12, -9, -12, 0)
+    p.close()
+    c.setFillColor(CHARCOAL); c.drawPath(p, fill=1, stroke=0)
+    c.setStrokeColor(WHITE); c.setLineWidth(1.1)
+    q = c.beginPath(); q.moveTo(-5, -10); q.curveTo(5, -4, -2, 3, 6, 10)
+    c.drawPath(q, fill=0, stroke=1)
+    c.restoreState()
 
 def grid_table(x: float, top: float, widths: list[float], headers: list[str], rows: list[list[str]], row_h: float, font: float = 7.0, header_h: float = 24):
     total = sum(widths)
@@ -218,22 +278,26 @@ def grid_table(x: float, top: float, widths: list[float], headers: list[str], ro
     cx = x
     for w, htxt in zip(widths, headers):
         c.setFillColor(CHARCOAL)
-        c.setFont("FieldSans-Bold", font)
+        c.setFont("FieldSans-Bold", max(8.5, font))
         # Wrap narrow headers if needed by drawing short labels as two lines.
         words = htxt.split("|")
         for j, word in enumerate(words):
             c.drawString(cx + 6, top - 10 - j * 8, word.upper())
         cx += w
     y_top = top - header_h
+    row_h = max(row_h, 23.04)
     for row in rows:
         y_bottom = y_top - row_h
-        rule(x, y_bottom, x + total, LINE, 0.55)
+        rule(x, y_bottom, x + total, LINE, 0.5)
         cx = x
         for w, cell in zip(widths, row):
-            if cell:
+            if cell and cell != "□":
                 c.setFillColor(INK)
-                c.setFont("FieldSans", font)
-                c.drawString(cx + 6, y_top - row_h + 7, str(cell)[:28])
+                c.setFont("FieldSans", max(8.5, font))
+                c.drawString(cx + 6, y_top - row_h + 8, str(cell)[:28])
+            if cell == "□":
+                c.setStrokeColor(MID); c.setLineWidth(0.75)
+                c.rect(cx + 6, y_top - row_h / 2 - 4, 8, 8, stroke=1, fill=0)
             cx += w
         y_top = y_bottom
     cx = x
@@ -248,15 +312,16 @@ def page_cover():
     x0, x1, width = start_page("TITLE", show_folio=False)
     # Original vector mark: four tasting/shot columns over a calm baseline.
     c.setFillColor(PALE)
-    c.roundRect(x0, 118, width, 552, 18, fill=1, stroke=0)
+    c.roundRect(x0, 118, width, 552, 6, fill=1, stroke=0)
     c.setFillColor(INK)
     c.setFont("FieldSans-Bold", 8.2)
     c.drawString(x0 + 30, 630, "A PRACTICAL HOME BARISTA WORKBOOK")
+    coffee_bean(x1 - 44, 628, 1.35)
     c.setStrokeColor(INK)
     c.setLineWidth(1.4)
     c.line(x0 + 30, 615, x0 + 100, 615)
     c.setFillColor(INK)
-    c.setFont("FieldSerif-Bold", 33)
+    c.setFont("FieldSerif-Bold", 30)
     c.drawString(x0 + 30, 547, "Espresso")
     c.drawString(x0 + 30, 505, "Dial-In")
     c.drawString(x0 + 30, 463, "Fieldbook")
@@ -294,19 +359,19 @@ def page_cover():
 def page_copyright():
     x0, x1, width = start_page("ABOUT THIS BOOK", show_folio=False)
     c.setFillColor(INK)
-    c.setFont("FieldSerif-Bold", 20)
+    c.setFont("FieldSerif-Bold", 28)
     c.drawString(x0, H - 105, "A note before you begin")
     y = H - 143
     y = para("Copyright © 2026 Parth Gosara. All rights reserved.", x0, y, width, "body") - 20
     y = para("No part of this book may be reproduced or distributed in any form without permission, except brief quotations used in reviews or as permitted by law. This book is an independently produced educational workbook.", x0, y, width, "body") - 20
     y = callout(x0, y, width, "This fieldbook is not affiliated with, endorsed by, or sponsored by any espresso machine, grinder, roaster, or coffee organization. The author and publisher make no claim that a recipe or taste cue will work for every coffee or setup.", "INDEPENDENCE & SCOPE", 91)
     y -= 12
-    y = para("Espresso equipment and workflows differ. Use your machine manufacturer's manual, stay within basket and machine guidance, and follow safe handling practices around hot water, steam, and pressurized equipment. If a setting is not adjustable on your machine, leave it fixed and record that fact.", x0, y, width, "body") - 20
+    y = para("Espresso equipment and workflows differ. Use your machine manufacturer’s manual, stay within basket and machine guidance, and follow safe handling practices around hot water, steam, and pressurized equipment. If a setting is not adjustable on your machine, leave it fixed and record that fact.", x0, y, width, "body") - 20
     y = para("Taste descriptions in this book are observation prompts, not laboratory measurements or diagnoses. A bright, sharp, bitter, dry, thin, or balanced impression can have more than one cause. Change one chosen variable at a time, record the result, and let your own cup decide what to keep.", x0, y, width, "body") - 24
     label("FIRST EDITION  ·  2026", x0, y, 7.4, MID)
     c.setFillColor(MID)
     c.setFont("FieldSans", 7.4)
-    c.drawRightString(x1, 31, "Printed on demand")
+    c.drawRightString(x1, 53, "Printed on demand")
     end_page()
 
 def instructional_page(title: str, section: str, strap: str, blocks: list[tuple[str, str]], callouts: list[tuple[str,str]] | None = None, diagram: str | None = None):
@@ -323,22 +388,39 @@ def instructional_page(title: str, section: str, strap: str, blocks: list[tuple[
             c.setFont("FieldSans-Bold", 7.0)
             c.drawCentredString(xx + box_w/2, y - 31, txt)
             if i < 4:
-                c.setFillColor(MID)
-                c.setFont("FieldSans-Bold", 9)
-                c.drawCentredString(xx + box_w + 3.5, y - 27, "›")
+                ax = xx + box_w + 1
+                ay = y - 28
+                c.setStrokeColor(MID); c.setLineWidth(0.8)
+                c.line(ax, ay, ax + 5, ay)
+                c.line(ax + 5, ay, ax + 2, ay + 2.5)
+                c.line(ax + 5, ay, ax + 2, ay - 2.5)
         y -= 66
     if diagram == "four_shots":
-        draw_four_dots(x0 + 18, y - 18, r=12, gap=(width - 36) / 3)
+        edge = 48
+        centers = [x0 + edge + i * (width - 2 * edge) / 3 for i in range(4)]
+        for i, cx in enumerate(centers):
+            c.setStrokeColor(INK); c.setLineWidth(1.1)
+            c.circle(cx, y - 18, 12, stroke=1, fill=0)
+            c.setFillColor(INK); c.setFont("FieldSans-Bold", 8.5)
+            c.drawCentredString(cx, y - 21, str(i + 1))
         names = ["BASELINE", "TEST A", "TEST B", "CONFIRM"]
-        for i, name in enumerate(names):
+        for cx, name in zip(centers, names):
             c.setFillColor(MID)
-            c.setFont("FieldSans-Bold", 7.0)
-            c.drawCentredString(x0 + 18 + i * (width - 36) / 3, y - 43, name)
+            c.setFont("FieldSans-Bold", 8.5)
+            c.drawCentredString(cx, y - 43, name)
         y -= 66
     for head, text in blocks:
-        section_tag(head, x0, y - 3)
-        y -= 20
-        y = para(esc(text), x0, y, width, "body") - 14
+        if title == "A quick start in six moves":
+            c.setStrokeColor(MID); c.setLineWidth(0.8)
+            c.roundRect(x0, y - 14, 11, 11, 2, stroke=1, fill=0)
+            c.setFillColor(CHARCOAL); c.setFont("FieldSans-Bold", 8.5)
+            c.drawString(x0 + 20, y - 10, head.upper())
+            y -= 18
+            y = para(esc(text), x0 + 20, y, width - 20, "body") - 10
+        else:
+            section_tag(head, x0, y - 3)
+            y -= 20
+            y = para(esc(text), x0, y, width, "body") - 14
     if callouts:
         for head, text in callouts:
             h = 66 if len(text) < 130 else 82
@@ -350,7 +432,7 @@ def instructional_page(title: str, section: str, strap: str, blocks: list[tuple[
 def page_setup():
     x0,x1,width=start_page("SETUP", "Know your setup", "Record what you can repeat; leave unfamiliar or non-adjustable controls alone.")
     y=H-101
-    callout(x0,y,width,"Your grinder's numbers are not universal. A setting of 12 on one grinder may not resemble 12 on another. Record the grinder name and its own scale.","IMPORTANT",55)
+    callout(x0,y,width,"Your grinder’s numbers are not universal. A setting of 12 on one grinder may not resemble 12 on another. Record the grinder name and its own scale.","IMPORTANT",55)
     y-=72
     section_tag("Machine & basket",x0,y); y-=20
     field(x0,y,width*0.56-8,"Espresso machine / model",40)
@@ -403,57 +485,98 @@ def page_session_index():
     callout(x0,y,width,"Use the same session number on all four pages. When a bean needs more exploration, start another session and name the question you are testing.","KEEP THE THREAD",59)
     end_page()
 
+def rating_row(x: float, y: float, w: float, name: str):
+    label(name, x, y - 3, 8.5, CHARCOAL)
+    c.setFillColor(MID); c.setFont("FieldSans", 8.5)
+    c.drawString(x + 65, y - 3, "LOW")
+    # Direction cue is a vector arrow; ratings remain vector-drawn circles.
+    c.setStrokeColor(MID); c.setLineWidth(0.7)
+    c.line(x + 91, y, x + 110, y)
+    c.line(x + 110, y, x + 106, y + 3)
+    c.line(x + 110, y, x + 106, y - 3)
+    start = x + 118
+    step = 18
+    for i in range(5):
+        xx = start + i * step
+        c.setStrokeColor(MID)
+        c.setLineWidth(0.8)
+        c.circle(xx, y, 5, stroke=1, fill=0)
+        c.setFillColor(MID)
+        c.setFont("FieldSans", 8.5)
+        c.drawCentredString(xx, y - 3, str(i + 1))
+    c.setFillColor(MID); c.setFont("FieldSans", 8.5)
+    c.drawString(x + 199, y - 3, "HIGH")
+
 def page_shot_card(x: float, top: float, w: float, h: float, shot_no: int, role: str):
-    y=top-h
-    box(x,y,w,h,fill=WHITE,stroke=LINE,radius=8,line=0.85)
-    # Card head band
+    bottom = top - h
+    box(x, bottom, w, h, fill=WHITE, stroke=LINE, radius=6, line=0.5)
     c.setFillColor(PALE)
-    c.roundRect(x+0.5,top-38,w-1,37,7,fill=1,stroke=0)
+    c.roundRect(x + 0.5, top - 43, w - 1, 42, 5, fill=1, stroke=0)
     c.setFillColor(INK)
-    c.setFont("FieldSerif-Bold",13)
-    c.drawString(x+13,top-24,f"SHOT {shot_no}")
+    c.setFont("FieldSerif-Bold", 14)
+    c.drawString(x + 12, top - 27, f"SHOT {shot_no}")
     c.setFillColor(CHARCOAL)
-    c.setFont("FieldSans-Bold",7.2)
-    c.drawString(x+82,top-22,role.upper())
-    c.setFillColor(MID); c.setFont("FieldSans",7.0)
-    c.drawRightString(x+w-14,top-22,"Compare with shot ____")
-    ix=x+14; iw=w-28
-    rowtop=top-44
-    # Compact, legible metric row; ample writing area remains for the sensory note.
-    labels=[("GRIND SETTING",0.22),("DOSE · g",0.17),("YIELD · g",0.17),("TIME · s",0.17),("TEMP · °C / °F*",0.27)]
-    cx=ix
-    for nm,frac in labels:
-        cw=iw*frac
-        field(cx,rowtop,cw-7,nm,h=33,size=7.0)
-        cx+=cw
-    # Sensory selections, not diagnostic claims
-    rowtop-=40
-    label("TASTE / TEXTURE — TICK WHAT YOU NOTICE",ix,rowtop-3,7.0,MID)
-    options=[("sharp / sour",0), ("sweet",1), ("bitter / dry",2), ("balanced",3), ("thin / hollow",4)]
-    colw=iw/3
-    for j,(txt,_) in enumerate(options):
-        r=j//3; col=j%3
-        checkbox(ix+col*colw,rowtop-22-r*18,txt,7.0)
-    rowtop-=58
-    scale(ix,rowtop,"BODY",5,diameter=8,step=16)
-    scale(ix+iw*0.53,rowtop,"BALANCE",5,diameter=8,step=16)
-    rowtop-=17
-    field_lines(ix,rowtop,iw,"Taste notes / what changed in the cup",2,18)
-    next_top=top-226
-    field(ix,next_top,iw,"ONE next adjustment (or 'repeat unchanged')",27, size=7.0)
-    c.setFillColor(MID); c.setFont("FieldSans",7.0)
-    c.drawRightString(x+w-14,y+7,"*Optional; note if fixed or unavailable on your machine.")
+    c.setFont("FieldSans-Bold", 8.5)
+    c.drawString(x + 89, top - 26, role.upper())
+    c.setFillColor(MID)
+    c.setFont("FieldSans", 8.5)
+    c.drawString(x + 12, top - 39, "Compare with shot ____")
+
+    ix, iw = x + 12, w - 24
+    # Five measurement fields in roomy, two-column rows.
+    items = [("GRIND SETTING", "DOSE · g"), ("YIELD · g", "TIME · s"), ("TEMP · °C / °F*", None)]
+    row_top = top - 54
+    for left_name, right_name in items:
+        gap = 10
+        fw = (iw - gap) / 2
+        field(ix, row_top, fw, left_name, h=36, size=8.5)
+        if right_name:
+            field(ix + fw + gap, row_top, fw, right_name, h=36, size=8.5)
+        else:
+            field(ix + fw + gap, row_top, fw, "", h=36, size=8.5)
+        row_top -= 39
+
+    row_top -= 2
+    label("TASTE / TEXTURE", ix, row_top, 8.5, MID)
+    label("TICK WHAT YOU NOTICE", ix, row_top - 12, 8.5, MID)
+    options = ["sharp / sour", "sweet", "bitter / dry", "balanced", "thin / hollow"]
+    colw = iw / 2
+    for j, text in enumerate(options):
+        col, row = j % 2, j // 2
+        checkbox(ix + col * colw, row_top - 31 - row * 18, text, 8.5)
+    row_top -= 80
+
+    rating_row(ix, row_top, iw, "BODY")
+    rating_row(ix, row_top - 23, iw, "SWEETNESS")
+    rating_row(ix, row_top - 46, iw, "BALANCE")
+    row_top -= 65
+
+    label("TASTE NOTES / WHAT CHANGED", ix, row_top, 8.5, CHARCOAL)
+    label("IN THE CUP", ix, row_top - 12, 8.5, CHARCOAL)
+    row_top -= 11
+    for i in range(4):
+        rule(ix, row_top - 18 - i * 20.16, ix + iw, LINE, 0.5)
+    next_label_y = row_top - 112
+    label("ONE NEXT ADJUSTMENT", ix, next_label_y, 8.5, CHARCOAL)
+    label("(OR 'REPEAT UNCHANGED')", ix, next_label_y - 12, 8.5, CHARCOAL)
+    for i in range(2):
+        rule(ix, next_label_y - 31 - i * 20.16, ix + iw, LINE, 0.5)
+    note = "*Optional; note if fixed or unavailable on your machine."
+    c.setFillColor(MID)
+    c.setFont("FieldSans", 8.5)
+    c.drawString(ix, bottom + 12, note)
 
 def page_shots(session: int, pair: tuple[int,int], title_suffix: str):
     x0,x1,width=start_page(f"SESSION {session:02d} · SHOTS", f"Session {session:02d}  /  {title_suffix}", "Write the actual result—even when it misses the target.")
-    top=H-97
-    card_h=274
-    page_shot_card(x0,top,width,card_h,pair[0],"Baseline" if pair[0]==1 else ("Test A" if pair[0]==2 else "Test B"))
-    top2=top-card_h-16
-    role="Test A" if pair[1]==2 else ("Test B" if pair[1]==3 else "Confirmation")
-    page_shot_card(x0,top2,width,card_h,pair[1],role)
-    c.setFillColor(MID); c.setFont("FieldSans",7.0)
-    c.drawString(x0,39,"After each shot: record first → taste → name one next move.")
+    top = H - 104
+    gap = 14
+    card_w = (width - gap) / 2
+    card_h = 562
+    roles = ["Baseline" if n == 1 else ("Test A" if n == 2 else ("Test B" if n == 3 else "Confirmation")) for n in pair]
+    for i, shot in enumerate(pair):
+        page_shot_card(x0 + i * (card_w + gap), top, card_w, card_h, shot, roles[i])
+    c.setFillColor(MID); c.setFont("FieldSans", 8.5)
+    c.drawString(x0, 104, "After each shot: record first → taste → name one next move.")
     end_page()
 
 def page_session_profile(session: int):
@@ -570,15 +693,37 @@ def page_note(index: int, title: str, prompt: str, kind: str="lines"):
         rows=[["","","","" ] for _ in range(6)]
         y=grid_table(x0,y,[width*0.23,width*0.23,width*0.26,width*0.28],["GRINDER","ESPRESSO RANGE","MY SETTING","NOTES / REFERENCE"],rows,48,7.0,30)
     elif kind=="grid":
-        c.setStrokeColor(PALE2); c.setLineWidth(0.45)
+        is_open = title.startswith("Open field notes")
         left=x0; right=x1; bottom=82
-        for yy in range(int(y-4),int(bottom),22): c.line(left,yy,right,yy)
-        for xx in range(int(left),int(right),24): c.line(xx,bottom,xx,y-4)
+        if is_open and title.endswith("1"):
+            # 5 mm dot grid at 25% black, with no vertical rules.
+            c.setFillColor(Color(0, 0, 0, alpha=0.25))
+            spacing=14.17
+            xx=left
+            while xx <= right:
+                yy=bottom
+                while yy <= y-4:
+                    c.circle(xx,yy,0.55,stroke=0,fill=1)
+                    yy += spacing
+                xx += spacing
+        elif is_open:
+            # Open field notes 2 and 3: horizontal-only rules, 0.3 in apart.
+            yy=y-4
+            while yy >= bottom:
+                rule(left,yy,right,Color(0,0,0,alpha=0.30),0.5)
+                yy -= 21.6
+        else:
+            c.setStrokeColor(PALE2); c.setLineWidth(0.45)
+            yy=int(y-4)
+            while yy >= int(bottom):
+                c.line(left,yy,right,yy)
+                yy -= 22
+            for xx in range(int(left),int(right),24): c.line(xx,bottom,xx,y-4)
         y=bottom
     else:
         # Handwriting rules with deliberate space and a narrow prompt rail.
         for i in range(18):
-            yy=y-i*29
+            yy=y-i*21.6
             if yy<90: break
             c.setFillColor(MID); c.setFont("FieldSans",7.0)
             if i % 4 == 0: c.drawString(x0,yy+7,["OBSERVE", "COMPARE", "DECIDE", "REPEAT"][((i//4)%4)])
@@ -593,14 +738,18 @@ def page_back_reference(index: int, title: str, strap: str, mode: str="table"):
         grid_table(x0,y,[width*0.22,width*0.25,width*0.25,width*0.28],["DATE / NO.","BEAN / SETUP","OBSERVATION","NEXT STEP"],rows,43,7.0,30)
     elif mode=="grid":
         c.setStrokeColor(PALE2); c.setLineWidth(0.5)
-        for yy in range(int(y-3),86,24): c.line(x0,yy,x1,yy)
-        for xx in range(int(x0),int(x1),28): c.line(xx,86,xx,y-3)
-        callout(x0,103,width,"Use this page for a question you want the next session to answer.","FIELD NOTE",48)
+        grid_bottom=145
+        yy=int(y-3)
+        while yy >= grid_bottom:
+            c.line(x0,yy,x1,yy)
+            yy -= 24
+        for xx in range(int(x0),int(x1),28): c.line(xx,grid_bottom,xx,y-3)
+        callout(x0,127,width,"Use this page for a question you want the next session to answer.","FIELD NOTE",48)
     elif mode=="index":
         rows=[]
         for i in range(1,15): rows.append([f"{i:02d}","","","□"])
         grid_table(x0,y,[width*0.08,width*0.40,width*0.44,width*0.08],["NO.","COFFEE / RECIPE","PAGE / RATIO","SAVED"],rows,38,7.1,28)
-        y=y-28-14*38-18
+        y=y-28-14*38-18 + 14
         callout(x0,y,width,"Write a short cue you will recognize when looking for this coffee later.","INDEX TIP",48)
     elif mode=="map":
         rows=[["","","","" ] for _ in range(8)]
@@ -612,7 +761,7 @@ def page_back_reference(index: int, title: str, strap: str, mode: str="table"):
         y-=220
         field_lines(x0,y,width,"My personal routine / machine-specific reminder",4,25)
     elif mode=="reference":
-        blocks=[("DOSE", "Dry coffee mass placed in the basket, recorded in grams."),("YIELD", "Liquid espresso collected in the cup, recorded by mass when possible."),("BREW RATIO", "Yield divided by dose. Example: 36 g out ÷ 18 g in = 2.0, often written 1:2."),("GRIND SETTING", "Your grinder's own scale. Numbers are not comparable between different grinders."),("SHOT TIME", "Time measured using your chosen start and stop convention. Keep that convention steady."),("BALANCE", "Your overall impression of how acidity, sweetness, bitterness, body, and finish fit together."),("BASELINE", "The recipe you use as a reference for a controlled comparison."),("ONE-VARIABLE TEST", "A comparison where one chosen factor changes and the other conditions are kept as consistent as practical.")]
+        blocks=[("DOSE", "Dry coffee mass placed in the basket, recorded in grams."),("YIELD", "Liquid espresso collected in the cup, recorded by mass when possible."),("BREW RATIO", "Yield divided by dose. Example: 36 g out ÷ 18 g in = 2.0, often written 1:2."),("GRIND SETTING", "Your grinder’s own scale. Numbers are not comparable between different grinders."),("SHOT TIME", "Time measured using your chosen start and stop convention. Keep that convention steady."),("BALANCE", "Your overall impression of how acidity, sweetness, bitterness, body, and finish fit together."),("BASELINE", "The recipe you use as a reference for a controlled comparison."),("ONE-VARIABLE TEST", "A comparison where one chosen factor changes and the other conditions are kept as consistent as practical.")]
         yy=y
         for h,t in blocks:
             label(h,x0,yy,7.1,CHARCOAL)
@@ -690,12 +839,12 @@ instructional_page("Optional controls & setup","OPTIONAL","Record a variable onl
     ("TEMPERATURE", "If the machine has a brew-temperature control, note its displayed setting and unit. If temperature is fixed or unknown, mark it as fixed/unknown and do not guess."),
     ("PRE-INFUSION / PRESSURE", "Note a setting only if your machine offers it and you understand what the control represents. Do not alter pressure or temperature just to fill in a field."),
     ("PREPARATION", "Distribution, tamp level, basket fill, and pre-infusion affect consistency. Use the same routine across compared shots where practical."),
-],[("SAFETY","Follow your machine's manual for steam, hot water, pressure, cleaning, and cooling. This workbook is not a substitute for equipment-specific safety instructions.")]) #12
+],[("SAFETY","Follow your machine’s manual for steam, hot water, pressure, cleaning, and cooling. This workbook is not a substitute for equipment-specific safety instructions.")]) #12
 page_taste_scale()                            #13
 instructional_page("A useful taste note","TASTING","Describe what you notice before deciding what to change.",[
     ("FIRST IMPRESSION", "Is the cup sharp, sweet, bitter, balanced, thin, heavy, clean, drying, or something else? Use the words that fit your palate."),
     ("BODY", "Body describes the weight or texture you perceive—light, silky, full, or heavy. It is a personal sensory note, not a measurement."),
-    ("BALANCE", "Balance is your overall impression of how the cup's brightness, sweetness, bitterness, body, and finish work together."),
+    ("BALANCE", "Balance is your overall impression of how the cup’s brightness, sweetness, bitterness, body, and finish work together."),
     ("REPEAT THE TASTE", "If the espresso is too hot to taste comfortably, wait. Keep your tasting moment and cup conditions reasonably similar across the session."),
 ]) #14
 instructional_page("Choose one next move","ADJUSTMENT","A note is most useful when it points to a specific next test.",[
@@ -741,9 +890,9 @@ instructional_page("A compact glossary","REFERENCE","Use these definitions to ma
     ("GRIND SETTING", "A position on one specific grinder. It is not a universal unit."),
     ("SHOT TIME", "Elapsed time using the convention you recorded. Keep the same convention to compare."),
     ("BASELINE", "The reference recipe you choose for one session."),
-    ("DIAL-IN", "A process of adjusting a recipe and preparation to suit a coffee and a person's preferences."),
+    ("DIAL-IN", "A process of adjusting a recipe and preparation to suit a coffee and a person’s preferences."),
 ]) #21
-instructional_page("Further reading & source notes","SOURCES","This book's guidance is deliberately practical and non-prescriptive.",[
+instructional_page("Further reading & source notes","SOURCES","This book’s guidance is deliberately practical and non-prescriptive.",[
     ("WORKFLOW REFERENCE", "Perfect Daily Grind, 'A Guide to Dialling In Espresso' (2020; updated online). A readable overview of dose, yield, ratio, sensory cues, and recipe adjustment: perfectdailygrind.com/2020/07/a-guide-to-dialling-in-espresso/"),
     ("TASTE-LED REFERENCE", "Clive Coffee, 'Dialing In Espresso By Taste' (2026). Useful for the principle that taste should be read alongside measurements: clivecoffee.com/blogs/learn/dialing-in-espresso-by-taste"),
     ("YOUR EQUIPMENT", "Read the current manuals for your machine, grinder, basket, and scale. Manufacturer controls and safety limits take priority over a generic workbook."),
