@@ -1,0 +1,65 @@
+{
+  "pdf_path": "books/espresso-dial-in-fieldbook/espresso-dial-in-fieldbook-full-wrap-cover.pdf",
+  "source_path": "books/espresso-dial-in-fieldbook/create_full_wrap_cover.py",
+  "preview_path": "books/espresso-dial-in-fieldbook/espresso-dial-in-fieldbook-cover-preview.png",
+  "pdf_pages": 1,
+  "raw_media_box_pt_exact": [
+    0,
+    0,
+    1260.808704,
+    810
+  ],
+  "raw_crop_box_pt_exact": [
+    0,
+    0,
+    1260.808704,
+    810
+  ],
+  "wrap_in_exact": [
+    17.511232,
+    11.25
+  ],
+  "interior_trim_in": [
+    8.5,
+    11.0
+  ],
+  "interior_pages": 116,
+  "paper_ink": "B&W / white paper",
+  "spine_in": 0.261232,
+  "color_space": "CMYK vector fills/strokes; no RGB paint operators or profiles",
+  "visible_fonts_embedded": [
+    [
+      "/AAAAAA+DejaVuSans-Bold",
+      true
+    ],
+    [
+      "/AAAAAA+DejaVuSerif-Bold",
+      true
+    ],
+    [
+      "/AAAAAA+DejaVuSans",
+      true
+    ]
+  ],
+  "min_visible_type_pt": 7.0,
+  "raster_images": 0,
+  "text_safe_area_issues": [],
+  "minimum_clearance_beyond_KDP_0.125in_safe_line_pt": 33.0,
+  "reserved_barcode_in": [
+    2.0,
+    1.2
+  ],
+  "barcode_overlap": false,
+  "preview_px": [
+    2522,
+    1620
+  ],
+  "preview_matches_pdf_render": true,
+  "background_bleed_verified": true,
+  "visual_review": "inspected final full-wrap preview; hierarchy, text wrapping, alignment, spine treatment, contrast, and barcode reserve look clean",
+  "unsupported_claims": "no invented endorsements, testimonials, awards, or credentials",
+  "remaining_not_performed": [
+    "KDP live template download/Previewer or upload",
+    "physical proof print check"
+  ]
+}
