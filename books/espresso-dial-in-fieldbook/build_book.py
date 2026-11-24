@@ -36,13 +36,20 @@ PALE = HexColor("#E6E6E6")
 PALE2 = HexColor("#D9D9D9")
 WHITE = white
 
-FONT_DIR = Path("/usr/share/fonts/truetype/dejavu")
-# ReportLab embeds the glyph subsets used by each page (with ToUnicode maps),
-# keeping the complete used glyph repertoire available without font substitution.
-pdfmetrics.registerFont(TTFont("FieldSans", str(FONT_DIR / "DejaVuSans.ttf")))
-pdfmetrics.registerFont(TTFont("FieldSans-Bold", str(FONT_DIR / "DejaVuSans-Bold.ttf")))
-pdfmetrics.registerFont(TTFont("FieldSerif", str(FONT_DIR / "DejaVuSerif.ttf")))
-pdfmetrics.registerFont(TTFont("FieldSerif-Bold", str(FONT_DIR / "DejaVuSerif-Bold.ttf")))
+# Typography: elegant serif for headings (Cardo), clean sans for body (Fira Sans).
+# Fonts sourced from google/fonts; DejaVu kept as fallback reference only.
+GOOGLE_FONT_DIR = Path("/tmp/google-fonts/ofl")
+DEJAVU_DIR = Path("/usr/share/fonts/truetype/dejavu")
+
+def _font_path(primary: Path, fallback: Path) -> str:
+    return str(primary if primary.exists() else fallback)
+
+pdfmetrics.registerFont(TTFont("FieldSans", _font_path(GOOGLE_FONT_DIR / "firasans/FiraSans-Regular.ttf", DEJAVU_DIR / "DejaVuSans.ttf")))
+pdfmetrics.registerFont(TTFont("FieldSans-Bold", _font_path(GOOGLE_FONT_DIR / "firasans/FiraSans-SemiBold.ttf", DEJAVU_DIR / "DejaVuSans-Bold.ttf")))
+pdfmetrics.registerFont(TTFont("FieldSans-Italic", _font_path(GOOGLE_FONT_DIR / "firasans/FiraSans-Italic.ttf", DEJAVU_DIR / "DejaVuSans.ttf")))
+pdfmetrics.registerFont(TTFont("FieldSerif", _font_path(GOOGLE_FONT_DIR / "cardo/Cardo-Regular.ttf", DEJAVU_DIR / "DejaVuSerif.ttf")))
+pdfmetrics.registerFont(TTFont("FieldSerif-Bold", _font_path(GOOGLE_FONT_DIR / "cardo/Cardo-Bold.ttf", DEJAVU_DIR / "DejaVuSerif-Bold.ttf")))
+pdfmetrics.registerFont(TTFont("FieldSerif-Italic", _font_path(GOOGLE_FONT_DIR / "cardo/Cardo-Italic.ttf", DEJAVU_DIR / "DejaVuSerif.ttf")))
 
 styles = {
     "body": ParagraphStyle("body", fontName="FieldSans", fontSize=11, leading=15.95, textColor=INK, spaceAfter=0),
@@ -150,10 +157,20 @@ def para(text: str, x: float, top: float, width: float, style: str = "body", max
     p.drawOn(c, x, top - h)
     return top - h
 
-def label(text: str, x: float, y: float, size: float = 7.1, color=MID, bold=True):
+def label(text: str, x: float, y: float, size: float = 8.5, color=MID, bold=True, tracking: float = 0.25):
+    # Labels: 8.5-9 pt tracked small-caps style, never below 8 pt.
+    size = max(8.5, min(size, 9.0)) if size <= 9.5 else size
     c.setFillColor(color)
     c.setFont("FieldSans-Bold" if bold else "FieldSans", size)
+    try:
+        c.setCharSpace(tracking)
+    except Exception:
+        pass
     c.drawString(x, y, text.upper())
+    try:
+        c.setCharSpace(0)
+    except Exception:
+        pass
 
 def rule(x1: float, y: float, x2: float, color=LINE, width: float = 0.5):
     c.setStrokeColor(color)
@@ -374,7 +391,7 @@ def page_copyright():
     c.drawRightString(x1, 53, "Printed on demand")
     end_page()
 
-def instructional_page(title: str, section: str, strap: str, blocks: list[tuple[str, str]], callouts: list[tuple[str,str]] | None = None, diagram: str | None = None):
+def instructional_page(title: str, section: str, strap: str, blocks: list[tuple[str, str]], callouts: list[tuple[str,str]] | None = None, diagram: str | None = None, bottom: str | None = None):
     x0, x1, width = start_page(section, title, strap)
     y = H - 100
     if diagram == "workflow":
@@ -425,6 +442,105 @@ def instructional_page(title: str, section: str, strap: str, blocks: list[tuple[
         for head, text in callouts:
             h = 66 if len(text) < 130 else 82
             y = callout(x0, y, width, text, head, h)
+    # Fix 7: fill empty lower third of pages 3-12 with a vector diagram or worked-example callout.
+    if bottom:
+        art_top = min(y - 14, H * 0.36)
+        art_bottom = 78
+        art_h = art_top - art_bottom
+        if art_h > 60:
+            if isinstance(bottom, tuple) and bottom[0] == "callout":
+                _, ct, ctext = bottom
+                ch = min(72, art_h)
+                callout(x0, art_top, width, ctext, ct, ch)
+            elif bottom == "ratio_equation":
+                box(x0, art_bottom, width, art_h, fill=PALE, stroke=PALE2, radius=6, line=0.5)
+                label("WORKED EXAMPLE · DOSE / YIELD / RATIO", x0 + 14, art_top - 18, 8.5, CHARCOAL)
+                # equation blocks
+                bx = x0 + 28
+                by = art_top - 78
+                c.setFillColor(WHITE); c.setStrokeColor(LINE); c.setLineWidth(0.8)
+                for i, (val, unit) in enumerate([("18.0 g", "DOSE IN"), ("36.0 g", "YIELD OUT")]):
+                    rx = bx + i * 150
+                    c.roundRect(rx, by, 110, 46, 6, fill=1, stroke=1)
+                    c.setFillColor(INK); c.setFont("FieldSerif-Bold", 18)
+                    c.drawCentredString(rx + 55, by + 24, val)
+                    c.setFillColor(MID); c.setFont("FieldSans-Bold", 8.5)
+                    c.drawCentredString(rx + 55, by + 8, unit)
+                # arrow
+                ax0, ax1, ay = bx + 112, bx + 148, by + 23
+                c.setStrokeColor(CHARCOAL); c.setLineWidth(1.2)
+                c.line(ax0, ay, ax1, ay); c.line(ax1, ay, ax1-5, ay+4); c.line(ax1, ay, ax1-5, ay-4)
+                # ratio result
+                rx = bx + 310
+                c.setFillColor(INK); c.roundRect(rx, by, 128, 46, 6, fill=1, stroke=0)
+                c.setFillColor(WHITE); c.setFont("FieldSerif-Bold", 18)
+                c.drawCentredString(rx + 64, by + 24, "1 : 2")
+                c.setFont("FieldSans-Bold", 8.5)
+                c.drawCentredString(rx + 64, by + 8, "BREW RATIO")
+                c.setFillColor(CHARCOAL); c.setFont("FieldSans", 9)
+                c.drawString(x0 + 14, art_bottom + 20, "36 g ÷ 18 g = 2.0  →  write as 1:2. Example only — not a required recipe.")
+            elif bottom == "grind_flow":
+                box(x0, art_bottom, width, art_h, fill=PALE, stroke=PALE2, radius=6, line=0.5)
+                label("GRIND VERSUS FLOW · VISUAL CUE", x0 + 14, art_top - 18, 8.5, CHARCOAL)
+                mid_y = art_bottom + art_h * 0.45
+                # left: coarser/faster
+                lx = x0 + 60
+                c.setFillColor(WHITE); c.setStrokeColor(LINE); c.setLineWidth(0.8)
+                c.roundRect(lx, mid_y - 28, 120, 56, 6, fill=1, stroke=1)
+                c.setFillColor(INK); c.setFont("FieldSans-Bold", 9)
+                c.drawCentredString(lx + 60, mid_y + 10, "COARSER GRIND")
+                c.setFillColor(MID); c.setFont("FieldSans", 8.5)
+                c.drawCentredString(lx + 60, mid_y - 6, "often faster flow")
+                # right: finer/slower
+                rx = x1 - 180
+                c.setFillColor(WHITE); c.setStrokeColor(LINE); c.setLineWidth(0.8)
+                c.roundRect(rx, mid_y - 28, 120, 56, 6, fill=1, stroke=1)
+                c.setFillColor(INK); c.setFont("FieldSans-Bold", 9)
+                c.drawCentredString(rx + 60, mid_y + 10, "FINER GRIND")
+                c.setFillColor(MID); c.setFont("FieldSans", 8.5)
+                c.drawCentredString(rx + 60, mid_y - 6, "often slower flow")
+                # center arrow both ways
+                ax = lx + 130
+                ax2 = rx - 10
+                ay = mid_y
+                c.setStrokeColor(CHARCOAL); c.setLineWidth(1.4)
+                c.line(ax, ay, ax2, ay)
+                c.line(ax, ay, ax+6, ay+4); c.line(ax, ay, ax+6, ay-4)
+                c.line(ax2, ay, ax2-6, ay+4); c.line(ax2, ay, ax2-6, ay-4)
+                c.setFillColor(CHARCOAL); c.setFont("FieldSans-Bold", 8.5)
+                c.drawCentredString((ax+ax2)/2, ay + 10, "SMALL CHANGES")
+                c.setFillColor(CHARCOAL); c.setFont("FieldSans", 9)
+                c.drawString(x0 + 14, art_bottom + 20, "Treat time as a clue. Record taste, yield, and flow before choosing the next test.")
+            elif bottom == "four_shot_flow":
+                box(x0, art_bottom, width, art_h, fill=PALE, stroke=PALE2, radius=6, line=0.5)
+                label("FOUR-SHOT FLOW · WORKED EXAMPLE", x0 + 14, art_top - 18, 8.5, CHARCOAL)
+                steps = [("SHOT 1", "Baseline\n18 g in · 36 g out"), ("SHOT 2", "Test A\none change"), ("SHOT 3", "Test B\nreturn + test"), ("SHOT 4", "Confirm\nrepeat best")]
+                bw = (width - 56 - 3 * 14) / 4
+                by = art_bottom + 28
+                bh = art_h - 58
+                for i, (hd, bd) in enumerate(steps):
+                    bx = x0 + 18 + i * (bw + 14)
+                    c.setFillColor(WHITE if i < 3 else INK)
+                    c.setStrokeColor(LINE); c.setLineWidth(0.7)
+                    c.roundRect(bx, by, bw, bh, 6, fill=1, stroke=1 if i < 3 else 0)
+                    c.setFillColor(INK if i < 3 else WHITE)
+                    c.setFont("FieldSans-Bold", 8.5)
+                    c.drawCentredString(bx + bw/2, by + bh - 18, hd)
+                    c.setFont("FieldSans", 8.5)
+                    lines = bd.split("\n")
+                    for li, ln in enumerate(lines):
+                        c.setFillColor(CHARCOAL if i < 3 else Color(0.9,0.9,0.9))
+                        c.drawCentredString(bx + bw/2, by + bh - 36 - li*13, ln)
+                    if i < 3:
+                        ax = bx + bw + 2
+                        ay = by + bh/2
+                        c.setStrokeColor(CHARCOAL); c.setLineWidth(1)
+                        c.line(ax, ay, ax + 10, ay)
+                        c.line(ax+10, ay, ax+6, ay+3); c.line(ax+10, ay, ax+6, ay-3)
+            else:
+                # Generic worked-example callout
+                if isinstance(bottom, str):
+                    callout(x0, art_top, width, bottom, "WORKED EXAMPLE", min(72, art_h))
     if y < 57:
         raise ValueError(f"Page content overflow on {page_no} ({title}): y={y}")
     end_page()
@@ -451,7 +567,9 @@ def page_setup():
         col=i%2; row=i//2
         checkbox(x0+col*(colw+20), y-row*34, t, 7.5)
     y-=116
-    field_lines(x0,y,width,"My usual workflow / what I will keep constant",3,24)
+    y = field_lines(x0,y,width,"My usual workflow / what I will keep constant",3,24)
+    # Fix 7: fill lower third of page 6 with a worked-example callout.
+    callout(x0, min(y - 10, 175), width, "Example: ‘Dose 18.0 g, WDT, level tamp, start timer at pump-on, stop at 36 g yield.’ Keeping this steady makes Shot 2 changes easier to trust.", "WORKED EXAMPLE", 66)
     end_page()
 
 def page_taste_scale():
@@ -532,11 +650,12 @@ def page_shot_card(x: float, top: float, w: float, h: float, shot_no: int, role:
         field(ix, row_top, fw, left_name, h=36, size=8.5)
         if right_name:
             field(ix + fw + gap, row_top, fw, right_name, h=36, size=8.5)
-        else:
-            field(ix + fw + gap, row_top, fw, "", h=36, size=8.5)
+        # Fix 2: remove stray unlabeled line next to TEMP field (no empty field drawn).
         row_top -= 39
 
-    row_top -= 2
+    # Fix 1: add ~0.18 in vertical breathing room between major sections.
+    gap_section = 0.18 * PT  # ~13 pt
+    row_top -= 2 + gap_section
     label("TASTE / TEXTURE", ix, row_top, 8.5, MID)
     label("TICK WHAT YOU NOTICE", ix, row_top - 12, 8.5, MID)
     options = ["sharp / sour", "sweet", "bitter / dry", "balanced", "thin / hollow"]
@@ -544,19 +663,19 @@ def page_shot_card(x: float, top: float, w: float, h: float, shot_no: int, role:
     for j, text in enumerate(options):
         col, row = j % 2, j // 2
         checkbox(ix + col * colw, row_top - 31 - row * 18, text, 8.5)
-    row_top -= 80
+    row_top -= 80 + gap_section
 
     rating_row(ix, row_top, iw, "BODY")
     rating_row(ix, row_top - 23, iw, "SWEETNESS")
     rating_row(ix, row_top - 46, iw, "BALANCE")
-    row_top -= 65
+    row_top -= 65 + gap_section
 
     label("TASTE NOTES / WHAT CHANGED", ix, row_top, 8.5, CHARCOAL)
     label("IN THE CUP", ix, row_top - 12, 8.5, CHARCOAL)
     row_top -= 11
     for i in range(4):
         rule(ix, row_top - 18 - i * 20.16, ix + iw, LINE, 0.5)
-    next_label_y = row_top - 112
+    next_label_y = row_top - 112 - gap_section
     label("ONE NEXT ADJUSTMENT", ix, next_label_y, 8.5, CHARCOAL)
     label("(OR 'REPEAT UNCHANGED')", ix, next_label_y - 12, 8.5, CHARCOAL)
     for i in range(2):
@@ -564,7 +683,8 @@ def page_shot_card(x: float, top: float, w: float, h: float, shot_no: int, role:
     note = "*Optional; note if fixed or unavailable on your machine."
     c.setFillColor(MID)
     c.setFont("FieldSans", 8.5)
-    c.drawString(ix, bottom + 12, note)
+    # Fix 3: keep >= 0.15 in clearance between footnote and card edge.
+    c.drawString(ix, bottom + 0.16 * PT, note)
 
 def page_shots(session: int, pair: tuple[int,int], title_suffix: str):
     x0,x1,width=start_page(f"SESSION {session:02d} · SHOTS", f"Session {session:02d}  /  {title_suffix}", "Write the actual result—even when it misses the target.")
@@ -722,12 +842,17 @@ def page_note(index: int, title: str, prompt: str, kind: str="lines"):
         y=bottom
     else:
         # Handwriting rules with deliberate space and a narrow prompt rail.
+        # Fix 6: align labels with ruled lines and remove duplicate "OBSERVE".
+        prompts = ["OBSERVE", "COMPARE", "DECIDE", "REPEAT"]
         for i in range(18):
-            yy=y-i*21.6
-            if yy<90: break
-            c.setFillColor(MID); c.setFont("FieldSans",7.0)
-            if i % 4 == 0: c.drawString(x0,yy+7,["OBSERVE", "COMPARE", "DECIDE", "REPEAT"][((i//4)%4)])
-            rule(x0+66,yy,x1,LINE,0.65)
+            yy = y - i * 21.6
+            if yy < 90:
+                break
+            c.setFillColor(MID)
+            c.setFont("FieldSans", 8.5)
+            if i % 4 == 0 and (i // 4) < len(prompts):
+                c.drawString(x0, yy + 1, prompts[i // 4])
+            rule(x0 + 66, yy, x1, LINE, 0.65)
     end_page()
 
 def page_back_reference(index: int, title: str, strap: str, mode: str="table"):
@@ -748,9 +873,9 @@ def page_back_reference(index: int, title: str, strap: str, mode: str="table"):
     elif mode=="index":
         rows=[]
         for i in range(1,15): rows.append([f"{i:02d}","","","□"])
-        grid_table(x0,y,[width*0.08,width*0.40,width*0.44,width*0.08],["NO.","COFFEE / RECIPE","PAGE / RATIO","SAVED"],rows,38,7.1,28)
-        y=y-28-14*38-18 + 14
-        callout(x0,y,width,"Write a short cue you will recognize when looking for this coffee later.","INDEX TIP",48)
+        table_bottom = grid_table(x0,y,[width*0.08,width*0.40,width*0.44,width*0.08],["NO.","COFFEE / RECIPE","PAGE / RATIO","SAVED"],rows,38,7.1,28)
+        # Fix 5: leave 0.25 in between the last table row and the tip box.
+        callout(x0, table_bottom - 0.25 * PT, width, "Write a short cue you will recognize when looking for this coffee later.", "INDEX TIP", 48)
     elif mode=="map":
         rows=[["","","","" ] for _ in range(8)]
         grid_table(x0,y,[width*0.23,width*0.22,width*0.22,width*0.33],["GRINDER / SCALE","COFFEE / BASKET","MY SETTING","PLAIN-LANGUAGE NOTE"],rows,46,7.0,30)
@@ -782,6 +907,59 @@ def page_back_reference(index: int, title: str, strap: str, mode: str="table"):
             field(x0+width*0.66,yy-25,width*0.17-14,"Time",34)
             field(x0+width*0.84,yy-25,width*0.16-14,"Taste",34)
             field_lines(x0+12,yy-73,width-24,"One note / one next change",1,20)
+    elif mode=="troubleshoot":
+        # Fix 4: page 113 replacement - troubleshooting chart.
+        headers = ["SYMPTOM", "LIKELY CAUSE", "ONE CHANGE TO TRY"]
+        rows = [
+            ["Runs fast / gushes", "Grind too coarse, low dose, or puck prep uneven.", "Grind slightly finer; keep dose and yield the same."],
+            ["Runs slow / drips", "Grind too fine, dose high for basket, or puck over-packed.", "Grind slightly coarser; verify dose fits basket."],
+            ["Sour / sharp / thin", "Under-extracted flow or short yield for this coffee.", "Increase yield slightly, or grind a little finer."],
+            ["Bitter / dry / harsh", "Over-extracted flow, long contact, or very fine grind.", "Shorten yield slightly, or grind a little coarser."],
+            ["Weak / watery", "Ratio too long or dose too low for the basket.", "Reduce yield, or confirm dose and basket size."],
+            ["Channeling / spurting", "Uneven distribution, tamp, or puck damage.", "Reset prep routine; distribute evenly before tamping."],
+            ["Tastes good, then fades", "Coffee aging, temperature drift, or inconsistent prep.", "Note roast/open date; repeat baseline before changing recipe."],
+            ["Inconsistent shot to shot", "Grinder retention, warm-up, or timer convention changing.", "Purge grinder, warm up fully, and keep timing rule steady."],
+        ]
+        col_w = [width * 0.28, width * 0.36, width * 0.36]
+        header_h = 28
+        row_h = 54
+        # Header band
+        c.setFillColor(PALE)
+        c.roundRect(x0, y - header_h, width, header_h, 4, fill=1, stroke=0)
+        cx = x0
+        for wcol, htxt in zip(col_w, headers):
+            c.setFillColor(CHARCOAL)
+            c.setFont("FieldSans-Bold", 8.5)
+            c.drawString(cx + 8, y - 17, htxt)
+            cx += wcol
+        # Rows
+        y_top = y - header_h
+        cell_style = ParagraphStyle("tscell", fontName="FieldSans", fontSize=8.5, leading=11.5, textColor=INK)
+        for row in rows:
+            y_bottom = y_top - row_h
+            c.setStrokeColor(LINE)
+            c.setLineWidth(0.5)
+            c.line(x0, y_bottom, x0 + width, y_bottom)
+            cx = x0
+            for wcol, cell in zip(col_w, row):
+                p = Paragraph(esc(cell), cell_style)
+                _, ph = p.wrap(wcol - 12, row_h - 10)
+                p.drawOn(c, cx + 6, y_top - 8 - ph)
+                cx += wcol
+            # vertical dividers
+            vx = x0
+            c.setStrokeColor(LINE)
+            c.setLineWidth(0.5)
+            for wcol in col_w[:-1]:
+                vx += wcol
+                c.line(vx, y_bottom, vx, y_top)
+            y_top = y_bottom
+        # outer border line at top/bottom already handled partially; add bottom cap
+        c.setStrokeColor(LINE)
+        c.setLineWidth(0.5)
+        c.line(x0, y - header_h - len(rows) * row_h, x0 + width, y - header_h - len(rows) * row_h)
+        y_after = y_top - 18
+        callout(x0, y_after, width, "Use this chart to pick one test at a time. If the cause is unclear, repeat the baseline before changing multiple variables.", "HOW TO USE", 52)
     end_page()
 
 # ---- Build the 116-page interior ----
@@ -791,13 +969,13 @@ instructional_page("Welcome to your fieldbook","WELCOME","A small system for mak
     ("THE POINT", "Espresso changes from bag to bag, and a recipe that works once can be difficult to remember. This book gives you a repeatable place to record what you used, what you tasted, and what you want to try next."),
     ("WHAT THIS BOOK IS", "A practical comparison workbook—not a machine manual, a recipe authority, or a promise that one ratio fits every coffee. Use the pages to learn your own setup and preserve the results you like."),
     ("HOW TO GET VALUE", "Write the baseline before pulling. Keep ordinary preparation steady. Make one intentional change at a time. Taste, record, and save the recipes you can reproduce."),
-],[("START SIMPLE","You do not need every field. If your machine does not expose a variable, leave it fixed and use the space for a note.")]) # 3
+],[("START SIMPLE","You do not need every field. If your machine does not expose a variable, leave it fixed and use the space for a note.")],bottom="four_shot_flow") # 3
 instructional_page("The workflow at a glance","WORKFLOW","Each page in the book has a job in the same practical loop.",[
     ("BUY BEANS", "Note the coffee, roaster, origin, process, roast date, and opened date when known."),
     ("SET A BASELINE", "Choose a dose and target yield that suit your basket and preference. Record the grinder, timer convention, and preparation routine."),
     ("TEST FOUR SHOTS", "Shot 1 is the baseline. Shots 2 and 3 test a single deliberate change. Shot 4 confirms or refines the best direction."),
     ("COMPARE & SAVE", "Compare taste and measurements together. Keep the favorite recipe, not just the fastest or prettiest number."),
-],diagram="workflow") #4
+],diagram="workflow",bottom=("callout","WORKED EXAMPLE","Example flow: open a new bag, log the roast date, pull Shot 1 at 18 g in / 36 g out, then change only grind for Shot 2. Save the recipe you can repeat.")) #4
 instructional_page("A quick start in six moves","QUICK START","You can begin with the next bag you open.",[
     ("01 · PREP", "Find the bean profile and setup page for the next numbered session. Weigh and prepare the coffee as consistently as you can."),
     ("02 · BASELINE", "Choose a starting recipe. A 1:2 example is 18 g in and 36 g out; use your basket and taste as the guide, not this example as a rule."),
@@ -805,41 +983,41 @@ instructional_page("A quick start in six moves","QUICK START","You can begin wit
     ("04 · TEST", "Change one chosen variable for Shot 2. For Shot 3, return to the baseline and test a different idea if useful. Keep other conditions steady."),
     ("05 · CONFIRM", "Use Shot 4 to repeat or refine the direction you prefer. A repeat helps reveal whether the result was consistent."),
     ("06 · KEEP", "Choose your favorite, write why, and transfer it to a saved recipe page. If the comparison was unclear, record the next question instead."),
-]) #5
+],bottom=("callout","WORKED EXAMPLE","Shot 1 baseline: 18 g in, 36 g out, 29 s. Shot 2: grind one step finer, same dose/yield target. Taste, compare, then decide whether to confirm.")) #5
 page_setup()                                   #6
 instructional_page("Plan the four-shot experiment","SESSION METHOD","A compact sequence that compares options without pretending taste is a lab result.",[
     ("SHOT 1 · BASELINE", "Your reference recipe for this session. Record everything you can measure and the preparation you will keep steady."),
     ("SHOT 2 · TEST A", "Choose one purposeful change from the baseline—often a small grinder adjustment, or a deliberate yield change. Mark what changed."),
     ("SHOT 3 · TEST B", "Return to the baseline conditions, then test one different question. If you build from Shot 2 instead, write the comparison shot number so the sequence stays clear."),
     ("SHOT 4 · CONFIRM", "Repeat the leading candidate unchanged, or make one small final refinement. Mark which recipe it is confirming."),
-],[("FAIRNESS CHECK","Changing dose, grind, yield, temperature, and puck preparation together makes it hard to learn which change mattered. If several things changed, log them honestly and treat the result as exploratory.")],diagram="four_shots") #7
+],[("FAIRNESS CHECK","Changing dose, grind, yield, temperature, and puck preparation together makes it hard to learn which change mattered. If several things changed, log them honestly and treat the result as exploratory.")],diagram="four_shots",bottom=("callout","WORKED EXAMPLE","If Shot 1 tastes sharp and thin, keep dose and yield steady and test one slightly finer grind in Shot 2. Return to baseline before a different Shot 3 question.")) #7
 instructional_page("Keep the comparison fair","METHOD","Small repeatable habits make your notes easier to interpret.",[
     ("HOLD STEADY", "Use the same machine, basket, dose target, puck preparation, cup position, and timer convention when they are not the question being tested."),
     ("CHANGE ONE MAIN THING", "Choose a single primary test. For example: keep dose and target yield steady while changing grind; or keep grind and dose steady while stopping at a different yield."),
     ("NOTE THE EXCEPTIONS", "If the grinder retains grounds, the machine temperature drifts, the shot channels, or your preparation changes, note it. A messy experiment can still teach you what to control next time."),
-],[("NOT A BLIND TASTE TEST","You already know the settings you changed. Use the book to reduce memory bias, not to claim scientific certainty.")]) #8
+],[("NOT A BLIND TASTE TEST","You already know the settings you changed. Use the book to reduce memory bias, not to claim scientific certainty.")],bottom=("callout","WORKED EXAMPLE","Hold steady: same basket, 18 g dose, 36 g target yield, same timer rule. Change one thing: grind setting. Note any puck-prep exception you see.")) #8
 instructional_page("Choose a starting recipe","BASELINE","Start with a recipe you can measure and repeat.",[
     ("DOSE", "Use a dose appropriate to your basket and machine instructions. Record dry coffee mass in grams, before brewing."),
     ("YIELD", "Choose a target output by weight when possible. Record the actual collected espresso, not only the intended target."),
     ("TIME", "Pick one timer convention and write it on the profile page. Pump-on to stop is one practical convention; other workflows may use a different start point."),
     ("GRIND", "Write the grinder name and its scale. A dial number only makes sense alongside that grinder."),
-],[("ILLUSTRATIVE BASELINE","18 g dose → 36 g yield is a 1:2 brew ratio. It is an example for showing the math, not a required recipe or a universal target.")]) #9
+],[("ILLUSTRATIVE BASELINE","18 g dose → 36 g yield is a 1:2 brew ratio. It is an example for showing the math, not a required recipe or a universal target.")],bottom=("callout","WORKED EXAMPLE","Baseline: 18.0 g dose, 36.0 g yield, 30 s. If you stop at 38 g by accident, write 38 g — the actual yield matters more than the target.")) #9
 instructional_page("Dose, yield & ratio","MEASURE","A few measurements give your tasting notes useful context.",[
     ("DOSE IN", "The mass of dry ground coffee placed in the basket. Keep the dose consistent while testing another variable unless dose itself is the experiment."),
     ("YIELD OUT", "The mass of espresso in the cup. A scale under the cup helps you stop at a chosen output and note the actual result."),
     ("BREW RATIO", "Divide yield by dose. Example: 36 g out ÷ 18 g in = 2.0, written as 1:2. This simple ratio does not measure taste or extraction by itself."),
     ("ACTUAL, NOT TARGET", "Write the measured output even if it overshoots. The difference between target and actual is part of the session record."),
-],[("WRITE UNITS","Use grams for dose and yield. Write seconds for time. A consistent unit makes later comparisons much easier.")]) #10
+],[("WRITE UNITS","Use grams for dose and yield. Write seconds for time. A consistent unit makes later comparisons much easier.")],bottom="ratio_equation") #10
 instructional_page("Grind setting & shot time","OBSERVE","Treat time as a clue about flow—not a score to chase by itself.",[
     ("GRIND", "A finer grind often slows flow and a coarser grind often speeds it up, but grinders and coffees differ. Move in small steps your grinder can repeat."),
     ("TIME", "Record your chosen start-to-stop time consistently. Two shots timed from different points are not directly comparable."),
     ("READ BOTH", "A very fast or slow shot can help you ask a question, but time alone cannot tell you whether you like the cup. Record taste, actual yield, and any uneven flow too."),
-],[("KEEP THE SCALE PERSONAL","Some grinders use clicks, numbers, steps, or stepless adjustment. Record the native setting and a useful description—never convert settings between brands as if they were equivalent.")]) #11
+],[("KEEP THE SCALE PERSONAL","Some grinders use clicks, numbers, steps, or stepless adjustment. Record the native setting and a useful description—never convert settings between brands as if they were equivalent.")],bottom="grind_flow") #11
 instructional_page("Optional controls & setup","OPTIONAL","Record a variable only when your machine exposes it and you can hold it steady.",[
     ("TEMPERATURE", "If the machine has a brew-temperature control, note its displayed setting and unit. If temperature is fixed or unknown, mark it as fixed/unknown and do not guess."),
     ("PRE-INFUSION / PRESSURE", "Note a setting only if your machine offers it and you understand what the control represents. Do not alter pressure or temperature just to fill in a field."),
     ("PREPARATION", "Distribution, tamp level, basket fill, and pre-infusion affect consistency. Use the same routine across compared shots where practical."),
-],[("SAFETY","Follow your machine’s manual for steam, hot water, pressure, cleaning, and cooling. This workbook is not a substitute for equipment-specific safety instructions.")]) #12
+],[("SAFETY","Follow your machine’s manual for steam, hot water, pressure, cleaning, and cooling. This workbook is not a substitute for equipment-specific safety instructions.")],bottom=("callout","WORKED EXAMPLE","If your machine shows 93°C and you hold it steady, record “93°C, fixed.” If temperature is unknown, write “fixed/unknown” rather than guessing a number.")) #12
 page_taste_scale()                            #13
 instructional_page("A useful taste note","TASTING","Describe what you notice before deciding what to change.",[
     ("FIRST IMPRESSION", "Is the cup sharp, sweet, bitter, balanced, thin, heavy, clean, drying, or something else? Use the words that fit your palate."),
@@ -934,7 +1112,7 @@ back=[
     ("Equipment care notes","Record cleaning or service that could affect later comparisons. Follow your manual.","table"),
     ("Beans to try","Note roaster, coffee, purchase/open date, and why it caught your interest.","table"),
     ("Coffee freshness observations","Track dates and taste changes on your own coffees; no universal rest window is assumed.","table"),
-    ("Four-shot reset card","A short reminder of baseline, tests, confirmation, and one-change discipline.","checklist"),
+    ("Troubleshooting chart","Symptom, likely cause, and one change to try before you change anything else.","troubleshoot"),
     ("Sensory word bank","A flexible list of words to help make your notes more specific.","taste"),
     ("Personal dial-in reference","Use these boxes for the settings and words that matter on your setup.","shot"),
     ("One more useful note","Close with an open page for an observation worth keeping.","grid"),
