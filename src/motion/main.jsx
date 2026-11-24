@@ -1,94 +1,12 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Canvas, useFrame } from '@react-three/fiber';
+import ArtifactScene from './ArtifactScene.jsx';
+import { signals } from './signals.js';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './motion.css';
 
 gsap.registerPlugin(ScrollTrigger);
-
-const signals = [
-  { title: 'Cozy mystery', genre: 'FICTION / MYSTERY', score: '92', lift: '+38%', readers: '18.4k', tint: '#f6a86b', copy: 'Small-town secrets. Big reader appetite.' },
-  { title: 'Botanical field guide', genre: 'NONFICTION / NATURE', score: '87', lift: '+24%', readers: '12.8k', tint: '#a3cfac', copy: 'For the curious, quietly outdoors.' },
-  { title: 'Mythic romantasy', genre: 'FICTION / FANTASY', score: '84', lift: '+31%', readers: '26.2k', tint: '#b7a8f9', copy: 'A new mythology is taking shape.' }
-];
-
-function Starfield() {
-  const points = useMemo(() => {
-    const data = new Float32Array(420 * 3);
-    for (let i = 0; i < 420; i++) {
-      data[i * 3] = (Math.random() - 0.5) * 16;
-      data[i * 3 + 1] = (Math.random() - 0.5) * 13;
-      data[i * 3 + 2] = -2 - Math.random() * 13;
-    }
-    return data;
-  }, []);
-  const ref = useRef();
-  useFrame((_, delta) => { if (ref.current) ref.current.rotation.y += delta * 0.006; });
-  return <points ref={ref}><bufferGeometry><bufferAttribute attach="attributes-position" args={[points, 3]} /></bufferGeometry><pointsMaterial color="#bec6dd" size={0.022} transparent opacity={0.66} sizeAttenuation /></points>;
-}
-
-function OrbitingBook({ position, rotation, color, scale = 1, delay = 0 }) {
-  const book = useRef();
-  useFrame(({ clock }) => {
-    if (!book.current) return;
-    const time = clock.elapsedTime + delay;
-    book.current.position.y = position[1] + Math.sin(time * 0.8) * 0.11;
-    book.current.rotation.y = rotation[1] + Math.sin(time * 0.32) * 0.12;
-  });
-  return <group ref={book} position={position} rotation={rotation} scale={scale}>
-      <mesh castShadow><boxGeometry args={[0.72, 1.02, 0.12]} /><meshStandardMaterial color="#13151d" roughness={0.4} metalness={0.36} /></mesh>
-      <mesh position={[0, 0, 0.066]}><planeGeometry args={[0.57, 0.84]} /><meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.24} roughness={0.53} /></mesh>
-      <mesh position={[0, 0, -0.067]}><boxGeometry args={[0.045, 0.99, 0.012]} /><meshStandardMaterial color="#e5d7c3" roughness={0.85} /></mesh>
-      <mesh position={[0, -0.2, 0.075]}><boxGeometry args={[0.3, 0.012, 0.004]} /><meshBasicMaterial color="#fff0de" transparent opacity={0.72} /></mesh>
-      <mesh position={[0, -0.26, 0.075]}><boxGeometry args={[0.2, 0.008, 0.004]} /><meshBasicMaterial color="#fff0de" transparent opacity={0.42} /></mesh>
-    </group>;
-}
-
-function Core({ tint, target }) {
-  const group = useRef();
-  const inner = useRef();
-  const rings = useRef();
-  useFrame(({ pointer, clock }, delta) => {
-    if (!group.current) return;
-    const ease = 1 - Math.exp(-delta * 2.2);
-    group.current.rotation.y += (pointer.x * 0.15 - group.current.rotation.y) * ease;
-    group.current.rotation.x += (-pointer.y * 0.12 - group.current.rotation.x) * ease;
-    group.current.position.y = Math.sin(clock.elapsedTime * 0.75) * 0.1;
-    if (inner.current) inner.current.rotation.y += delta * 0.13;
-    if (rings.current) rings.current.rotation.z += delta * 0.055;
-  });
-  return <group ref={group}>
-      <mesh castShadow>
-        <icosahedronGeometry args={[1.18, 5]} />
-        <meshPhysicalMaterial color={tint} roughness={0.24} metalness={0.28} clearcoat={0.86} clearcoatRoughness={0.16} emissive={tint} emissiveIntensity={0.12} />
-      </mesh>
-      <mesh ref={inner} scale={0.8}>
-        <icosahedronGeometry args={[1.15, 2]} />
-        <meshBasicMaterial color="#fff0d7" wireframe transparent opacity={0.15} />
-      </mesh>
-    <group ref={rings}>
-      <mesh rotation={[0.38, 0.26, -0.48]}><torusGeometry args={[1.63, 0.012, 8, 180]} /><meshBasicMaterial color={tint} transparent opacity={0.6} /></mesh>
-      <mesh rotation={[1.16, -0.45, 0.22]}><torusGeometry args={[1.88, 0.006, 6, 160]} /><meshBasicMaterial color="#ded3c1" transparent opacity={0.34} /></mesh>
-    </group>
-    <mesh position={[-0.9, 0.9, 0.35]}><octahedronGeometry args={[0.15, 0]} /><meshStandardMaterial color="#f8e4c6" emissive="#f4bc87" emissiveIntensity={0.3} metalness={0.6} roughness={0.18} /></mesh>
-    <mesh position={[1.22, -0.58, -0.12]}><dodecahedronGeometry args={[0.105, 0]} /><meshStandardMaterial color={tint} emissive={tint} emissiveIntensity={0.42} metalness={0.42} roughness={0.24} /></mesh>
-  </group>;
-}
-
-function ArtifactScene({ signal }) {
-  return <Canvas dpr={[1, 1.6]} camera={{ position: [0, 0, 5.5], fov: 37 }} gl={{ alpha: true, antialias: true, powerPreference: 'low-power' }}>
-    <ambientLight intensity={0.8} />
-    <directionalLight position={[3, 4, 5]} intensity={2.5} color="#fff0d9" />
-    <pointLight position={[-3, 0, 3]} intensity={30} distance={7} color={signal.tint} />
-    <pointLight position={[2, -2, -1]} intensity={12} distance={6} color="#a9c5ff" />
-    <Core tint={signal.tint} />
-    <OrbitingBook position={[-1.95, 0.83, -0.55]} rotation={[0.2, -0.45, -0.3]} color="#b6614e" scale={0.84} delay={1} />
-    <OrbitingBook position={[1.95, 0.46, -0.48]} rotation={[-0.12, 0.42, 0.24]} color="#537c68" scale={0.72} delay={2} />
-    <OrbitingBook position={[1.25, -1.35, 0.35]} rotation={[0.1, -0.2, -0.45]} color="#7867a7" scale={0.61} delay={3} />
-    <Starfield />
-  </Canvas>;
-}
 
 function App() {
   const [active, setActive] = useState(0);
@@ -96,8 +14,12 @@ function App() {
   const [scanning, setScanning] = useState(false);
   const signal = signals[active];
   const heroRef = useRef(null);
+  const scanTimeout = useRef(0);
 
   useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return () => window.clearTimeout(scanTimeout.current);
+    }
     const ctx = gsap.context(() => {
       gsap.from('.topbar', { y: -18, opacity: 0, duration: 0.7, ease: 'power3.out' });
       gsap.from('.hero-copy > *', { y: 28, opacity: 0, duration: 0.9, stagger: 0.085, delay: 0.16, ease: 'power3.out' });
@@ -106,18 +28,30 @@ function App() {
       gsap.to('.orbit-label--one', { y: -9, duration: 2.8, repeat: -1, yoyo: true, ease: 'sine.inOut' });
       gsap.to('.orbit-label--two', { y: 8, duration: 3.3, repeat: -1, yoyo: true, ease: 'sine.inOut' });
     }, heroRef);
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      window.clearTimeout(scanTimeout.current);
+    };
   }, []);
 
   const selectSignal = (index) => {
-    setActive(index);
-    gsap.fromTo('.signal-readout', { y: 8, opacity: 0.35 }, { y: 0, opacity: 1, duration: 0.45, ease: 'power2.out' });
+    if (index === active) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setActive(index);
+      return;
+    }
+    const enter = () => {
+      setActive(index);
+      gsap.fromTo('.signal-readout', { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: 0.48, ease: 'power3.out', overwrite: 'auto' });
+    };
+    gsap.to('.signal-readout', { y: -8, opacity: 0, duration: 0.2, ease: 'power2.in', overwrite: 'auto', onComplete: enter });
   };
 
   const cycleSignal = () => {
     setScanning(true);
-    setActive((current) => (current + 1) % signals.length);
-    window.setTimeout(() => setScanning(false), 850);
+    selectSignal((active + 1) % signals.length);
+    window.clearTimeout(scanTimeout.current);
+    scanTimeout.current = window.setTimeout(() => setScanning(false), 850);
   };
 
   return <main ref={heroRef} style={{ '--signal': signal.tint }}>
@@ -146,7 +80,7 @@ function App() {
       <div className="hero-stage" aria-label="An interactive 3D sculpture of reader signals and floating books">
         <div className="stage-grid" />
         <div className="stage-glow" />
-        <div className="hero-canvas"><ArtifactScene signal={signal} /></div>
+        <div className="hero-canvas"><ArtifactScene activeIndex={active} /></div>
         <div className="orbit-label orbit-label--one"><span className="label-orbit-dot" /> READER GRAVITY <b>+12.8%</b></div>
         <div className="orbit-label orbit-label--two">VOL. 01 <span>·</span> {signal.genre.split(' / ')[1]}</div>
         <div className="signal-readout">

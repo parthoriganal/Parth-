@@ -19,7 +19,7 @@ export default defineConfig({
       input: { main: resolve(process.cwd(), 'index.html'), motion: resolve(process.cwd(), 'motion.html') },
       output: {
         manualChunks(id) {
-          if (id.includes('/node_modules/three/') || id.includes('/node_modules/@react-three/fiber/')) return 'graphics-vendor';
+          if (id.includes('/node_modules/three/')) return 'graphics-vendor';
           if (id.includes('/node_modules/react-dom/') || id.includes('/node_modules/react/') || id.includes('/node_modules/scheduler/')) return 'react-vendor';
           if (id.includes('/node_modules/gsap/')) return 'motion-vendor';
         }
