@@ -8,6 +8,7 @@ from __future__ import annotations
 import html
 import math
 import os
+import re
 from pathlib import Path
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
@@ -31,9 +32,10 @@ AUTHOR = "Parth Gosara"
 INK = HexColor("#202020")
 CHARCOAL = HexColor("#3D3D3D")
 MID = HexColor("#696969")
-LINE = HexColor("#A8A8A8")
-PALE = HexColor("#E6E6E6")
-PALE2 = HexColor("#D9D9D9")
+# Fix 6: writing lines, grids, table borders darker (~40% gray, 0.5 pt).
+LINE = HexColor("#999999")  # ~40% K
+PALE = HexColor("#E6E6E6")  # 10% K callout fill
+PALE2 = HexColor("#BFBFBF")  # slightly darker support stroke
 WHITE = white
 
 # Typography: elegant serif for headings (Cardo), clean sans for body (Fira Sans).
@@ -113,11 +115,25 @@ def start_page(section: str = "FIELD GUIDE", page_title: str | None = None, stra
             else:
                 c.drawString(x0, 53, "ESPRESSO DIAL-IN FIELDBOOK")
                 c.drawRightString(x1, 53, f"{page_no:03d}")
+    # Fix 9: session edge marker on each session page (top outside corner).
+    if section.upper().startswith("SESSION "):
+        m = re.search(r"SESSION\s+(\d+)", section.upper())
+        if m:
+            sess = m.group(1)
+            c.saveState()
+            c.setFillColor(MID)
+            c.setFont("FieldSans-Bold", 8.5)
+            marker = f"SESSION {sess}"
+            if page_no % 2:
+                c.drawRightString(W - 10, H - 14, marker)
+            else:
+                c.drawString(10, H - 14, marker)
+            c.restoreState()
     if page_title:
         y = H - (70 if page_no > 2 else 66)
         c.setFillColor(INK)
         title_size = 28
-        title_available = width - (46 if page_no in {3, 23, 79, 93, 105} else 0)
+        title_available = width - (46 if page_no in {4, 25, 81, 95, 105} else 0)
         title_width = pdfmetrics.stringWidth(page_title, "FieldSerif-Bold", title_size)
         horiz_scale = min(100, (title_available / title_width) * 100) if title_width else 100
         if horiz_scale < 90:
@@ -136,11 +152,11 @@ def start_page(section: str = "FIELD GUIDE", page_title: str | None = None, stra
             c.setFont("FieldSans", 8.5)
             c.drawString(x0, y - 20, strap)
     # Section-opening pages carry a quiet, oversized chapter numeral beside the title.
-    section_numbers = {3: "01", 23: "02", 79: "03", 93: "04", 105: "05"}
+    section_numbers = {4: "01", 25: "02", 81: "03", 95: "04", 105: "05"}
     if page_no in section_numbers:
         c.setFillColor(HexColor("#D9D9D9"))
         c.setFont("FieldSerif-Bold", 30)
-        numeral_y = H - 110 if page_no == 23 else H - 76
+        numeral_y = H - 110 if page_no == 25 else H - 76
         c.drawRightString(x1, numeral_y, section_numbers[page_no])
     page_text_manifest.append((page_no, section, page_title or ""))
     return x0, x1, width
@@ -389,6 +405,33 @@ def page_copyright():
     c.setFillColor(MID)
     c.setFont("FieldSans", 7.4)
     c.drawRightString(x1, 53, "Printed on demand")
+    end_page()
+
+def page_contents():
+    # Fix 8: one-page Contents listing sections and page numbers.
+    x0, x1, width = start_page("CONTENTS", "Contents", "Everything in this fieldbook, at a glance.")
+    y = H - 118
+    entries = [
+        ("Start Here", "4–24", "Welcome, workflow, setup, method, taste, and reference guides"),
+        ("Example Session", "7", "A filled-in sample showing how to use the shot pages"),
+        ("Sessions 01–14", "25–80", "Four pages per bean: profile, shots 1–4, compare & decide"),
+        ("Saved Recipes", "81–94", "One page per repeatable recipe you want to keep"),
+        ("Notes", "95–104", "Grinder map, taste words, routines, and open field notes"),
+        ("Reference", "105–116", "Finders, logs, troubleshooting, and quick-read guides"),
+    ]
+    for name, pg, desc in entries:
+        box(x0, y - 58, width, 58, fill=WHITE, stroke=LINE, radius=6, line=0.5)
+        c.setFillColor(INK)
+        c.setFont("FieldSerif-Bold", 16)
+        c.drawString(x0 + 16, y - 26, name)
+        c.setFillColor(MID)
+        c.setFont("FieldSans", 9)
+        c.drawString(x0 + 16, y - 43, desc)
+        c.setFillColor(CHARCOAL)
+        c.setFont("FieldSans-Bold", 11)
+        c.drawRightString(x1 - 16, y - 28, pg)
+        y -= 70
+    callout(x0, y - 4, width, "Each bean session follows the same four-page flow: Profile → Shots 1–2 → Shots 3–4 → Compare & decide. Use the SESSION markers in the top outside corner to flip quickly.", "HOW TO USE THIS BOOK", 62)
     end_page()
 
 def instructional_page(title: str, section: str, strap: str, blocks: list[tuple[str, str]], callouts: list[tuple[str,str]] | None = None, diagram: str | None = None, bottom: str | None = None):
@@ -642,7 +685,8 @@ def page_shot_card(x: float, top: float, w: float, h: float, shot_no: int, role:
 
     ix, iw = x + 12, w - 24
     # Five measurement fields in roomy, two-column rows.
-    items = [("GRIND SETTING", "DOSE · g"), ("YIELD · g", "TIME · s"), ("TEMP · °C / °F*", None)]
+    # Fix 1: use empty space beside TEMP for a labeled "BASKET / PREP" field.
+    items = [("GRIND SETTING", "DOSE · g"), ("YIELD · g", "TIME · s"), ("TEMP · °C / °F*", "BASKET / PREP")]
     row_top = top - 54
     for left_name, right_name in items:
         gap = 10
@@ -650,7 +694,6 @@ def page_shot_card(x: float, top: float, w: float, h: float, shot_no: int, role:
         field(ix, row_top, fw, left_name, h=36, size=8.5)
         if right_name:
             field(ix + fw + gap, row_top, fw, right_name, h=36, size=8.5)
-        # Fix 2: remove stray unlabeled line next to TEMP field (no empty field drawn).
         row_top -= 39
 
     # Fix 1: add ~0.18 in vertical breathing room between major sections.
@@ -683,8 +726,10 @@ def page_shot_card(x: float, top: float, w: float, h: float, shot_no: int, role:
     note = "*Optional; note if fixed or unavailable on your machine."
     c.setFillColor(MID)
     c.setFont("FieldSans", 8.5)
-    # Fix 3: keep >= 0.15 in clearance between footnote and card edge.
-    c.drawString(ix, bottom + 0.16 * PT, note)
+    # Fix 1: >= 0.15 in clearance from last line above it.
+    last_rule_y = next_label_y - 31 - 20.16
+    footnote_y = max(bottom + 0.16 * PT, last_rule_y + 0.15 * PT)
+    c.drawString(ix, footnote_y, note)
 
 def page_shots(session: int, pair: tuple[int,int], title_suffix: str):
     x0,x1,width=start_page(f"SESSION {session:02d} · SHOTS", f"Session {session:02d}  /  {title_suffix}", "Write the actual result—even when it misses the target.")
@@ -697,6 +742,139 @@ def page_shots(session: int, pair: tuple[int,int], title_suffix: str):
         page_shot_card(x0 + i * (card_w + gap), top, card_w, card_h, shot, roles[i])
     c.setFillColor(MID); c.setFont("FieldSans", 8.5)
     c.drawString(x0, 104, "After each shot: record first → taste → name one next move.")
+    end_page()
+
+def page_example_shots():
+    # Fix 7: completed example session page (Session 01 shots 1-2), marked EXAMPLE.
+    x0,x1,width=start_page("SESSION 01 · SHOTS", "Session 01  /  Shots 1–2 (Example)", "A filled-in sample to show how to use the session pages.")
+    # EXAMPLE marker
+    c.saveState()
+    c.setFillColor(HexColor("#444444"))
+    c.setStrokeColor(HexColor("#444444"))
+    c.setLineWidth(1)
+    c.roundRect(x1 - 72, H - 52, 68, 20, 4, fill=0, stroke=1)
+    c.setFont("FieldSans-Bold", 9)
+    c.drawCentredString(x1 - 38, H - 46, "EXAMPLE")
+    c.restoreState()
+
+    top = H - 104
+    gap = 14
+    card_w = (width - gap) / 2
+    card_h = 562
+    examples = [
+        {
+            "shot": 1, "role": "Baseline", "compare": "—",
+            "grind": "12.0", "dose": "18.0", "yield": "36.2", "time": "29", "temp": "93°C", "basket": "18 g",
+            "ticks": {"sharp / sour": False, "sweet": True, "bitter / dry": False, "balanced": True, "thin / hollow": False},
+            "body": 3, "sweetness": 4, "balance": 4,
+            "notes": ["Sweet, nutty cup with a clean finish.", "Slightly quick flow; could be a touch richer."],
+            "next": ["Grind one step finer (11.8), keep", "dose and yield the same."]
+        },
+        {
+            "shot": 2, "role": "Test A", "compare": "1",
+            "grind": "11.8", "dose": "18.0", "yield": "36.0", "time": "32", "temp": "93°C", "basket": "18 g",
+            "ticks": {"sharp / sour": False, "sweet": True, "bitter / dry": False, "balanced": True, "thin / hollow": False},
+            "body": 4, "sweetness": 5, "balance": 5,
+            "notes": ["Richer body, more sweetness, balanced.", "Better than Shot 1 — good candidate."],
+            "next": ["Repeat as Shot 4 to confirm.", ""]
+        },
+    ]
+    for i, ex in enumerate(examples):
+        xx = x0 + i * (card_w + gap)
+        bottom = top - card_h
+        box(xx, bottom, card_w, card_h, fill=WHITE, stroke=LINE, radius=6, line=0.5)
+        c.setFillColor(PALE)
+        c.roundRect(xx + 0.5, top - 43, card_w - 1, 42, 5, fill=1, stroke=0)
+        c.setFillColor(INK); c.setFont("FieldSerif-Bold", 14)
+        c.drawString(xx + 12, top - 27, f"SHOT {ex['shot']}")
+        c.setFillColor(CHARCOAL); c.setFont("FieldSans-Bold", 8.5)
+        c.drawString(xx + 89, top - 26, ex["role"].upper())
+        c.setFillColor(MID); c.setFont("FieldSans", 8.5)
+        c.drawString(xx + 12, top - 39, f"Compare with shot {ex['compare']}")
+
+        ix, iw = xx + 12, card_w - 24
+        items = [("GRIND SETTING", ex["grind"], "DOSE · g", ex["dose"]),
+                 ("YIELD · g", ex["yield"], "TIME · s", ex["time"]),
+                 ("TEMP · °C / °F*", ex["temp"], "BASKET / PREP", ex["basket"])]
+        row_top = top - 54
+        for ln, lv, rn, rv in items:
+            gapf = 10
+            fw = (iw - gapf) / 2
+            field(ix, row_top, fw, ln, h=36, size=8.5)
+            field(ix + fw + gapf, row_top, fw, rn, h=36, size=8.5)
+            c.setFillColor(INK); c.setFont("FieldSans", 10)
+            c.drawString(ix + 2, row_top - 28, lv)
+            c.drawString(ix + fw + gapf + 2, row_top - 28, rv)
+            row_top -= 39
+
+        gap_section = 0.18 * PT
+        row_top -= 2 + gap_section
+        label("TASTE / TEXTURE", ix, row_top, 8.5, MID)
+        label("TICK WHAT YOU NOTICE", ix, row_top - 12, 8.5, MID)
+        opts = ["sharp / sour", "sweet", "bitter / dry", "balanced", "thin / hollow"]
+        colw = iw / 2
+        for j, text in enumerate(opts):
+            col, row = j % 2, j // 2
+            bx = ix + col * colw
+            by = row_top - 31 - row * 18
+            c.setStrokeColor(MID); c.setLineWidth(0.8)
+            c.rect(bx, by - 1, 8, 8, stroke=1, fill=0)
+            if ex["ticks"].get(text):
+                c.setStrokeColor(INK); c.setLineWidth(1.2)
+                c.line(bx+1.5, by+3, bx+3.5, by+0.5)
+                c.line(bx+3.5, by+0.5, bx+7, by+6.5)
+            c.setFillColor(INK); c.setFont("FieldSans", 8.5)
+            c.drawString(bx + 13, by, text)
+        row_top -= 80 + gap_section
+
+        for rname, rval, roff in [("BODY", ex["body"], 0), ("SWEETNESS", ex["sweetness"], 23), ("BALANCE", ex["balance"], 46)]:
+            ry = row_top - roff
+            label(rname, ix, ry - 3, 8.5, CHARCOAL)
+            c.setFillColor(MID); c.setFont("FieldSans", 8.5)
+            c.drawString(ix + 65, ry - 3, "LOW")
+            c.setStrokeColor(MID); c.setLineWidth(0.7)
+            c.line(ix + 91, ry, ix + 110, ry)
+            c.line(ix + 110, ry, ix + 106, ry + 3); c.line(ix + 110, ry, ix + 106, ry - 3)
+            start = ix + 118
+            for k in range(5):
+                cxp = start + k * 18
+                c.setStrokeColor(MID); c.setLineWidth(0.8)
+                c.circle(cxp, ry, 5, stroke=1, fill=0)
+                if k + 1 == rval:
+                    c.setFillColor(INK)
+                    c.circle(cxp, ry, 3.2, stroke=0, fill=1)
+                c.setFillColor(MID); c.setFont("FieldSans", 8.5)
+                c.drawCentredString(cxp, ry - 3, str(k + 1))
+            c.setFillColor(MID); c.setFont("FieldSans", 8.5)
+            c.drawString(ix + 199, ry - 3, "HIGH")
+        row_top -= 65 + gap_section
+
+        label("TASTE NOTES / WHAT CHANGED", ix, row_top, 8.5, CHARCOAL)
+        label("IN THE CUP", ix, row_top - 12, 8.5, CHARCOAL)
+        row_top -= 11
+        for li in range(4):
+            ly = row_top - 18 - li * 20.16
+            rule(ix, ly, ix + iw, LINE, 0.5)
+            if li < len(ex["notes"]) and ex["notes"][li]:
+                c.setFillColor(INK); c.setFont("FieldSans", 9)
+                c.drawString(ix + 2, ly + 3, ex["notes"][li][:52])
+        next_label_y = row_top - 112 - gap_section
+        label("ONE NEXT ADJUSTMENT", ix, next_label_y, 8.5, CHARCOAL)
+        label("(OR 'REPEAT UNCHANGED')", ix, next_label_y - 12, 8.5, CHARCOAL)
+        for li in range(2):
+            ly = next_label_y - 31 - li * 20.16
+            rule(ix, ly, ix + iw, LINE, 0.5)
+            if li < len(ex["next"]) and ex["next"][li]:
+                c.setFillColor(INK); c.setFont("FieldSans", 9)
+                c.drawString(ix + 2, ly + 3, ex["next"][li][:52])
+        note = "*Optional; note if fixed or unavailable on your machine."
+        c.setFillColor(MID); c.setFont("FieldSans", 8.5)
+        last_rule_y = next_label_y - 31 - 20.16
+        footnote_y = max(bottom + 0.16 * PT, last_rule_y + 0.15 * PT)
+        c.drawString(ix, footnote_y, note)
+
+    c.setFillColor(MID); c.setFont("FieldSans", 8.5)
+    c.drawString(x0, 104, "EXAMPLE ONLY — use your own numbers, taste notes, and next adjustment.")
     end_page()
 
 def page_session_profile(session: int):
@@ -816,29 +994,31 @@ def page_note(index: int, title: str, prompt: str, kind: str="lines"):
         is_open = title.startswith("Open field notes")
         left=x0; right=x1; bottom=82
         if is_open and title.endswith("1"):
-            # 5 mm dot grid at 25% black, with no vertical rules.
-            c.setFillColor(Color(0, 0, 0, alpha=0.25))
-            spacing=14.17
-            xx=left
+            # Fix 6: 5 mm dot grid, ~0.6 pt dots, 40% gray, no vertical rules.
+            c.setFillColor(Color(0.6, 0.6, 0.6))
+            spacing = 14.17
+            xx = left
             while xx <= right:
-                yy=bottom
-                while yy <= y-4:
-                    c.circle(xx,yy,0.55,stroke=0,fill=1)
+                yy = bottom
+                while yy <= y - 4:
+                    c.circle(xx, yy, 0.3, stroke=0, fill=1)
                     yy += spacing
                 xx += spacing
         elif is_open:
             # Open field notes 2 and 3: horizontal-only rules, 0.3 in apart.
-            yy=y-4
+            yy = y - 4
             while yy >= bottom:
-                rule(left,yy,right,Color(0,0,0,alpha=0.30),0.5)
+                rule(left, yy, right, LINE, 0.5)
                 yy -= 21.6
         else:
-            c.setStrokeColor(PALE2); c.setLineWidth(0.45)
-            yy=int(y-4)
+            # Fix 6: darker grid lines, 0.5 pt.
+            c.setStrokeColor(LINE); c.setLineWidth(0.5)
+            yy = int(y - 4)
             while yy >= int(bottom):
-                c.line(left,yy,right,yy)
+                c.line(left, yy, right, yy)
                 yy -= 22
-            for xx in range(int(left),int(right),24): c.line(xx,bottom,xx,y-4)
+            for xx in range(int(left), int(right), 24):
+                c.line(xx, bottom, xx, y - 4)
         y=bottom
     else:
         # Handwriting rules with deliberate space and a narrow prompt rail.
@@ -851,7 +1031,8 @@ def page_note(index: int, title: str, prompt: str, kind: str="lines"):
             c.setFillColor(MID)
             c.setFont("FieldSans", 8.5)
             if i % 4 == 0 and (i // 4) < len(prompts):
-                c.drawString(x0, yy + 1, prompts[i // 4])
+                # Fix 2: align label exactly with its ruled line.
+                c.drawString(x0, yy + 2, prompts[i // 4])
             rule(x0 + 66, yy, x1, LINE, 0.65)
     end_page()
 
@@ -883,8 +1064,26 @@ def page_back_reference(index: int, title: str, strap: str, mode: str="table"):
     elif mode=="checklist":
         items=["Confirm the basket fits the planned dose.","Weigh dose and espresso output if a scale is available.","Use the same timer start convention each session.","Record shot time as an observation, not a pass/fail grade.","Taste first; choose one variable for the next comparison.","Save the recipe only if you can identify the coffee and setup."]
         bullet_lines(items,x0+2,y,width-4,33,8.6)
-        y-=220
-        field_lines(x0,y,width,"My personal routine / machine-specific reminder",4,25)
+        # Fix 4: fill the empty lower half with "My go-to recipe" box + four ruled lines.
+        box_top = 360
+        box_bottom = 82
+        box(x0, box_bottom, width, box_top - box_bottom, fill=PALE, stroke=PALE2, radius=6, line=0.5)
+        label("MY GO-TO RECIPE", x0 + 14, box_top - 20, 8.5, CHARCOAL)
+        c.setFillColor(MID); c.setFont("FieldSans", 8.5)
+        c.drawString(x0 + 14, box_top - 34, "The recipe I reach for most often on this setup.")
+        fy = box_top - 56
+        fw2 = (width - 28 - 14) / 2
+        field(x0 + 14, fy, fw2, "Coffee", 34, size=8.5)
+        field(x0 + 14 + fw2 + 14, fy, fw2, "Grind", 34, size=8.5)
+        fy -= 40
+        field(x0 + 14, fy, fw2 / 2 - 5, "Dose · g", 34, size=8.5)
+        field(x0 + 14 + fw2 / 2 + 5, fy, fw2 / 2 - 5, "Yield · g", 34, size=8.5)
+        field(x0 + 14 + fw2 + 14, fy, fw2 / 2 - 5, "Time · s", 34, size=8.5)
+        field(x0 + 14 + fw2 + 14 + fw2 / 2 + 5, fy, fw2 / 2 - 5, "Ratio", 34, size=8.5)
+        fy -= 44
+        label("NOTES", x0 + 14, fy, 8.5, MID)
+        for i in range(4):
+            rule(x0 + 14, fy - 18 - i * 24, x0 + width - 14, LINE, 0.5)
     elif mode=="reference":
         blocks=[("DOSE", "Dry coffee mass placed in the basket, recorded in grams."),("YIELD", "Liquid espresso collected in the cup, recorded by mass when possible."),("BREW RATIO", "Yield divided by dose. Example: 36 g out ÷ 18 g in = 2.0, often written 1:2."),("GRIND SETTING", "Your grinder’s own scale. Numbers are not comparable between different grinders."),("SHOT TIME", "Time measured using your chosen start and stop convention. Keep that convention steady."),("BALANCE", "Your overall impression of how acidity, sweetness, bitterness, body, and finish fit together."),("BASELINE", "The recipe you use as a reference for a controlled comparison."),("ONE-VARIABLE TEST", "A comparison where one chosen factor changes and the other conditions are kept as consistent as practical.")]
         yy=y
@@ -960,11 +1159,58 @@ def page_back_reference(index: int, title: str, strap: str, mode: str="table"):
         c.line(x0, y - header_h - len(rows) * row_h, x0 + width, y - header_h - len(rows) * row_h)
         y_after = y_top - 18
         callout(x0, y_after, width, "Use this chart to pick one test at a time. If the cause is unclear, repeat the baseline before changing multiple variables.", "HOW TO USE", 52)
+    elif mode=="shots_guide":
+        # Fix 10: How to read your shots - hints, not rules.
+        intro = "These are tasting hints, not rules. Taste first, change one thing at a time, and write down what actually happened."
+        callout(x0, y, width, intro, "READ WITH CARE", 52)
+        y2 = y - 72
+        headers = ["IF IT TASTES...", "IT MIGHT SUGGEST...", "ONE HINT TO TRY"]
+        rows = [
+            ["Sour / sharp / thin", "Flow may be fast, yield short, or extraction uneven for this coffee.", "Try a slightly finer grind, or a slightly longer yield — not both."],
+            ["Bitter / harsh / dry", "Flow may be slow, yield long, or the coffee is pushing too far.", "Try a slightly coarser grind, or stop the shot a little earlier."],
+            ["Weak / watery", "Ratio may be too long, dose too low, or cup lacking concentration.", "Try a shorter yield, or confirm dose and basket fit."],
+            ["Astringent / rough", "Finish feels drying; prep or extraction may be uneven.", "Check puck prep and distribution; then test one small grind change."],
+            ["Flat / hollow", "Cup may lack sweetness or energy; recipe may be off-center.", "Adjust one variable toward balance and compare by taste."],
+            ["Good once, off next", "Routine, warm-up, or coffee age may have shifted.", "Repeat the baseline before changing the recipe."],
+        ]
+        col_w = [width * 0.26, width * 0.39, width * 0.35]
+        header_h = 28
+        row_h = 58
+        c.setFillColor(PALE)
+        c.roundRect(x0, y2 - header_h, width, header_h, 4, fill=1, stroke=0)
+        cx = x0
+        for wcol, htxt in zip(col_w, headers):
+            c.setFillColor(CHARCOAL)
+            c.setFont("FieldSans-Bold", 8.5)
+            c.drawString(cx + 8, y2 - 17, htxt)
+            cx += wcol
+        y_top = y2 - header_h
+        cell_style = ParagraphStyle("sgcell", fontName="FieldSans", fontSize=8.5, leading=11.5, textColor=INK)
+        for row in rows:
+            y_bottom = y_top - row_h
+            c.setStrokeColor(LINE); c.setLineWidth(0.5)
+            c.line(x0, y_bottom, x0 + width, y_bottom)
+            cx = x0
+            for wcol, cell in zip(col_w, row):
+                p = Paragraph(esc(cell), cell_style)
+                _, ph = p.wrap(wcol - 12, row_h - 10)
+                p.drawOn(c, cx + 6, y_top - 8 - ph)
+                cx += wcol
+            vx = x0
+            for wcol in col_w[:-1]:
+                vx += wcol
+                c.line(vx, y_bottom, vx, y_top)
+            y_top = y_bottom
+        c.setStrokeColor(LINE); c.setLineWidth(0.5)
+        c.line(x0, y2 - header_h - len(rows) * row_h, x0 + width, y2 - header_h - len(rows) * row_h)
+        y_after = y_top - 16
+        callout(x0, y_after, width, "If a shot is both sour and bitter, suspect uneven flow or prep before chasing two recipe changes at once.", "WHEN IN DOUBT", 50)
     end_page()
 
 # ---- Build the 116-page interior ----
 page_cover()                                  # 1
 page_copyright()                              # 2
+page_contents()                               # 3
 instructional_page("Welcome to your fieldbook","WELCOME","A small system for making the next shot more informative.",[
     ("THE POINT", "Espresso changes from bag to bag, and a recipe that works once can be difficult to remember. This book gives you a repeatable place to record what you used, what you tasted, and what you want to try next."),
     ("WHAT THIS BOOK IS", "A practical comparison workbook—not a machine manual, a recipe authority, or a promise that one ratio fits every coffee. Use the pages to learn your own setup and preserve the results you like."),
@@ -984,6 +1230,7 @@ instructional_page("A quick start in six moves","QUICK START","You can begin wit
     ("05 · CONFIRM", "Use Shot 4 to repeat or refine the direction you prefer. A repeat helps reveal whether the result was consistent."),
     ("06 · KEEP", "Choose your favorite, write why, and transfer it to a saved recipe page. If the comparison was unclear, record the next question instead."),
 ],bottom=("callout","WORKED EXAMPLE","Shot 1 baseline: 18 g in, 36 g out, 29 s. Shot 2: grind one step finer, same dose/yield target. Taste, compare, then decide whether to confirm.")) #5
+page_example_shots()                          # 7
 page_setup()                                   #6
 instructional_page("Plan the four-shot experiment","SESSION METHOD","A compact sequence that compares options without pretending taste is a lab result.",[
     ("SHOT 1 · BASELINE", "Your reference recipe for this session. Record everything you can measure and the preparation you will keep steady."),
@@ -1098,8 +1345,6 @@ notes=[
     ("My espresso preferences","Describe the balance, body, intensity, and finish you enjoy.","lines"),
     ("Bean-to-bean observations","Compare coffees in your own terms; do not assume a roast label predicts your taste.","matrix"),
     ("Open field notes  /  1","Use for a question, setup sketch, or notes from a session.","grid"),
-    ("Open field notes  /  2","Use for a question, setup sketch, or notes from a session.","grid"),
-    ("Open field notes  /  3","Use for a question, setup sketch, or notes from a session.","grid"),
 ]
 for i,(title,strap,kind) in enumerate(notes,1): page_note(i,title,strap,kind)
 # Twelve back-of-book utilities; all structured for later retrieval, not padding.
@@ -1115,7 +1360,7 @@ back=[
     ("Troubleshooting chart","Symptom, likely cause, and one change to try before you change anything else.","troubleshoot"),
     ("Sensory word bank","A flexible list of words to help make your notes more specific.","taste"),
     ("Personal dial-in reference","Use these boxes for the settings and words that matter on your setup.","shot"),
-    ("One more useful note","Close with an open page for an observation worth keeping.","grid"),
+    ("How to read your shots","Sour, bitter, weak, or harsh? Hints to help you choose one next test.","shots_guide"),
 ]
 for i,(title,strap,mode) in enumerate(back,1): page_back_reference(i,title,strap,mode)
 
