@@ -61,7 +61,7 @@ function App() {
       <nav className={menuOpen ? 'navigation navigation--open' : 'navigation'} aria-label="Main navigation">
         <a href="#atlas" onClick={() => setMenuOpen(false)}>The atlas</a>
         <a href="#method" onClick={() => setMenuOpen(false)}>Our method</a>
-        <a className="nav-cta" href="/">Open Scout <span>↗</span></a>
+        <a className="nav-cta" href="./">Open Scout <span>↗</span></a>
       </nav>
     </header>
 
@@ -112,12 +112,12 @@ function App() {
       <div className="method-visual reveal"><div className="method-rings"><i/><i/><i/><b>O</b></div><span className="method-tag">A BETTER KIND OF BOOKMARK</span><span className="method-coordinate">36° 10' N / 115° 08' W</span></div>
       <div className="method-copy reveal"><p className="eyebrow">02 / THE METHOD</p><h2>Less guessing.<br /><em>More gravity.</em></h2><p>We listen for the small signals hiding in plain sight: what readers search, what shelves feel crowded, and where a fresh point of view can still find its orbit.</p>
         <div className="method-list"><div><span>01</span><div><b>Follow the reader</b><small>Real search signals. Not a crystal ball.</small></div><i>↗</i></div><div><span>02</span><div><b>Find the open space</b><small>Demand meets a shelf that can breathe.</small></div><i>↗</i></div><div><span>03</span><div><b>Write with intention</b><small>A clearer next chapter for your idea.</small></div><i>↗</i></div></div>
-        <a className="button button--outline" href="/">Open the research studio <span>↗</span></a>
+        <a className="button button--outline" href="./">Open the research studio <span>↗</span></a>
       </div>
     </section>
 
-    <section className="closing reveal"><p className="eyebrow">YOUR NEXT CHAPTER IS OUT THERE</p><h2>Go where the<br /><em>story takes you.</em></h2><a className="button button--light" href="/">Start exploring <span>↗</span></a><div className="closing-decoration" aria-hidden="true">✳</div></section>
-    <footer className="footer"><a className="brand" href="#home"><span className="brand-symbol"><i/><i/><i/></span><span>ORBITAL<span className="brand-period">.</span></span></a><span>AN EXPERIMENT IN READER GRAVITY</span><a href="/">KDP SCOUT PRO <span>↗</span></a></footer>
+    <section className="closing reveal"><p className="eyebrow">YOUR NEXT CHAPTER IS OUT THERE</p><h2>Go where the<br /><em>story takes you.</em></h2><a className="button button--light" href="./">Start exploring <span>↗</span></a><div className="closing-decoration" aria-hidden="true">✳</div></section>
+    <footer className="footer"><a className="brand" href="#home"><span className="brand-symbol"><i/><i/><i/></span><span>ORBITAL<span className="brand-period">.</span></span></a><span>AN EXPERIMENT IN READER GRAVITY</span><a href="./">KDP SCOUT PRO <span>↗</span></a></footer>
   </main>;
 }
 

@@ -27,10 +27,15 @@ jobs:
 
       - run: npm ci
 
-      - name: Verify timeline and graphic systems
-        run: npm run verify
-
       - run: npm run build
+        env:
+          VITE_BASE_PATH: /Parth-/
+
+      - name: Verify the built site and ORBITAL route
+        run: |
+          npm run verify
+          test -s dist/motion.html
+          grep -q '/Parth-/assets/' dist/motion.html
 
       # Gravity Lab is fully static (no build step), so it ships verbatim
       # inside the Pages artifact at /gravity-lab/
