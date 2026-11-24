@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import { resolve } from 'node:path';
 export default defineConfig({
   server: {
     host: '0.0.0.0',
@@ -11,5 +12,18 @@ export default defineConfig({
     }
   },
   preview: { host: '0.0.0.0', port: 4173 },
-  build: { outDir: 'dist', emptyOutDir: true }
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true,
+    rollupOptions: {
+      input: { main: resolve(process.cwd(), 'index.html'), motion: resolve(process.cwd(), 'motion.html') },
+      output: {
+        manualChunks(id) {
+          if (id.includes('/node_modules/three/') || id.includes('/node_modules/@react-three/fiber/')) return 'graphics-vendor';
+          if (id.includes('/node_modules/react-dom/') || id.includes('/node_modules/react/') || id.includes('/node_modules/scheduler/')) return 'react-vendor';
+          if (id.includes('/node_modules/gsap/')) return 'motion-vendor';
+        }
+      }
+    }
+  }
 });
