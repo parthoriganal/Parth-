@@ -115,20 +115,7 @@ def start_page(section: str = "FIELD GUIDE", page_title: str | None = None, stra
             else:
                 c.drawString(x0, 53, "ESPRESSO DIAL-IN FIELDBOOK")
                 c.drawRightString(x1, 53, f"{page_no:03d}")
-    # Fix 9: session edge marker on each session page (top outside corner).
-    if section.upper().startswith("SESSION "):
-        m = re.search(r"SESSION\s+(\d+)", section.upper())
-        if m:
-            sess = m.group(1)
-            c.saveState()
-            c.setFillColor(MID)
-            c.setFont("FieldSans-Bold", 8.5)
-            marker = f"SESSION {sess}"
-            if page_no % 2:
-                c.drawRightString(W - 10, H - 14, marker)
-            else:
-                c.drawString(10, H - 14, marker)
-            c.restoreState()
+    # Fix 1 (targeted): session marker kept in running header (safe zone); no edge marker.
     if page_title:
         y = H - (70 if page_no > 2 else 66)
         c.setFillColor(INK)
@@ -580,6 +567,14 @@ def instructional_page(title: str, section: str, strap: str, blocks: list[tuple[
                         c.setStrokeColor(CHARCOAL); c.setLineWidth(1)
                         c.line(ax, ay, ax + 10, ay)
                         c.line(ax+10, ay, ax+6, ay+3); c.line(ax+10, ay, ax+6, ay-3)
+            elif bottom == "my_notes":
+                # Fix 5: My notes box with 6 ruled lines.
+                box(x0, art_bottom, width, art_h, fill=PALE, stroke=PALE2, radius=6, line=0.5)
+                label("MY NOTES", x0 + 14, art_top - 20, 8.5, CHARCOAL)
+                for i in range(6):
+                    ly = art_top - 44 - i * 24
+                    if ly > art_bottom + 16:
+                        rule(x0 + 14, ly, x1 - 14, LINE, 0.5)
             else:
                 # Generic worked-example callout
                 if isinstance(bottom, str):
@@ -747,14 +742,18 @@ def page_shots(session: int, pair: tuple[int,int], title_suffix: str):
 def page_example_shots():
     # Fix 7: completed example session page (Session 01 shots 1-2), marked EXAMPLE.
     x0,x1,width=start_page("SESSION 01 · SHOTS", "Session 01  /  Shots 1–2 (Example)", "A filled-in sample to show how to use the session pages.")
-    # EXAMPLE marker
+    # Fix 2: EXAMPLE tag to the right of title, below header rule, 0.1 in clearance.
     c.saveState()
+    tag_h = 20
+    tag_w = 68
+    tag_x = x0 + 415
+    tag_y = H - 39 - 0.1 * PT - tag_h  # 0.1 in below header rule
     c.setFillColor(HexColor("#444444"))
     c.setStrokeColor(HexColor("#444444"))
     c.setLineWidth(1)
-    c.roundRect(x1 - 72, H - 52, 68, 20, 4, fill=0, stroke=1)
+    c.roundRect(tag_x, tag_y, tag_w, tag_h, 4, fill=0, stroke=1)
     c.setFont("FieldSans-Bold", 9)
-    c.drawCentredString(x1 - 38, H - 46, "EXAMPLE")
+    c.drawCentredString(tag_x + tag_w / 2, tag_y + 6, "EXAMPLE")
     c.restoreState()
 
     top = H - 104
@@ -768,7 +767,7 @@ def page_example_shots():
             "ticks": {"sharp / sour": False, "sweet": True, "bitter / dry": False, "balanced": True, "thin / hollow": False},
             "body": 3, "sweetness": 4, "balance": 4,
             "notes": ["Sweet, nutty cup with a clean finish.", "Slightly quick flow; could be a touch richer."],
-            "next": ["Grind one step finer (11.8), keep", "dose and yield the same."]
+            "next": ["Grind one step finer (11.8).", ""]
         },
         {
             "shot": 2, "role": "Test A", "compare": "1",
@@ -1322,7 +1321,7 @@ instructional_page("Further reading & source notes","SOURCES","This book’s gui
     ("TASTE-LED REFERENCE", "Clive Coffee, 'Dialing In Espresso By Taste' (2026). Useful for the principle that taste should be read alongside measurements: clivecoffee.com/blogs/learn/dialing-in-espresso-by-taste"),
     ("YOUR EQUIPMENT", "Read the current manuals for your machine, grinder, basket, and scale. Manufacturer controls and safety limits take priority over a generic workbook."),
     ("HOW TO READ THIS BOOK", "The 1:2 example is arithmetic and a familiar starting reference, not a scientific optimum. Taste language and adjustment prompts are intentionally framed as hypotheses to test on your setup."),
-],[("NO AFFILIATION","The sources above are independent reading suggestions. They do not endorse this fieldbook.")]) #22
+],[("NO AFFILIATION","The sources above are independent reading suggestions. They do not endorse this fieldbook.")],bottom="my_notes") #24
 
 # Four pages per bean session, fourteen intentionally reusable experiments.
 for s in range(1,15):
