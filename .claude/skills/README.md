@@ -1,14 +1,25 @@
 # Installed Agent Skills
 
-This directory contains open-source Agent Skills (SKILL.md format) installed from GitHub publishers. Skills are plain Markdown + reference files and work with any LLM (Claude, GPT, Gemini, etc.) that supports the skills format. Most packs here are **read-only** — nothing runs. The exception is [`youtube-agent-skill`](#youtube-agent-skill), which ships six stdlib-only Python tools that are meant to be executed.
+This directory contains **230 open-source Agent Skills** (`SKILL.md` format) across **12 publisher packs**, installed from verified GitHub repositories. Skills are plain Markdown + reference files (with optional executable helper scripts where noted) and work with Claude Code, Codex, Cursor, Windsurf, Gemini CLI, and other compatible agents.
+
+Run `npm run verify:downloads` and `npm run verify:yt-skill` to verify the installed packs, or scan any pack with `node libraries/skillhawk/src/cli.js scan .claude/skills/<pack>`.
 
 ## Sources
 
-| Publisher | Source repo | License | Skills installed |
-|---|---|---|---|
-| **nextlevelbuilder** | github.com/nextlevelbuilder/ui-ux-pro-max-skill | MIT | banner-design, brand, design, design-system, slides, ui-styling, ui-ux-pro-max |
-| **Anthropic** | github.com/anthropics/skills | See per-skill LICENSE | academy-guide, algorithmic-art, brand-guidelines, canvas-design, claude-api, discernment-nudge, doc-coauthoring, docx, frontend-design, internal-comms, mcp-builder, pdf, pptx, skill-creator, slack-gif-creator, theme-factory, web-artifacts-builder, webapp-testing, xlsx |
-| **Jakeschincariol** | github.com/Jakeschincariol/youtube-agent-skill | MIT | yt-audit, yt-chapters, yt-comment, yt-edit, yt-package, yt-plan, yt-retention, yt-script, yt-seo, yt-shorts, yt-viral |
+| Publisher / Folder | Source repo | License | Count | Focus |
+|---|---|---|---|---|
+| **superpowers** | [obra/superpowers](https://github.com/obra/superpowers) | MIT | 15 | Engineering workflow: brainstorming, planning, TDD, systematic debugging, subagent execution, code review, verification |
+| **mattpocock** | [mattpocock/skills](https://github.com/mattpocock/skills) | MIT | 27 | Practical engineering & productivity: grill-me, codebase design, domain modeling, specs/tickets, triage, handoff, TDD |
+| **blender** | [arjun988/blender-skills](https://github.com/arjun988/blender-skills) | MIT | 94 | Production Blender workflows: modeling, PBR materials, lighting, camera cinematography, rigging, animation, compositing, export |
+| **threejs** | [CloudAI-X/threejs-skills](https://github.com/CloudAI-X/threejs-skills) | MIT | 13 | Three.js fundamentals, geometry, materials, shaders, lighting, loaders, animation, postprocessing, asset pipeline, R3F |
+| **remotion** | [remotion-dev/skills](https://github.com/remotion-dev/skills) | See upstream | 13 | Official Remotion programmatic video skills: best practices, captions, multimedia, render, interactivity, studio |
+| **marketing** | [coreyhaines31/marketingskills](https://github.com/coreyhaines31/marketingskills) | MIT | 19 | Curated SEO, AI-SEO, copywriting, content strategy, launch, pricing, CRO, competitor profiling, social, video |
+| **zens-ink-seo** | [ZensInk/zens-ink-seo-package](https://github.com/ZensInk/zens-ink-seo-package) | MIT | 9 | Keyword research, difficulty, search intent, competitor gap, Reddit blue-ocean, rank tracking, GEO readiness, site audit (paired with `libraries/zens-ink-seo-package/`) |
+| **scrapling** | [D4Vinci/Scrapling](https://github.com/D4Vinci/Scrapling) | BSD-3-Clause | 1 | Adaptive web scraping, spiders, RAG scraping, MCP server, and migrating from BeautifulSoup (paired with `libraries/scrapling/`) |
+| **supabase** | [supabase/agent-skills](https://github.com/supabase/agent-skills) | MIT | 2 | Official Supabase & Postgres performance/schema best practices |
+| **nextlevelbuilder** *(pre-existing)* | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | MIT | 7 | banner-design, brand, design, design-system, slides, ui-styling, ui-ux-pro-max |
+| **anthropic** *(pre-existing)* | [anthropics/skills](https://github.com/anthropics/skills) | See per-skill LICENSE | 19 | academy-guide, algorithmic-art, brand-guidelines, canvas-design, claude-api, discernment-nudge, doc-coauthoring, docx, frontend-design, internal-comms, mcp-builder, pdf, pptx, skill-creator, slack-gif-creator, theme-factory, web-artifacts-builder, webapp-testing, xlsx |
+| **youtube-agent-skill** *(pre-existing)* | [Jakeschincariol/youtube-agent-skill](https://github.com/Jakeschincariol/youtube-agent-skill) | MIT | 11 | yt-audit, yt-chapters, yt-comment, yt-edit, yt-package, yt-plan, yt-retention, yt-script, yt-seo, yt-shorts, yt-viral |
 
 ## youtube-agent-skill
 
@@ -56,32 +67,14 @@ Three tools import **across sibling folders**, so the pack must stay under one c
 
 Six skills read `~/.claude/youtube/voice.md` for how you actually talk. The blank template is at `youtube-agent-skill/templates/voice.md` — copy it there and fill it in, or send three of your own videos and ask for it to be written from those.
 
-### Fine print, from upstream
-
-- **It does not publish.** Every skill ends in a block you copy and a question. You upload.
-- **`hookscore.py` is a heuristic, not a predictor.** Calibrated on 74 real short-form hooks; it separates bad hooks from real ones well, and a creator's own hits from their own misses barely at all.
-- **The formula classifier judges the words on screen**, not why a video got its views.
-- **`/yt-viral` reads public listings only** — it never logs in as you or touches credentials.
-- **Nothing invents a number.** A skill that wants a figure it does not have asks you for it.
-
 ## Install method
 
-These were cloned via `git clone https://github.com/<owner>/<repo>` (network: `github.com` is allowed in this sandbox). Skill folders were copied into `.claude/skills/<publisher>/<skill>/`.
-
-`youtube-agent-skill` was installed the same way — its 11 `yt-*` folders were copied as a group into `.claude/skills/youtube-agent-skill/` so the sibling imports above keep resolving, along with its `LICENSE`, upstream `README.md` and `templates/voice.md`.
-
-No build step, no GPU, and no display are required.
+All packs were cloned shallowly via `git clone --depth 1 https://github.com/<owner>/<repo>`, audited with SkillHawk (`libraries/skillhawk/`), and copied cleanly (excluding `.git` metadata) into `.claude/skills/<publisher>/` with upstream `LICENSE` files preserved.
 
 ## How to use
 
-Point your AI coding assistant (Claude Code, Cursor, Windsurf, etc.) at this directory so it can discover the skills:
+Point your AI coding assistant (Claude Code, Cursor, Windsurf, Codex, etc.) at this directory:
 
-- **Claude Code:** skills are auto-discovered under `~/.claude/skills/` or a project `.claude/skills/`.
-- **MCP:** use a skills MCP server (e.g. `gengirish/skills-mcp`, `adelie-ai/skills-mcp`, `mk0e/skillkit-mcp`) pointed at `.claude/skills`.
+- **Claude Code:** project skills are auto-discovered under `.claude/skills/`.
+- **MCP:** point a skills MCP server at `.claude/skills`, or launch ZensInk's built-in MCP server via `PYTHONPATH=libraries/zens-ink-seo-package python3 -m zens_ink.mcp`.
 - **Manual:** read any `.claude/skills/<publisher>/<skill>/SKILL.md` for that skill's instructions.
-
-## Notes
-
-- Sandbox limitation: GUI/video tools (EffectCraft, Krita, OpenToonz, LuxCoreRender, OSPRay, ZetaRay) could **not** be installed here — GitHub release assets are on a blocked host, `apt`/Debian repos are unreachable, no Rust toolchain, and the sandbox is headless with no GPU. Those must be installed on a local desktop machine with a GPU.
-- These skill files are safe to commit; they contain no secrets and no compiled binaries. The `youtube-agent-skill` Python tools are readable source, dependency-free, and were run and verified here (`npm run verify:yt-skill`, 17/17).
-

@@ -11,6 +11,7 @@
     "backend": "python backend/app.py",
     "verify": "node scripts/verify.mjs",
     "verify:yt-skill": "node scripts/verify-youtube-skill.mjs",
+    "verify:downloads": "node scripts/verify-downloads.mjs",
     "sim": "python3 -m http.server 8080 --bind 0.0.0.0 --directory gravity-lab",
     "test:physics": "node gravity-lab/test/physics.cjs",
     "test:sim": "node gravity-lab/test/smoke.cjs",
@@ -20,7 +21,9 @@
     "bloom:render": "bash singularity-bloom/render.sh"
   },
   "dependencies": {
+    "animejs": "^4.5.0",
     "chart.js": "^4.4.4",
+    "simplex-noise": "^4.0.3",
     "three": "^0.187.0"
   },
   "devDependencies": {
