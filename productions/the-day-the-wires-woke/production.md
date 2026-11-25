@@ -2,7 +2,7 @@
 
 Original animated explainer · production development document
 
-**Status: pre-production only.** This document is not an animated video. No assets, voice track, or render for this production have been created yet. The existing `video/final/video.mp4` belongs to a different project.
+**Status: production in progress; no video render.** A generated narration recording (`narration.mp3`, 6:19) and one illustrated background (`art/telegraph-office.png`) now exist. Character artwork, animation, remaining backgrounds, sound design, assembly and video rendering are still needed. The existing `video/final/video.mp4` belongs to a different project.
 
 ## Concept
 
